@@ -11,13 +11,16 @@ export class CategoriesService {
     constructor(
         private readonly repo: CategoriesRepository,
         private readonly eventEmitter: EventEmitter2,
-    ) { }
+    ) {}
 
-    findAll() { return this.repo.findAll(); }
+    findAll() {
+        return this.repo.findAll();
+    }
 
     findOne(id: number) {
         const category = this.repo.findById(id);
-        if (!category) throw new NotFoundException(`Category with ID ${id} not found`);
+        if (!category)
+            throw new NotFoundException(`Category with ID ${id} not found`);
         return category;
     }
 
@@ -37,18 +40,27 @@ export class CategoriesService {
 
         await this.repo.delete(id);
 
-        this.eventEmitter.emit(CategoryDeletedEvent.eventName, new CategoryDeletedEvent(id));
+        this.eventEmitter.emit(
+            CategoryDeletedEvent.eventName,
+            new CategoryDeletedEvent(id),
+        );
 
         return { success: true };
     }
 
     @OnEvent(CriterionDeletedEvent.eventName)
     async handleCriterionDeletedEvent(payload: CriterionDeletedEvent) {
-        console.log(`[Event] Criterion ${payload.criterionId} is deleted. Delete it from categories where it is required...`);
-        const allCategoriesWithCriterion = await this.repo.findWithCriteriaIds([payload.criterionId]);
+        console.log(
+            `[Event] Criterion ${payload.criterionId} is deleted. Delete it from categories where it is required...`,
+        );
+        const allCategoriesWithCriterion = await this.repo.findWithCriteriaIds([
+            payload.criterionId,
+        ]);
 
-        const updatePromises = allCategoriesWithCriterion.map(category => {
-            category.requiredCriteriaIds = category.requiredCriteriaIds.filter((id) => id !== payload.criterionId);
+        const updatePromises = allCategoriesWithCriterion.map((category) => {
+            category.requiredCriteriaIds = category.requiredCriteriaIds.filter(
+                (id) => id !== payload.criterionId,
+            );
             return this.repo.update(category.id, category);
         });
 

@@ -7,13 +7,15 @@ import { CategoryDeletedEvent } from 'src/common/events/category.events';
 
 @Injectable()
 export class SoftwareService {
-    constructor(private readonly repo: SoftwareRepository) { }
+    constructor(private readonly repo: SoftwareRepository) {}
 
-    findAll() { return this.repo.findAll(); }
+    findAll() {
+        return this.repo.findAll();
+    }
 
     findOne(id: number) {
         const sw = this.repo.findById(id);
-        if (!sw) throw new NotFoundException(`Софт з ID ${id} не знайдено`);
+        if (!sw) throw new NotFoundException(`Software with ID ${id} not found`);
         return sw;
     }
 
@@ -28,16 +30,30 @@ export class SoftwareService {
     }
     async remove(id: number) {
         const category = await this.repo.findById(id);
-        if (!category) throw new NotFoundException('Software not found');
+        if (!category) throw new NotFoundException(`Software with ID ${id} not found`);
 
         await this.repo.delete(id);
 
         return { success: true };
     }
-    
+
     @OnEvent(CategoryDeletedEvent.eventName)
-    async handleCategoryDeletedEvent(payload: CategoryDeletedEvent) {
-        console.log(`[Event] Category ${payload.categoryId} is deleted. Delete connected softwares...`);
-        await this.repo.deleteByCategoryId(payload.categoryId);
+    async handleCategoryDeleted(payload: CategoryDeletedEvent) {
+        console.log(
+            `[Event] Category ${payload.categoryId} deleted. Updating software...`,
+        );
+
+        const softwareList = await this.repo.findWithCategoryId(
+            payload.categoryId,
+        );
+
+        const updatePromises = softwareList.map((sw) => {
+            sw.categoryIds = sw.categoryIds.filter(
+                (id) => id !== payload.categoryId,
+            );
+            return this.repo.update(sw.id, sw);
+        });
+
+        await Promise.all(updatePromises);
     }
 }

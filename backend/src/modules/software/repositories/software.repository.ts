@@ -1,41 +1,71 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, ArrayContains } from 'typeorm';
 import { Software } from '../entities/software.entity';
 
 @Injectable()
-export class SoftwareRepository {
+export class SoftwareRepository implements OnModuleInit {
     constructor(
         @InjectRepository(Software)
         private readonly ormRepo: Repository<Software>,
-    ) { }
+    ) {}
+
     async onModuleInit() {
         const count = await this.ormRepo.count();
         if (count === 0) {
-            console.log('[Software] Database is empty. Seeding default software tools...');
+            console.log('[Software] Database is empty. Seeding...');
             await this.ormRepo.save([
-                // Category 1: IDEs (Requires criteria 1 and 2)
-                { categoryId: 1, name: 'JetBrains Rider', websiteUrl: 'https://jetbrains.com/rider', features: { "1": true, "2": 3.2 } },
-                { categoryId: 1, name: 'Visual Studio Code', websiteUrl: 'https://code.visualstudio.com', features: { "1": true, "2": 1.5 } },
-
-                // Category 2: Databases (Requires criteria 1 and 3)
-                { categoryId: 2, name: 'DataGrip', websiteUrl: 'https://jetbrains.com/datagrip', features: { "1": true, "3": 199 } },
-                { categoryId: 2, name: 'DBeaver', websiteUrl: 'https://dbeaver.io', features: { "1": true, "3": 0 } },
-
-                // Category 3: Programming Languages (Requires criteria 4 and 5)
-                { categoryId: 3, name: 'Rust', websiteUrl: 'https://rust-lang.org', features: { "4": true, "5": 'Steep' } },
-                { categoryId: 3, name: 'Go', websiteUrl: 'https://go.dev', features: { "4": false, "5": 'Easy' } },
+                {
+                    categoryIds: [1],
+                    name: 'JetBrains Rider',
+                    developer: 'JetBrains',
+                    shortDescription: 'The cross-platform .NET IDE.',
+                    fullDescription:
+                        '## Overview\nRider is an excellent choice for .NET developers.',
+                    websiteUrl: 'https://jetbrains.com/rider',
+                    features: { '1': true, '2': 3.2 },
+                },
+                {
+                    categoryIds: [1],
+                    name: 'Visual Studio Code',
+                    developer: 'Microsoft',
+                    shortDescription: 'The code editor.',
+                    logoUrl:
+                        'https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg',
+                    websiteUrl: 'https://code.visualstudio.com/',
+                    features: { '1': true, '2': 3.2 },
+                },
             ]);
         }
     }
 
-    findAll() { return this.ormRepo.find(); }
-    findById(id: number) { return this.ormRepo.findOneBy({ id }); }
-    create(dto: any) { return this.ormRepo.save(dto); }
-    update(id: number, dto: any) { return this.ormRepo.update(id, dto); }
-    delete(id: number) { return this.ormRepo.delete(id); }
+    findAll() {
+        return this.ormRepo.find();
+    }
+    findById(id: number) {
+        return this.ormRepo.findOneBy({ id });
+    }
+    create(dto: any) {
+        return this.ormRepo.save(dto);
+    }
+    update(id: number, dto: any) {
+        return this.ormRepo.update(id, dto);
+    }
+    delete(id: number) {
+        return this.ormRepo.delete(id);
+    }
 
     deleteByCategoryId(categoryId: number) {
-        return this.ormRepo.delete({ categoryId });
+        return this.ormRepo.delete({
+            categoryIds: ArrayContains([categoryId]),
+        });
+    }
+
+    findWithCategoryId(categoryId: number) {
+        return this.ormRepo.find({
+            where: {
+                categoryIds: ArrayContains([categoryId]),
+            },
+        });
     }
 }

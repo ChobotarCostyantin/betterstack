@@ -12,7 +12,8 @@ export class CreateCategoryDto {
 
     @ApiProperty({
         example: [1, 2, 3],
-        description: 'Array of Criterion IDs that are mandatory for this category'
+        description:
+            'Array of Criterion IDs that are mandatory for this category',
     })
     requiredCriteriaIds: number[];
 }

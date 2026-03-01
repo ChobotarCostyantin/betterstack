@@ -6,22 +6,22 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'betterstack_db',
-      autoLoadEntities: true,
-      synchronize: true,
-    }),
-    EventEmitterModule.forRoot(),
+    imports: [
+        TypeOrmModule.forRoot({
+            type: 'postgres',
+            host: 'localhost',
+            port: 5432,
+            username: 'postgres',
+            password: 'postgres',
+            database: 'betterstack_db',
+            autoLoadEntities: true,
+            synchronize: true,
+        }),
+        EventEmitterModule.forRoot(),
 
-    CategoriesModule,
-    CriteriaModule,
-    SoftwareModule,
-  ],
+        CategoriesModule,
+        CriteriaModule,
+        SoftwareModule,
+    ],
 })
-export class AppModule { }
+export class AppModule {}

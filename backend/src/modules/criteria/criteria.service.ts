@@ -10,13 +10,16 @@ export class CriteriaService {
     constructor(
         private readonly repo: CriteriaRepository,
         private readonly eventEmitter: EventEmitter2,
-    ) { }
+    ) {}
 
-    findAll() { return this.repo.findAll(); }
+    findAll() {
+        return this.repo.findAll();
+    }
 
     findOne(id: number) {
         const criterion = this.repo.findById(id);
-        if (!criterion) throw new NotFoundException(`Criterion with ID ${id} not found`);
+        if (!criterion)
+            throw new NotFoundException(`Criterion with ID ${id} not found`);
         return criterion;
     }
 
@@ -29,14 +32,18 @@ export class CriteriaService {
         const newCriterion = this.repo.update(id, dto);
         return newCriterion;
     }
-    
+
     async remove(id: number) {
         const criterion = await this.repo.findById(id);
-        if (!criterion) throw new NotFoundException(`Criterion with ID ${id} not found`);
+        if (!criterion)
+            throw new NotFoundException(`Criterion with ID ${id} not found`);
 
         await this.repo.delete(id);
 
-        this.eventEmitter.emit(CriterionDeletedEvent.eventName, new CriterionDeletedEvent(id));
+        this.eventEmitter.emit(
+            CriterionDeletedEvent.eventName,
+            new CriterionDeletedEvent(id),
+        );
 
         return { success: true };
     }
