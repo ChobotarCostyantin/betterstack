@@ -15,7 +15,8 @@ export class SoftwareService {
 
     findOne(id: number) {
         const sw = this.repo.findById(id);
-        if (!sw) throw new NotFoundException(`Software with ID ${id} not found`);
+        if (!sw)
+            throw new NotFoundException(`Software with ID ${id} not found`);
         return sw;
     }
 
@@ -30,7 +31,8 @@ export class SoftwareService {
     }
     async remove(id: number) {
         const category = await this.repo.findById(id);
-        if (!category) throw new NotFoundException(`Software with ID ${id} not found`);
+        if (!category)
+            throw new NotFoundException(`Software with ID ${id} not found`);
 
         await this.repo.delete(id);
 
