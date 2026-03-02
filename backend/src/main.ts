@@ -8,6 +8,7 @@ async function bootstrap() {
     const config = new DocumentBuilder()
         .setTitle('Betterstack API')
         .setVersion('1.0')
+        .addBearerAuth()
         .build();
 
     app.setGlobalPrefix('api/v1');

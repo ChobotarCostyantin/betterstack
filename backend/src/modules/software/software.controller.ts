@@ -7,14 +7,20 @@ import {
     Body,
     Param,
     ParseIntPipe,
+    UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SoftwareService } from './software.service';
 import { CreateSoftwareDto } from './dto/create-software.dto';
 import { UpdateSoftwareDto } from './dto/update-software.dto';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { WithRole } from 'src/common/decorators/roles.decorator';
+import { Role } from 'src/common/enums/role.enum';
 
 @ApiTags('Software')
 @Controller('software')
+@ApiBearerAuth()
 export class SoftwareController {
     constructor(private readonly service: SoftwareService) {}
 
@@ -32,12 +38,16 @@ export class SoftwareController {
 
     @Post()
     @ApiOperation({ summary: 'Create new software' })
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @WithRole(Role.USER)
     create(@Body() dto: CreateSoftwareDto) {
         return this.service.create(dto);
     }
 
     @Put(':id')
     @ApiOperation({ summary: 'Update software' })
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @WithRole(Role.ADMIN)
     update(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateSoftwareDto,
@@ -47,6 +57,8 @@ export class SoftwareController {
 
     @Delete(':id')
     @ApiOperation({ summary: 'Delete software' })
+    @UseGuards(JwtAuthGuard, RolesGuard)    
+    @WithRole(Role.ADMIN)
     remove(@Param('id', ParseIntPipe) id: number) {
         return this.service.remove(id);
     }
