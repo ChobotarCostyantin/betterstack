@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { searchAction } from '@/src/lib/api';
 import { Software } from '@/src/lib/types';
 
-// Створюємо реальний об'єкт-словник для мапінгу (Тимчасово для мокових даних)
 const CATEGORY_MAP: Record<number, string> = {
     1: 'Frameworks',
     2: 'Databases',
@@ -35,7 +34,6 @@ export default function LiveSearchBar() {
             document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Виклик API через Server Action
     useEffect(() => {
         if (query.trim().length < 2) {
             setResults([]);
