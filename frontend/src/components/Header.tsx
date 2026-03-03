@@ -1,4 +1,3 @@
-// src/components/Header.tsx
 import Link from 'next/link';
 
 export default function Header() {
@@ -17,23 +16,6 @@ export default function Header() {
                 <div className="flex items-center gap-x-8">
                     <NavLink href="/comparison">Comparison</NavLink>
                 </div>
-
-                {/* Мобільне меню (спрощений варіант, тільки іконка)
-                <div className="md:hidden flex items-center">
-                    <button className="outline-none mobile-menu-button hover:text-gray-400">
-                        <svg
-                            className="w-6 h-6"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                </div> */}
             </nav>
         </header>
     );
