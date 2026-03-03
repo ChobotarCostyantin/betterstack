@@ -1,4 +1,13 @@
 # betterstack
+![Node.js](https://img.shields.io/badge/Node.js-0d121c?style=flat-square&logo=nodedotjs&logoColor=5FA04E&link=https%3A%2F%2Fnodejs.org%2Fen)
+![npm](https://img.shields.io/badge/npm-CB3837?style=flat-square&logo=npm&link=https%3A%2F%2Fwww.npmjs.com%2F)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white&link=https%3A%2F%2Fwww.docker.com%2F)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white&link=https%3A%2F%2Fwww.postgresql.org%2F)
+![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black?style=flat-square&logo=nextdotjs&labelColor=black&color=ededed)
+![Nest.js](https://img.shields.io/badge/Nest.js-11.1.15-E0234E?style=flat-square&logo=nestjs&logoColor=white&labelColor=090909&link=https%3A%2F%2Fnestjs.com%2F)
+![TypeORM](https://img.shields.io/badge/TypeORM-FE0803?style=flat-square&logo=typeorm&logoColor=white&link=https%3A%2F%2Ftypeorm.io%2F)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-white?style=flat-square&logo=tailwindcss&logoColor=06B6D4&link=https%3A%2F%2Ftailwindcss.com%2F)
+![Last commit](https://img.shields.io/github/last-commit/TeseySTD/betterstack?style=flat-square)
 
 ## Overview
 
@@ -6,7 +15,7 @@
 
 ## Tech Stack
 
-* **Frontend:** Next.js 16.1.6, React 19, Tailwind CSS.
+* **Frontend:** Next.js 16.1.6, Tailwind CSS.
 * **Backend:** NestJS 11, TypeORM, PostgreSQL.
 * **Infrastructure:** Docker and Docker Compose for database management.
 
@@ -16,7 +25,7 @@
 
 * Node.js (v20 or higher recommended)
 * Docker and Docker Compose
-* npm or yarn
+* npm
 
 ### 1. Database Setup
 
