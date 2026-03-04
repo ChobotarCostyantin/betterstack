@@ -5,10 +5,13 @@ services:
     container_name: bs-postgres
     image: postgres:18
     volumes:
-      - ./pg-volume:/var/lib/postgresql
+      - postgres-volume:/var/lib/postgresql
     ports:
       - '5432:5432'
     environment:
       POSTGRES_DB: betterstack_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+
+volumes:
+  postgres-volume:
