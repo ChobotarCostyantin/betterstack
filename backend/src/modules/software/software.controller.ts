@@ -22,7 +22,7 @@ import { Role } from 'src/common/enums/role.enum';
 @Controller('software')
 @ApiBearerAuth()
 export class SoftwareController {
-    constructor(private readonly service: SoftwareService) {}
+    constructor(private readonly service: SoftwareService) { }
 
     @Get()
     @ApiOperation({ summary: 'Get all software' })
@@ -30,10 +30,16 @@ export class SoftwareController {
         return this.service.findAll();
     }
 
-    @Get(':id')
+    @Get('id/:id')
     @ApiOperation({ summary: 'Get software by id' })
     findOne(@Param('id', ParseIntPipe) id: number) {
         return this.service.findOne(id);
+    }
+
+    @Get(':slug')
+    @ApiOperation({ summary: 'Get software by slug' })
+    findOneBySlug(@Param('slug') slug: string) {
+        return this.service.findOneBySlug(slug);
     }
 
     @Post()
@@ -57,7 +63,7 @@ export class SoftwareController {
 
     @Delete(':id')
     @ApiOperation({ summary: 'Delete software' })
-    @UseGuards(JwtAuthGuard, RolesGuard)    
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     remove(@Param('id', ParseIntPipe) id: number) {
         return this.service.remove(id);

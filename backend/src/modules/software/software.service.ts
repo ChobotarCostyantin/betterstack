@@ -20,6 +20,13 @@ export class SoftwareService {
         return sw;
     }
 
+    async findOneBySlug(slug: string) {
+        const sw = await this.repo.findBySlug(slug);
+        if (!sw)
+            throw new NotFoundException(`Software with slug ${slug} not found`);
+        return sw;
+    }
+
     create(dto: CreateSoftwareDto) {
         const newSoftware = this.repo.create(dto);
         return newSoftware;

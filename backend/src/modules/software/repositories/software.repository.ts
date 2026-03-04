@@ -17,6 +17,7 @@ export class SoftwareRepository implements OnModuleInit {
             await this.ormRepo.save([
                 {
                     categoryIds: [1],
+                    slug: 'jetbrains-rider',
                     name: 'JetBrains Rider',
                     developer: 'JetBrains',
                     shortDescription: 'The cross-platform .NET IDE.',
@@ -27,6 +28,7 @@ export class SoftwareRepository implements OnModuleInit {
                 },
                 {
                     categoryIds: [1],
+                    slug: 'visual-studio-code',
                     name: 'Visual Studio Code',
                     developer: 'Microsoft',
                     shortDescription: 'The code editor.',
@@ -44,6 +46,9 @@ export class SoftwareRepository implements OnModuleInit {
     }
     findById(id: number) {
         return this.ormRepo.findOneBy({ id });
+    }
+    findBySlug(slug: string) {
+        return this.ormRepo.findOneBy({ slug });
     }
     create(dto: any) {
         return this.ormRepo.save(dto);

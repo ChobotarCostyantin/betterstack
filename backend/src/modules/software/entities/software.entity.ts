@@ -5,6 +5,9 @@ export class Software {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ unique: true })
+    slug: string;
+
     @Column('int', { array: true, default: [] })
     categoryIds: number[];
 
