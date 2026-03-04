@@ -72,7 +72,7 @@ const SOFTWARE_DB: Software[] = [
 ];
 
 const CATEGORY_DB: Category[] = [
-    { id: 1, name: 'Frameworks TEXT TEXT TEXT TEXT TEXT TEXT', slug: 'frameworks', type: 'category' },
+    { id: 1, name: 'Frameworks TEXT TEXT TEXT', slug: 'frameworks', type: 'category' },
     { id: 2, name: 'Databases', slug: 'databases', type: 'category' },
     { id: 3, name: 'CSS Tools', slug: 'css-tools', type: 'category' },
     { id: 4, name: 'Languages', slug: 'languages', type: 'category' },

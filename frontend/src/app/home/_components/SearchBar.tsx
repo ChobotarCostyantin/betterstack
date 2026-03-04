@@ -1,25 +1,23 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
 import { searchAction, getCategoryByIdAction } from '@/src/lib/api';
 import { Software } from '@/src/lib/types';
+import SearchResultItem from './SearchResultItem';
 
 export default function LiveSearchBar() {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Software[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [categoryNames, setCategoryNames] = useState<Record<number, string>>(
-        {},
-    );
+    const [categoryNames, setCategoryNames] = useState<Record<number, string>>({});
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const fetchMissingCategories = async () => {
             const allCategoryIds = Array.from(
-                new Set(results.flatMap((item) => item.categoryIds)),
+                new Set(results.flatMap((item) => item.categoryIds || [])),
             );
 
             const missingIds = allCategoryIds.filter(
@@ -33,7 +31,7 @@ export default function LiveSearchBar() {
             await Promise.all(
                 missingIds.map(async (id) => {
                     try {
-                        const category = await getCategoryByIdAction(id); //
+                        const category = await getCategoryByIdAction(id);
                         if (category && category.name) {
                             newNames[id] = category.name;
                         }
@@ -92,8 +90,8 @@ export default function LiveSearchBar() {
     }, [query]);
 
     return (
-        <div ref={wrapperRef} className="relative w-full max-w-2xl mx-auto">
-            <div className="relative group z-50">
+        <div ref={wrapperRef} className="relative w-full max-w-2xl mx-auto z-50">
+            <div className="relative group">
                 <input
                     type="text"
                     value={query}
@@ -110,43 +108,20 @@ export default function LiveSearchBar() {
             </div>
 
             {isOpen && query.length >= 2 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[#111114] border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden z-40 flex flex-col max-h-100">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-[#111114] border border-zinc-800 rounded-2xl shadow-2xl flex flex-col max-h-100">
                     {results.length === 0 && !isLoading ? (
                         <div className="p-6 text-center text-zinc-500">
                             No results found for "{query}"
                         </div>
                     ) : (
-                        <div className="overflow-y-auto p-2">
+                        <div className="overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent">
                             {results.map((result) => (
-                                <Link
-                                    href={`/article/${result.id}`}
-                                    key={`${result.type}-${result.id}`}
-                                    onClick={() => setIsOpen(false)}
-                                    className="flex items-start justify-between gap-4 px-4 py-3 hover:bg-zinc-800 transition-colors group"
-                                >
-                                    <div className="flex flex-col flex-1 min-w-0">
-                                        <span className="text-zinc-200 font-medium truncate">
-                                            {result.name}
-                                        </span>
-                                        {result.type === 'software' && (
-                                            <span className="text-sm text-zinc-500 truncate">
-                                                {result.shortDescription}
-                                            </span>
-                                        )}
-                                    </div>
-
-                                    <div className="flex flex-wrap justify-end gap-1">
-                                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700 uppercase whitespace-nowrap">
-                                            {result.categoryIds
-                                                .map(
-                                                    (id) =>
-                                                        categoryNames[id] ||
-                                                        `Loading...`,
-                                                )
-                                                .join(', ')}
-                                        </span>
-                                    </div>
-                                </Link>
+                                <SearchResultItem 
+                                    key={result.id} 
+                                    result={result} 
+                                    categoryNames={categoryNames} 
+                                    onClose={() => setIsOpen(false)} 
+                                />
                             ))}
                         </div>
                     )}
