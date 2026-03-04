@@ -1,24 +1,54 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { searchAction } from '@/src/lib/api';
+import { searchAction, getCategoryByIdAction } from '@/src/lib/api';
 import { Software } from '@/src/lib/types';
-
-const CATEGORY_MAP: Record<number, string> = {
-    1: 'Frameworks',
-    2: 'Databases',
-    3: 'CSS Tools',
-    4: 'Languages',
-};
+import SearchResultItem from './SearchResultItem';
 
 export default function LiveSearchBar() {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Software[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [categoryNames, setCategoryNames] = useState<Record<number, string>>({});
 
     const wrapperRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const fetchMissingCategories = async () => {
+            const allCategoryIds = Array.from(
+                new Set(results.flatMap((item) => item.categoryIds || [])),
+            );
+
+            const missingIds = allCategoryIds.filter(
+                (id) => !categoryNames[id],
+            );
+
+            if (missingIds.length === 0) return;
+
+            const newNames: Record<number, string> = { ...categoryNames };
+
+            await Promise.all(
+                missingIds.map(async (id) => {
+                    try {
+                        const category = await getCategoryByIdAction(id);
+                        if (category && category.name) {
+                            newNames[id] = category.name;
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching category ${id}:`, error);
+                        newNames[id] = `Unknown #${id}`;
+                    }
+                }),
+            );
+
+            setCategoryNames(newNames);
+        };
+
+        if (results.length > 0) {
+            fetchMissingCategories();
+        }
+    }, [results]);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -49,7 +79,7 @@ export default function LiveSearchBar() {
                 const data = await searchAction(query);
                 setResults(data);
             } catch (error) {
-                console.error('Помилка пошуку:', error);
+                console.error('Search error:', error);
             } finally {
                 setIsLoading(false);
             }
@@ -60,8 +90,8 @@ export default function LiveSearchBar() {
     }, [query]);
 
     return (
-        <div ref={wrapperRef} className="relative w-full max-w-2xl mx-auto">
-            <div className="relative group z-50">
+        <div ref={wrapperRef} className="relative w-full max-w-2xl mx-auto z-50">
+            <div className="relative group">
                 <input
                     type="text"
                     value={query}
@@ -78,43 +108,20 @@ export default function LiveSearchBar() {
             </div>
 
             {isOpen && query.length >= 2 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[#111114] border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden z-40 flex flex-col max-h-100">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-[#111114] border border-zinc-800 rounded-2xl shadow-2xl flex flex-col max-h-100">
                     {results.length === 0 && !isLoading ? (
                         <div className="p-6 text-center text-zinc-500">
                             No results found for "{query}"
                         </div>
                     ) : (
-                        <div className="overflow-y-auto p-2">
+                        <div className="overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent">
                             {results.map((result) => (
-                                <Link
-                                    href={`/article/${result.id}`}
-                                    key={`${result.type}-${result.id}`}
-                                    onClick={() => setIsOpen(false)}
-                                    className="flex items-center gap-4 p-3 rounded-xl hover:bg-zinc-800/50 transition-colors cursor-pointer"
-                                >
-                                    {/* <div className="w-10 h-10 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
-                                        {result.type === 'software' ? '📦' : '📂'}
-                                    </div> */}
-                                    <div className="flex flex-col">
-                                        <span className="text-zinc-200 font-medium flex items-center gap-2">
-                                            {result.name}
-                                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700 uppercase">
-                                                {result.categoryIds
-                                                    .map(
-                                                        (id) =>
-                                                            CATEGORY_MAP[id] ||
-                                                            `Cat ${id}`,
-                                                    )
-                                                    .join(', ')}
-                                            </span>
-                                        </span>
-                                        {result.type === 'software' && (
-                                            <span className="text-sm text-zinc-500 truncate">
-                                                {result.shortDescription}
-                                            </span>
-                                        )}
-                                    </div>
-                                </Link>
+                                <SearchResultItem 
+                                    key={result.id} 
+                                    result={result} 
+                                    categoryNames={categoryNames} 
+                                    onClose={() => setIsOpen(false)} 
+                                />
                             ))}
                         </div>
                     )}

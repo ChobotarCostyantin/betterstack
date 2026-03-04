@@ -11,6 +11,7 @@ const SOFTWARE_DB: Software[] = [
         shortDescription: 'The React Framework for the Web',
         type: 'software',
         categoryIds: [1],
+        logoUrl: 'https://www.vectorlogo.zone/logos/nextjs/nextjs-icon.svg',
     },
     {
         id: 2,
@@ -18,6 +19,7 @@ const SOFTWARE_DB: Software[] = [
         shortDescription: 'A progressive Node.js framework',
         type: 'software',
         categoryIds: [1],
+        logoUrl: 'https://www.vectorlogo.zone/logos/nestjs/nestjs-icon.svg',
     },
     {
         id: 3,
@@ -25,21 +27,24 @@ const SOFTWARE_DB: Software[] = [
         shortDescription: 'Utility-first CSS framework',
         type: 'software',
         categoryIds: [3],
+        logoUrl: 'https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg',
     },
     {
         id: 4,
         name: 'PostgreSQL',
         shortDescription: 'Advanced open source relational database',
         type: 'software',
-        categoryIds: [2],
+        categoryIds: [2, 1, 3, 4],
+        logoUrl: 'https://www.vectorlogo.zone/logos/postgresql/postgresql-icon.svg',
     },
     {
         id: 5,
-        name: 'TypeScript',
+        name: 'TypeScript TEXT TEXT',
         shortDescription:
             'Statically typed, interpreted, and compiled high-level language',
         type: 'software',
         categoryIds: [4],
+        logoUrl: 'https://www.vectorlogo.zone/logos/typescriptlang/typescriptlang-icon.svg',
     },
     {
         id: 6,
@@ -67,7 +72,7 @@ const SOFTWARE_DB: Software[] = [
 ];
 
 const CATEGORY_DB: Category[] = [
-    { id: 1, name: 'Frameworks', slug: 'frameworks', type: 'category' },
+    { id: 1, name: 'Frameworks TEXT TEXT TEXT', slug: 'frameworks', type: 'category' },
     { id: 2, name: 'Databases', slug: 'databases', type: 'category' },
     { id: 3, name: 'CSS Tools', slug: 'css-tools', type: 'category' },
     { id: 4, name: 'Languages', slug: 'languages', type: 'category' },
@@ -102,4 +107,10 @@ export async function getSoftwareByIdAction(id: number): Promise<Software> {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     return SOFTWARE_DB.find((item) => item.id === id) || SOFTWARE_DB[0];
+}
+
+export async function getCategoryByIdAction(id: number): Promise<Category> {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    return CATEGORY_DB.find((item) => item.id === id) || CATEGORY_DB[0];
 }
