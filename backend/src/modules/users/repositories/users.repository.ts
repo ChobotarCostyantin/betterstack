@@ -10,7 +10,7 @@ export class UsersRepository implements OnModuleInit {
     constructor(
         @InjectRepository(User)
         private readonly ormRepo: Repository<User>,
-    ) { }
+    ) {}
 
     async onModuleInit() {
         const count = await this.ormRepo.count();
@@ -25,8 +25,16 @@ export class UsersRepository implements OnModuleInit {
         }
     }
 
-    findByEmail(email: string) { return this.ormRepo.findOneBy({ email }); }
-    findById(id: number) { return this.ormRepo.findOneBy({ id }); }
-    create(data: Partial<User>) { return this.ormRepo.save(data); }
-    updateRole(id: number, role: Role) { return this.ormRepo.update(id, { role }); }
+    findByEmail(email: string) {
+        return this.ormRepo.findOneBy({ email });
+    }
+    findById(id: number) {
+        return this.ormRepo.findOneBy({ id });
+    }
+    create(data: Partial<User>) {
+        return this.ormRepo.save(data);
+    }
+    updateRole(id: number, role: Role) {
+        return this.ormRepo.update(id, { role });
+    }
 }

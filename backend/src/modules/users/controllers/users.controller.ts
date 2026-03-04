@@ -1,4 +1,3 @@
-
 import { Controller, Patch, Param, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { UsersService } from '../users.service';
@@ -12,7 +11,7 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 @Controller('users')
 @ApiBearerAuth()
 export class UsersController {
-    constructor(private readonly usersService: UsersService) { }
+    constructor(private readonly usersService: UsersService) {}
 
     @Patch(':id/make-admin')
     @WithRole(Role.ADMIN)

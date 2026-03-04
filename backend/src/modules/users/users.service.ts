@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import {
+    Injectable,
+    BadRequestException,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersRepository } from './repositories/users.repository';
@@ -10,7 +14,7 @@ export class UsersService {
     constructor(
         private readonly repo: UsersRepository,
         private readonly jwtService: JwtService,
-    ) { }
+    ) {}
 
     async register(dto: AuthDto) {
         if (await this.repo.findByEmail(dto.email)) {
@@ -36,7 +40,11 @@ export class UsersService {
 
     private generateToken(user: any) {
         return {
-            access_token: this.jwtService.sign({ id: user.id, email: user.email, role: user.role }),
+            access_token: this.jwtService.sign({
+                id: user.id,
+                email: user.email,
+                role: user.role,
+            }),
         };
     }
 }

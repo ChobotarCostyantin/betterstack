@@ -22,7 +22,7 @@ import { Role } from 'src/common/enums/role.enum';
 @Controller('software')
 @ApiBearerAuth()
 export class SoftwareController {
-    constructor(private readonly service: SoftwareService) { }
+    constructor(private readonly service: SoftwareService) {}
 
     @Get()
     @ApiOperation({ summary: 'Get all software' })

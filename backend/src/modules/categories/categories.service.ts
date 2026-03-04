@@ -13,24 +13,24 @@ export class CategoriesService {
         private readonly eventEmitter: EventEmitter2,
     ) {}
 
-    findAll() {
-        return this.repo.findAll();
+    async findAll() {
+        return await this.repo.findAll();
     }
 
-    findOne(id: number) {
-        const category = this.repo.findById(id);
+    async findOne(id: number) {
+        const category = await this.repo.findById(id);
         if (!category)
             throw new NotFoundException(`Category with ID ${id} not found`);
         return category;
     }
 
-    create(dto: CreateCategoryDto) {
-        const newCategory = this.repo.create(dto);
+    async create(dto: CreateCategoryDto) {
+        const newCategory = await this.repo.create(dto);
         return newCategory;
     }
 
-    update(id: number, dto: UpdateCategoryDto) {
-        const updatedCategory = this.repo.update(id, dto);
+    async update(id: number, dto: UpdateCategoryDto) {
+        const updatedCategory = await this.repo.update(id, dto);
         return updatedCategory;
     }
 

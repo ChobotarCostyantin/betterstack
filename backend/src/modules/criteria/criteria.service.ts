@@ -12,24 +12,24 @@ export class CriteriaService {
         private readonly eventEmitter: EventEmitter2,
     ) {}
 
-    findAll() {
-        return this.repo.findAll();
+    async findAll() {
+        return await this.repo.findAll();
     }
 
-    findOne(id: number) {
-        const criterion = this.repo.findById(id);
+    async findOne(id: number) {
+        const criterion = await this.repo.findById(id);
         if (!criterion)
             throw new NotFoundException(`Criterion with ID ${id} not found`);
         return criterion;
     }
 
-    create(dto: CreateCriterionDto) {
-        const newCriterion = this.repo.create(dto);
+    async create(dto: CreateCriterionDto) {
+        const newCriterion = await this.repo.create(dto);
         return newCriterion;
     }
 
-    update(id: number, dto: UpdateCriterionDto) {
-        const newCriterion = this.repo.update(id, dto);
+    async update(id: number, dto: UpdateCriterionDto) {
+        const newCriterion = await this.repo.update(id, dto);
         return newCriterion;
     }
 

@@ -22,7 +22,7 @@ import { Role } from 'src/common/enums/role.enum';
 @Controller('criteria')
 @ApiBearerAuth()
 export class CriteriaController {
-    constructor(private readonly service: CriteriaService) { }
+    constructor(private readonly service: CriteriaService) {}
 
     @Get()
     @ApiOperation({ summary: 'Get all criteria' })

@@ -22,7 +22,7 @@ import { UsersModule } from './modules/users/users.module';
         JwtModule.register({
             global: true,
             secret: 'super-secret-key', // TODO: move to env
-            signOptions: { expiresIn: '1d' }
+            signOptions: { expiresIn: '1d' },
         }),
         EventEmitterModule.forRoot(),
 
@@ -32,4 +32,4 @@ import { UsersModule } from './modules/users/users.module';
         UsersModule,
     ],
 })
-export class AppModule { }
+export class AppModule {}

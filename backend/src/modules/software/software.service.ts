@@ -9,12 +9,12 @@ import { CategoryDeletedEvent } from 'src/common/events/category.events';
 export class SoftwareService {
     constructor(private readonly repo: SoftwareRepository) {}
 
-    findAll() {
-        return this.repo.findAll();
+    async findAll() {
+        return await this.repo.findAll();
     }
 
-    findOne(id: number) {
-        const sw = this.repo.findById(id);
+    async findOne(id: number) {
+        const sw = await this.repo.findById(id);
         if (!sw)
             throw new NotFoundException(`Software with ID ${id} not found`);
         return sw;
@@ -27,18 +27,18 @@ export class SoftwareService {
         return sw;
     }
 
-    create(dto: CreateSoftwareDto) {
-        const newSoftware = this.repo.create(dto);
+    async create(dto: CreateSoftwareDto) {
+        const newSoftware = await this.repo.create(dto);
         return newSoftware;
     }
 
-    update(id: number, dto: UpdateSoftwareDto) {
-        const updatedSoftware = this.repo.update(id, dto);
+    async update(id: number, dto: UpdateSoftwareDto) {
+        const updatedSoftware = await this.repo.update(id, dto);
         return updatedSoftware;
     }
     async remove(id: number) {
-        const category = await this.repo.findById(id);
-        if (!category)
+        const soft = await this.repo.findById(id);
+        if (!soft)
             throw new NotFoundException(`Software with ID ${id} not found`);
 
         await this.repo.delete(id);
