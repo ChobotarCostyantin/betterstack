@@ -42,7 +42,11 @@ export default function CategoryTags({
             setIsExpanded(false);
         };
 
-        const handleScroll = () => {
+        const handleScroll = (event: Event) => {
+            if (popupRef.current?.contains(event.target as Node)) {
+                return;
+            }
+
             if (isExpanded) setIsExpanded(false);
         };
 
