@@ -26,7 +26,7 @@ export default function SearchResultItem({
 
     return (
         <Link
-            href={`/article/${result.id}`}
+            href={`/article/${result.slug}`}
             onClick={onClose}
             className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-zinc-800/50 transition-colors group rounded-xl"
         >

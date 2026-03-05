@@ -6,7 +6,7 @@ const SOFTWARE_DB: ShortSoftware[] = [
     {
         id: 1,
         name: 'Next.js',
-        slug: 'nextdotjs',
+        slug: 'nextjs',
         shortDescription: 'The React Framework for the Web',
         categoryIds: [1],
         logoUrl: 'https://www.vectorlogo.zone/logos/nextjs/nextjs-icon.svg',
@@ -14,7 +14,7 @@ const SOFTWARE_DB: ShortSoftware[] = [
     {
         id: 2,
         name: 'Nest.js',
-        slug: 'nestdotjs',
+        slug: 'nestjs',
         shortDescription: 'A progressive Node.js framework',
         categoryIds: [1],
         logoUrl: 'https://www.vectorlogo.zone/logos/nestjs/nestjs-icon.svg',
@@ -47,7 +47,7 @@ const SOFTWARE_DB: ShortSoftware[] = [
     {
         id: 6,
         name: 'Express.js',
-        slug: 'expressdotjs',
+        slug: 'expressjs',
         shortDescription:
             'Fast, unopinionated, minimalist web framework for Node.js',
         categoryIds: [1],
@@ -62,7 +62,7 @@ const SOFTWARE_DB: ShortSoftware[] = [
     {
         id: 8,
         name: 'Node.js',
-        slug: 'nodedotjs',
+        slug: 'nodejs',
         shortDescription:
             "JavaScript runtime built on Chrome's V8 JavaScript engine",
         categoryIds: [1],

@@ -46,7 +46,7 @@ export default function FeaturedCard({ item }: FeaturedCardProps) {
     return (
         <div className="relative w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-11px)] min-h-45">
             <Link
-                href={`/article/${item.id}`}
+                href={`/article/${item.slug}`}
                 className="block h-full p-8 rounded-2xl bg-[#111114] border border-zinc-800 hover:border-zinc-600 transition-all group flex-col shadow-xl"
             >
                 <div className="flex justify-between items-start mb-6 gap-4">
