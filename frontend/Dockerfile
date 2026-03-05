@@ -23,6 +23,10 @@ RUN npm ci
 FROM deps AS development
 WORKDIR /usr/src/app
 COPY . .
+
+# Ensure .next is owned by node
+RUN mkdir -p .next && chown -R node:node .next
+
 USER node
 CMD ["npm", "run", "dev"]
 

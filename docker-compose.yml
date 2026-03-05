@@ -7,9 +7,9 @@ services:
       context: ./frontend
       target: development
     volumes:
-      - ./frontend:/usr/src/app         # for hot-reload
-      - /usr/src/app/node_modules       # but prevent overwriting container's node_modules
-      - next-volume:/usr/src/app/.next  # make .next writable by Docker
+      - ./frontend:/usr/src/app     # for hot-reload
+      - /usr/src/app/node_modules   # but prevent overwriting container's node_modules
+      - /usr/src/app/.next          # as well as .next
     ports:
       - "3000:3000"
     environment:
@@ -24,8 +24,8 @@ services:
       context: ./backend
       target: development
     volumes:
-      - ./backend:/usr/src/app          # for hot-reload
-      - /usr/src/app/node_modules       # but prevent overwriting container's node_modules
+      - ./backend:/usr/src/app      # for hot-reload
+      - /usr/src/app/node_modules   # but prevent overwriting container's node_modules
     ports:
       - "3010:3010"
     environment:
@@ -61,4 +61,3 @@ services:
 
 volumes:
   postgres-volume:
-  next-volume:
