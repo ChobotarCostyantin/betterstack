@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { searchAction, getCategoryByIdAction } from '@/src/lib/api';
-import { Software } from '@/src/lib/types';
+import { ShortSoftware } from '@/src/lib/types';
 import SearchResultItem from './SearchResultItem';
 
 export default function LiveSearchBar() {
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState<Software[]>([]);
+    const [results, setResults] = useState<ShortSoftware[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [categoryNames, setCategoryNames] = useState<Record<number, string>>({});

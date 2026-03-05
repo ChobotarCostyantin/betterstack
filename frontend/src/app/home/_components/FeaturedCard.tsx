@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Software } from '@/src/lib/types';
+import { ShortSoftware } from '@/src/lib/types';
 import { getCategoryByIdAction } from '@/src/lib/api';
 import CategoryTags from './CategoryTags';
 
 interface FeaturedCardProps {
-    item: Software;
+    item: ShortSoftware;
 }
 
 export default function FeaturedCard({ item }: FeaturedCardProps) {

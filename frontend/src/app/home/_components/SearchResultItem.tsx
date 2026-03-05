@@ -1,6 +1,6 @@
 'use client';
 
-import { Software } from '@/src/lib/types';
+import { ShortSoftware } from '@/src/lib/types';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import CategoryTags from './CategoryTags';
@@ -10,7 +10,7 @@ export default function SearchResultItem({
     categoryNames,
     onClose,
 }: {
-    result: Software;
+    result: ShortSoftware;
     categoryNames: Record<number, string>;
     onClose: () => void;
 }) {

@@ -1,84 +1,82 @@
 'use server';
 
-import { Software, Category } from './types';
+import { ShortSoftware, Category } from './types';
 
-// export type SearchResult = Software | Category;
-
-const SOFTWARE_DB: Software[] = [
+const SOFTWARE_DB: ShortSoftware[] = [
     {
         id: 1,
         name: 'Next.js',
+        slug: 'nextdotjs',
         shortDescription: 'The React Framework for the Web',
-        type: 'software',
         categoryIds: [1],
         logoUrl: 'https://www.vectorlogo.zone/logos/nextjs/nextjs-icon.svg',
     },
     {
         id: 2,
-        name: 'NestJS',
+        name: 'Nest.js',
+        slug: 'nestdotjs',
         shortDescription: 'A progressive Node.js framework',
-        type: 'software',
         categoryIds: [1],
         logoUrl: 'https://www.vectorlogo.zone/logos/nestjs/nestjs-icon.svg',
     },
     {
         id: 3,
         name: 'Tailwind CSS',
+        slug: 'tailwindcss',
         shortDescription: 'Utility-first CSS framework',
-        type: 'software',
         categoryIds: [3],
         logoUrl: 'https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg',
     },
     {
         id: 4,
         name: 'PostgreSQL',
+        slug: 'postgresql',
         shortDescription: 'Advanced open source relational database',
-        type: 'software',
         categoryIds: [2, 1, 3, 4],
         logoUrl: 'https://www.vectorlogo.zone/logos/postgresql/postgresql-icon.svg',
     },
     {
         id: 5,
         name: 'TypeScript TEXT TEXT',
+        slug: 'typescript',
         shortDescription:
             'Statically typed, interpreted, and compiled high-level language',
-        type: 'software',
         categoryIds: [4],
         logoUrl: 'https://www.vectorlogo.zone/logos/typescriptlang/typescriptlang-icon.svg',
     },
     {
         id: 6,
         name: 'Express.js',
+        slug: 'expressdotjs',
         shortDescription:
             'Fast, unopinionated, minimalist web framework for Node.js',
-        type: 'software',
         categoryIds: [1],
     },
     {
         id: 7,
         name: 'React',
+        slug: 'react',
         shortDescription: 'JavaScript library for building user interfaces',
-        type: 'software',
         categoryIds: [1],
     },
     {
         id: 8,
         name: 'Node.js',
+        slug: 'nodedotjs',
         shortDescription:
             "JavaScript runtime built on Chrome's V8 JavaScript engine",
-        type: 'software',
         categoryIds: [1],
     },
 ];
 
 const CATEGORY_DB: Category[] = [
-    { id: 1, name: 'Frameworks TEXT TEXT TEXT', slug: 'frameworks', type: 'category' },
-    { id: 2, name: 'Databases', slug: 'databases', type: 'category' },
-    { id: 3, name: 'CSS Tools', slug: 'css-tools', type: 'category' },
-    { id: 4, name: 'Languages', slug: 'languages', type: 'category' },
+    { id: 1, name: 'Frameworks TEXT TEXT TEXT', slug: 'frameworks' },
+    { id: 2, name: 'Databases', slug: 'databases' },
+    { id: 3, name: 'CSS Tools', slug: 'css-tools' },
+    { id: 4, name: 'Languages', slug: 'languages' },
 ];
 
-export async function searchAction(query: string): Promise<Software[]> {
+export async function searchAction(query: string): Promise<ShortSoftware[]> {
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     if (!query || query.trim().length < 2) return [];
@@ -94,7 +92,7 @@ export async function searchAction(query: string): Promise<Software[]> {
     return [...softwareResults];
 }
 
-export async function getFeaturedAction(): Promise<Software[]> {
+export async function getFeaturedAction(): Promise<ShortSoftware[]> {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const randomIndex = Math.floor(Math.random() * SOFTWARE_DB.length);
@@ -103,7 +101,7 @@ export async function getFeaturedAction(): Promise<Software[]> {
 
     return SOFTWARE_DB.slice(startIndex, endIndex);
 }
-export async function getSoftwareByIdAction(id: number): Promise<Software> {
+export async function getSoftwareByIdAction(id: number): Promise<ShortSoftware> {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     return SOFTWARE_DB.find((item) => item.id === id) || SOFTWARE_DB[0];
