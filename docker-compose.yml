@@ -1,17 +1,63 @@
-name: "betterstack"
+name: betterstack
+
 services:
-  db:
-    container_name: "db"
-    image: "postgres"
+  frontend:
+    container_name: bs-frontend
+    build:
+      context: ./frontend
+      target: development
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - ./frontend:/usr/src/app     # for hot-reload
+      - /usr/src/app/node_modules   # but prevent overwriting container's node_modules
+      - /usr/src/app/.next          # as well as .next
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      BACKEND_BASE_URL: "http://backend:3010"
+    depends_on:
+      - backend
+
+  backend:
+    container_name: bs-backend
+    build:
+      context: ./backend
+      target: development
+    volumes:
+      - ./backend:/usr/src/app      # for hot-reload
+      - /usr/src/app/node_modules   # but prevent overwriting container's node_modules
+    ports:
+      - "3010:3010"
+    environment:
+      NODE_ENV: development
+      PORT: 3010
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: betterstack_db
+      JWT_SECRET: "VFhmYhyAJDHnclhu"
+      JWT_EXPIRES_IN_SEC: 86400
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: bs-postgres
+    image: postgres:18
+    volumes:
+      - postgres-volume:/var/lib/postgresql
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: "betterstack_db"
+      POSTGRES_DB: betterstack_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
 
 volumes:
-  db_data:
-    name: betterstack_db_data
+  postgres-volume:
