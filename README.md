@@ -1,4 +1,8 @@
-# betterstack
+<div align="center">
+<img title="betterstack" src="./assets/logo.svg" alt="betterstack logo" width="128" height="128" />
+
+# **betterstack**
+
 [![Node.js](https://img.shields.io/badge/Node.js-0d121c?style=flat-square&logo=nodedotjs&logoColor=5FA04E&link=https%3A%2F%2Fnodejs.org%2Fen)](https://nodejs.org/en)
 [![npm](https://img.shields.io/badge/npm-CB3837?style=flat-square&logo=npm&link=https%3A%2F%2Fwww.npmjs.com%2F)](https://www.npmjs.com/)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white&link=https%3A%2F%2Fwww.docker.com%2F)](https://www.docker.com/)
@@ -8,6 +12,8 @@
 [![TypeORM](https://img.shields.io/badge/TypeORM-FE0803?style=flat-square&logo=typeorm&logoColor=white&link=https%3A%2F%2Ftypeorm.io%2F)](https://typeorm.io/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-white?style=flat-square&logo=tailwindcss&logoColor=06B6D4&link=https%3A%2F%2Ftailwindcss.com%2F)](https://tailwindcss.com/)
 [![Last commit](https://img.shields.io/github/last-commit/TeseySTD/betterstack?style=flat-square)](https://github.com/TeseySTD/betterstack/commits/main/)
+</div>
+
 
 ## Overview
 

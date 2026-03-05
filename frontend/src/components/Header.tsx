@@ -8,6 +8,7 @@ export default function Header() {
                 <div className="shrink-0">
                     <Link
                         href="/home"
+                        title='betterstack'
                         className="text-2xl font-bold tracking-wide hover:text-gray-400 transition-colors"
                     >
                         <Logo/>
