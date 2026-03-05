@@ -1,15 +1,16 @@
 import React from 'react';
 
-interface LogoProps extends React.SVGProps<SVGSVGElement> { }
+interface LogoProps extends React.SVGProps<SVGSVGElement> {}
 
 export default function Logo({ className = '', ...props }: LogoProps) {
+    
     return (
         <svg
             width="45"
             viewBox="0 0 513 551"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className={`betterstack-logo group ${className}`}
+            className={`betterstack-logo ${className}`}
             {...props}
         >
             <style>
