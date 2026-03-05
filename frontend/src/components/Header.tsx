@@ -1,15 +1,17 @@
 import Link from 'next/link';
+import Logo from './Logo';
 
 export default function Header() {
     return (
         <header className="w-full bg-linear-[90deg,#09090b80,#11111480] z-99999 border-b border-zinc-800 shadow-lg sticky top-0 backdrop-blur-sm">
-            <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
                 <div className="shrink-0">
                     <Link
                         href="/home"
+                        title='betterstack'
                         className="text-2xl font-bold tracking-wide hover:text-gray-400 transition-colors"
                     >
-                        betterstack
+                        <Logo/>
                     </Link>
                 </div>
 
