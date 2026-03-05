@@ -1,8 +1,8 @@
 'use server';
 
-import { ShortSoftware, Category } from './types';
+import { Software, Category } from './types';
 
-const SOFTWARE_DB: ShortSoftware[] = [
+const SOFTWARE_DB: Software[] = [
     {
         id: 1,
         name: 'Next.js',
@@ -10,6 +10,7 @@ const SOFTWARE_DB: ShortSoftware[] = [
         shortDescription: 'The React Framework for the Web',
         categoryIds: [1],
         logoUrl: 'https://www.vectorlogo.zone/logos/nextjs/nextjs-icon.svg',
+        features: {},
     },
     {
         id: 2,
@@ -18,6 +19,7 @@ const SOFTWARE_DB: ShortSoftware[] = [
         shortDescription: 'A progressive Node.js framework',
         categoryIds: [1],
         logoUrl: 'https://www.vectorlogo.zone/logos/nestjs/nestjs-icon.svg',
+        features: {},
     },
     {
         id: 3,
@@ -26,14 +28,21 @@ const SOFTWARE_DB: ShortSoftware[] = [
         shortDescription: 'Utility-first CSS framework',
         categoryIds: [3],
         logoUrl: 'https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg',
+        features: {},
     },
     {
         id: 4,
         name: 'PostgreSQL',
         slug: 'postgresql',
+        developer: 'Postgres',
         shortDescription: 'Advanced open source relational database',
+        fullDescription: 'TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT\nTEXT TEXT TEXT TEXT \nTEXT TEXT TEXT ',
         categoryIds: [2, 1, 3, 4],
         logoUrl: 'https://www.vectorlogo.zone/logos/postgresql/postgresql-icon.svg',
+        websiteUrl: 'https://www.postgresql.org/',
+        githubUrl: 'https://github.com/postgres/postgres',
+        screenshots: ['https://www.vectorlogo.zone/logos/postgresql/postgresql-ar21~bgwhite.svg', 'https://www.vectorlogo.zone/logos/postgresql/postgresql-wordmark.svg'],
+        features: {},
     },
     {
         id: 5,
@@ -43,6 +52,7 @@ const SOFTWARE_DB: ShortSoftware[] = [
             'Statically typed, interpreted, and compiled high-level language',
         categoryIds: [4],
         logoUrl: 'https://www.vectorlogo.zone/logos/typescriptlang/typescriptlang-icon.svg',
+        features: {},
     },
     {
         id: 6,
@@ -51,6 +61,7 @@ const SOFTWARE_DB: ShortSoftware[] = [
         shortDescription:
             'Fast, unopinionated, minimalist web framework for Node.js',
         categoryIds: [1],
+        features: {},
     },
     {
         id: 7,
@@ -58,6 +69,7 @@ const SOFTWARE_DB: ShortSoftware[] = [
         slug: 'react',
         shortDescription: 'JavaScript library for building user interfaces',
         categoryIds: [1],
+        features: {},
     },
     {
         id: 8,
@@ -66,6 +78,7 @@ const SOFTWARE_DB: ShortSoftware[] = [
         shortDescription:
             "JavaScript runtime built on Chrome's V8 JavaScript engine",
         categoryIds: [1],
+        features: {},
     },
 ];
 
@@ -76,7 +89,7 @@ const CATEGORY_DB: Category[] = [
     { id: 4, name: 'Languages', slug: 'languages' },
 ];
 
-export async function searchAction(query: string): Promise<ShortSoftware[]> {
+export async function searchAction(query: string): Promise<Software[]> {
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     if (!query || query.trim().length < 2) return [];
@@ -92,7 +105,7 @@ export async function searchAction(query: string): Promise<ShortSoftware[]> {
     return [...softwareResults];
 }
 
-export async function getFeaturedAction(): Promise<ShortSoftware[]> {
+export async function getFeaturedAction(): Promise<Software[]> {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const randomIndex = Math.floor(Math.random() * SOFTWARE_DB.length);
@@ -101,12 +114,16 @@ export async function getFeaturedAction(): Promise<ShortSoftware[]> {
 
     return SOFTWARE_DB.slice(startIndex, endIndex);
 }
-export async function getSoftwareByIdAction(id: number): Promise<ShortSoftware> {
+export async function getSoftwareByIdAction(id: number): Promise<Software> {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     return SOFTWARE_DB.find((item) => item.id === id) || SOFTWARE_DB[0];
 }
+export async function getSoftwareBySlugAction(slug: string): Promise<Software> {
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
+    return SOFTWARE_DB.find((item) => item.slug === slug) || SOFTWARE_DB[0];
+}
 export async function getCategoryByIdAction(id: number): Promise<Category> {
     await new Promise((resolve) => setTimeout(resolve, 100));
 

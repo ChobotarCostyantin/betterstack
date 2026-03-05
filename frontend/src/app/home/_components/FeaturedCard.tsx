@@ -2,18 +2,14 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { ShortSoftware } from '@/src/lib/types';
-import { getCategoryByIdAction } from '@/src/lib/api';
-import CategoryTags from './CategoryTags';
+import { Software } from '@/src/lib/types';
+import CategoryTags from '@/src/components/CategoryTags';
 
 interface FeaturedCardProps {
-    item: ShortSoftware;
+    item: Software;
 }
 
 export default function FeaturedCard({ item }: FeaturedCardProps) {
-    const [categoryNames, setCategoryNames] = useState<Record<number, string>>(
-        {},
-    );
     const [isImageLoading, setIsImageLoading] = useState(true);
     const [imageError, setImageError] = useState(false);
     const imgRef = useRef<HTMLImageElement>(null);
@@ -23,25 +19,6 @@ export default function FeaturedCard({ item }: FeaturedCardProps) {
     useEffect(() => {
         if (imgRef.current?.complete) setIsImageLoading(false);
     }, [item.logoUrl]);
-
-    useEffect(() => {
-        const fetchCategories = async () => {
-            if (!item.categoryIds || item.categoryIds.length === 0) return;
-            const newNames: Record<number, string> = {};
-            await Promise.all(
-                item.categoryIds.map(async (id) => {
-                    try {
-                        const category = await getCategoryByIdAction(id);
-                        if (category?.name) newNames[id] = category.name;
-                    } catch (error) {
-                        newNames[id] = `ID #${id}`;
-                    }
-                }),
-            );
-            setCategoryNames(newNames);
-        };
-        fetchCategories();
-    }, [item.categoryIds]);
 
     return (
         <div className="relative w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-11px)] min-h-45">
@@ -95,8 +72,6 @@ export default function FeaturedCard({ item }: FeaturedCardProps) {
 
                 <CategoryTags
                     categoryIds={item.categoryIds}
-                    categoryNames={categoryNames}
-                    variant="card"
                 />
             </Link>
         </div>

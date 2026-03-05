@@ -2,53 +2,16 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { searchAction, getCategoryByIdAction } from '@/src/lib/api';
-import { ShortSoftware } from '@/src/lib/types';
+import { Software } from '@/src/lib/types';
 import SearchResultItem from './SearchResultItem';
 
 export default function LiveSearchBar() {
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState<ShortSoftware[]>([]);
+    const [results, setResults] = useState<Software[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [categoryNames, setCategoryNames] = useState<Record<number, string>>({});
 
     const wrapperRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const fetchMissingCategories = async () => {
-            const allCategoryIds = Array.from(
-                new Set(results.flatMap((item) => item.categoryIds || [])),
-            );
-
-            const missingIds = allCategoryIds.filter(
-                (id) => !categoryNames[id],
-            );
-
-            if (missingIds.length === 0) return;
-
-            const newNames: Record<number, string> = { ...categoryNames };
-
-            await Promise.all(
-                missingIds.map(async (id) => {
-                    try {
-                        const category = await getCategoryByIdAction(id);
-                        if (category && category.name) {
-                            newNames[id] = category.name;
-                        }
-                    } catch (error) {
-                        console.error(`Error fetching category ${id}:`, error);
-                        newNames[id] = `Unknown #${id}`;
-                    }
-                }),
-            );
-
-            setCategoryNames(newNames);
-        };
-
-        if (results.length > 0) {
-            fetchMissingCategories();
-        }
-    }, [results]);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -119,7 +82,6 @@ export default function LiveSearchBar() {
                                 <SearchResultItem 
                                     key={result.id} 
                                     result={result} 
-                                    categoryNames={categoryNames} 
                                     onClose={() => setIsOpen(false)} 
                                 />
                             ))}

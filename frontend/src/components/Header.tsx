@@ -15,6 +15,7 @@ export default function Header() {
 
                 <div className="flex items-center gap-x-8">
                     <NavLink href="/comparison">Comparison</NavLink>
+                    <NavLink href="">Login</NavLink>
                 </div>
             </nav>
         </header>

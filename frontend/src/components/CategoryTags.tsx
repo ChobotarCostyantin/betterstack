@@ -1,0 +1,69 @@
+'use client';
+
+import CategoryPopup from '@/src/app/home/_components/CategoryPopup';
+import { useEffect, useState } from 'react';
+import { getCategoryByIdAction } from '../lib/api';
+
+interface CategoryTagsProps {
+    categoryIds?: number[] | null;
+    maxDisplay?: number;
+    showAll?: boolean;
+}
+
+export default function CategoryTags({
+    categoryIds,
+    maxDisplay = 1,
+    showAll = false,
+}: CategoryTagsProps) {
+    if (!categoryIds || categoryIds.length === 0) return null;
+
+    const [categoryNames, setCategoryNames] = useState<Record<number, string>>(
+        {},
+    );
+
+    const displayCategories = showAll
+        ? categoryIds
+        : categoryIds.slice(0, maxDisplay);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            if (!categoryIds || categoryIds.length === 0) return;
+            const newNames: Record<number, string> = {};
+            await Promise.all(
+                categoryIds.map(async (id) => {
+                    try {
+                        const category = await getCategoryByIdAction(id);
+                        if (category?.name) newNames[id] = category.name;
+                    } catch (error) {
+                        newNames[id] = `ID #${id}`;
+                    }
+                }),
+            );
+            setCategoryNames(newNames);
+        };
+        fetchCategories();
+    }, [categoryIds]);
+
+    return (
+        <div className="flex flex-wrap gap-1.5 items-center shrink-0">
+            {displayCategories.map((id) => (
+                <span
+                    key={id}
+                    title={categoryNames[id]}
+                    className={`text-[11px] px-3 py-1 rounded-lg bg-zinc-800/50 text-zinc-300 border border-zinc-700/50 uppercase font-semibold transition-all ${
+                        showAll ? '' : 'max-w-30 truncate'
+                    }`}
+                >
+                    {categoryNames[id] || '...'}
+                </span>
+            ))}
+            {showAll || categoryIds.length <= maxDisplay ? null : (
+                <CategoryPopup
+                    categoryIds={categoryIds}
+                    categoryNames={categoryNames}
+                    maxDisplay={maxDisplay}
+                />
+            )}
+        </div>
+    );
+}

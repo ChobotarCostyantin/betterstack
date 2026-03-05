@@ -1,17 +1,15 @@
 'use client';
 
-import { ShortSoftware } from '@/src/lib/types';
+import { Software } from '@/src/lib/types';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import CategoryTags from './CategoryTags';
+import CategoryTags from '@/src/components/CategoryTags';
 
 export default function SearchResultItem({
     result,
-    categoryNames,
     onClose,
 }: {
-    result: ShortSoftware;
-    categoryNames: Record<number, string>;
+    result: Software;
     onClose: () => void;
 }) {
     const [isImageLoading, setIsImageLoading] = useState(true);
@@ -72,8 +70,6 @@ export default function SearchResultItem({
 
             <CategoryTags
                 categoryIds={result.categoryIds}
-                categoryNames={categoryNames}
-                variant="search"
             />
         </Link>
     );
