@@ -36,13 +36,13 @@ const SOFTWARE_DB: Software[] = [
         slug: 'postgresql',
         developer: 'Postgres',
         shortDescription: 'Advanced open source relational database',
-        fullDescription: 'TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT\nTEXT TEXT TEXT TEXT \nTEXT TEXT TEXT ',
+        fullDescription: '## Overview\nPostgreSQL is a powerful, open source relational database management system (RDBMS).',
         categoryIds: [2, 1, 3, 4],
         logoUrl: 'https://www.vectorlogo.zone/logos/postgresql/postgresql-icon.svg',
         websiteUrl: 'https://www.postgresql.org/',
         githubUrl: 'https://github.com/postgres/postgres',
-        screenshots: ['https://www.vectorlogo.zone/logos/postgresql/postgresql-ar21~bgwhite.svg', 'https://www.vectorlogo.zone/logos/postgresql/postgresql-wordmark.svg'],
-        features: {},
+        screenshots: ['https://www.vectorlogo.zone/logos/dotnet/dotnet-official.svg', 'https://www.vectorlogo.zone/logos/dotnet/dotnet-official.svg', 'https://www.vectorlogo.zone/logos/postgresql/postgresql-ar21~bgwhite.svg', 'https://www.vectorlogo.zone/logos/postgresql/postgresql-ar21~bgwhite.svg', 'https://www.vectorlogo.zone/logos/postgresql/postgresql-ar21~bgwhite.svg'],
+        features: { 1: true, 2: 3.2, 3: 'test', 4: 'bradar fak u bradar nex comen ok' },
     },
     {
         id: 5,
@@ -83,7 +83,7 @@ const SOFTWARE_DB: Software[] = [
 ];
 
 const CATEGORY_DB: Category[] = [
-    { id: 1, name: 'Frameworks TEXT TEXT TEXT', slug: 'frameworks' },
+    { id: 1, name: 'Frameworks', slug: 'frameworks' },
     { id: 2, name: 'Databases', slug: 'databases' },
     { id: 3, name: 'CSS Tools', slug: 'css-tools' },
     { id: 4, name: 'Languages', slug: 'languages' },
