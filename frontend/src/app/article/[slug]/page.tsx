@@ -39,7 +39,7 @@ export default async function SoftwareArticlePage({
                     </div>
                 </div>
 
-                <div className='flex gap-5 mt-4'>
+                <div className="flex gap-5 mt-4">
                     {software.githubUrl && (
                         <Link
                             href={software.githubUrl}
@@ -76,9 +76,9 @@ export default async function SoftwareArticlePage({
             </header>
 
             <section className="mb-8">
-                {/* <h3 className="text-sm uppercase tracking-wider text-gray-400 mb-2">
+                <h3 className="text-md font-semibold uppercase tracking-wider text-gray-400 mb-2">
                     Categories
-                </h3> */}
+                </h3>
                 <div className="">
                     <CategoryTags
                         categoryIds={sortedCategories}
@@ -104,20 +104,28 @@ export default async function SoftwareArticlePage({
 
             <ScreenshotGallery screenshots={software.screenshots} />
 
-            <section className="bg-zinc-800 p-6 rounded-2xl">
-                <h2 className="text-2xl font-bold mb-4">
-                    Features
-                </h2>
-                <dl className=" gap-x-8 gap-y-4">
+            <section className="mb-12">
+                <div className="flex items-center gap-4 mb-6">
+                    <h2 className="text-2xl font-bold text-zinc-100">
+                        Features
+                    </h2>
+                    <div className="h-px bg-zinc-800 flex-1"></div>
+                </div>
+
+                <dl className="flex flex-col gap-3">
                     {Object.entries(software.features).map(([key, value]) => (
                         <div
                             key={key}
-                            className="border-b border-zinc-700 pb-2"
+                            className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-zinc-800/30 border border-zinc-700/50 hover:bg-zinc-800/80 hover:border-zinc-500 transition-all duration-300"
                         >
-                            <dt className="text-sm text-gray-400 font-medium">
-                                Criteria: {key}
+                            <dt className="flex items-center gap-4 text-sm font-medium text-zinc-400 mb-2 sm:mb-0">
+                                <div className="w-8 h-8 shrink-0 rounded-lg bg-zinc-800/80 flex items-center justify-center border border-zinc-700 group-hover:border-zinc-500/50 group-hover:bg-zinc-500/10 transition-colors">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-gray-600/80 group-hover:bg-gray-400 transition-colors"></span>
+                                </div>
+                                <dd className="text-base font-semibold text-zinc-200 pl-12 sm:pl-0">
+                                    {String(value)}
+                                </dd>
                             </dt>
-                            <dd className="text-base">{String(value)}</dd>
                         </div>
                     ))}
                 </dl>
