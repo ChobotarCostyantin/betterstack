@@ -3,15 +3,13 @@
 import { Software } from '@/src/lib/types';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import CategoryTags from './CategoryTags';
+import CategoryTags from '@/src/components/CategoryTags';
 
 export default function SearchResultItem({
     result,
-    categoryNames,
     onClose,
 }: {
     result: Software;
-    categoryNames: Record<number, string>;
     onClose: () => void;
 }) {
     const [isImageLoading, setIsImageLoading] = useState(true);
@@ -26,7 +24,7 @@ export default function SearchResultItem({
 
     return (
         <Link
-            href={`/article/${result.id}`}
+            href={`/article/${result.slug}`}
             onClick={onClose}
             className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-zinc-800/50 transition-colors group rounded-xl"
         >
@@ -72,8 +70,6 @@ export default function SearchResultItem({
 
             <CategoryTags
                 categoryIds={result.categoryIds}
-                categoryNames={categoryNames}
-                variant="search"
             />
         </Link>
     );

@@ -3,8 +3,8 @@ import Logo from './Logo';
 
 export default function Header() {
     return (
-        <header className="w-full bg-linear-[90deg,#09090b80,#11111480] z-99999 border-b border-zinc-800 shadow-lg sticky top-0 backdrop-blur-sm">
-            <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
+        <header className="w-full bg-linear-[90deg,#09090b80,#11111480] z-999 border-b border-zinc-800 shadow-lg sticky top-0 backdrop-blur-sm">
+            <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                 <div className="shrink-0">
                     <Link
                         href="/home"
@@ -20,6 +20,7 @@ export default function Header() {
 
                 <div className="flex items-center gap-x-8">
                     <NavLink href="/comparison">Comparison</NavLink>
+                    <NavLink href="">Login</NavLink>
                 </div>
             </nav>
         </header>
