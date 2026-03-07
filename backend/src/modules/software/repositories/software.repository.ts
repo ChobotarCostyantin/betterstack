@@ -24,7 +24,8 @@ export class SoftwareRepository implements OnModuleInit {
                     fullDescription:
                         '## Overview\nRider is an excellent choice for .NET developers.',
                     websiteUrl: 'https://jetbrains.com/rider',
-                    features: { '1': true, '2': 3.2 },
+                    features: ['Amazing Gui', 'Fast', 'Powerful'],
+                    criteria: { '1': true, '2': 3.2 },
                 },
                 {
                     categoryIds: [1],
@@ -35,7 +36,8 @@ export class SoftwareRepository implements OnModuleInit {
                     logoUrl:
                         'https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg',
                     websiteUrl: 'https://code.visualstudio.com/',
-                    features: { '1': true, '2': 3.2 },
+                    features: ['Amazing Gui', 'Fast', 'Powerful'],
+                    criteria: { '1': true, '2': 3.2 },
                 },
             ]);
         }

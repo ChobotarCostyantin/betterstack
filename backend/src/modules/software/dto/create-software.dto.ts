@@ -31,6 +31,9 @@ export class CreateSoftwareDto {
     @ApiPropertyOptional({ example: ['img1.png', 'img2.png'] })
     screenshots?: string[];
 
+    @ApiPropertyOptional({ example: ['feature1', 'feature2'] })
+    features: string[];
+
     @ApiProperty({ example: { '1': true, '2': 3.2 } })
-    features: Record<number, any>;
+    criteria: Record<number, any>;
 }

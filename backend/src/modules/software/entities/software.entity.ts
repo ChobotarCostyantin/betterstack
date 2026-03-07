@@ -34,7 +34,10 @@ export class Software {
 
     @Column('text', { array: true, default: [] })
     screenshots: string[];
+    
+    @Column('text', { array: true, default: [] })
+    features: string[];
 
     @Column({ type: 'jsonb', default: {} })
-    features: Record<number, any>;
+    criteria: Record<number, any>;
 }
