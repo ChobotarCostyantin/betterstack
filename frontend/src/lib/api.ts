@@ -114,18 +114,18 @@ export async function getFeaturedAction(): Promise<Software[]> {
 
     return SOFTWARE_DB.slice(startIndex, endIndex);
 }
-export async function getSoftwareByIdAction(id: number): Promise<Software> {
+export async function getSoftwareByIdAction(id: number): Promise<Software | undefined> {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    return SOFTWARE_DB.find((item) => item.id === id) || SOFTWARE_DB[0];
+    return SOFTWARE_DB.find((item) => item.id === id);
 }
-export async function getSoftwareBySlugAction(slug: string): Promise<Software> {
+export async function getSoftwareBySlugAction(slug: string): Promise<Software | undefined> {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    return SOFTWARE_DB.find((item) => item.slug === slug) || SOFTWARE_DB[0];
+    return SOFTWARE_DB.find((item) => item.slug === slug);
 }
-export async function getCategoryByIdAction(id: number): Promise<Category> {
+export async function getCategoryByIdAction(id: number): Promise<Category | undefined> {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    return CATEGORY_DB.find((item) => item.id === id) || CATEGORY_DB[0];
+    return CATEGORY_DB.find((item) => item.id === id);
 }

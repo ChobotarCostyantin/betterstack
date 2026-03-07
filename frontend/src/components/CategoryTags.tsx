@@ -57,7 +57,7 @@ export default function CategoryTags({
                     {categoryNames[id] || '...'}
                 </span>
             ))}
-            {showAll || categoryIds.length <= maxDisplay ? null : (
+            {!showAll && categoryIds.length > maxDisplay && (
                 <CategoryPopup
                     categoryIds={categoryIds}
                     categoryNames={categoryNames}

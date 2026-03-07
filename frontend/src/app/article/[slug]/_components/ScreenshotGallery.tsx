@@ -111,7 +111,6 @@ export default function ScreenshotGallery({
                 </button>
             </div>
 
-            {/* Попап */}
             {selectedImage &&
                 mounted &&
                 typeof document !== 'undefined' &&

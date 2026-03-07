@@ -1,10 +1,11 @@
-import { Software } from '@/src/lib/types';
 import { getSoftwareBySlugAction } from '@/src/lib/api';
 import Image from 'next/image';
 import Link from 'next/link';
 import CategoryTags from '@/src/components/CategoryTags';
 import ScreenshotGallery from './_components/ScreenshotGallery';
 import ReactMarkdown from 'react-markdown';
+import { notFound } from 'next/navigation';
+import { GlobeIcon } from 'lucide-react';
 
 export default async function SoftwareArticlePage({
     params,
@@ -12,7 +13,10 @@ export default async function SoftwareArticlePage({
     params: Promise<{ slug: string }>;
 }) {
     const slugObject = await params;
-    const software: Software = await getSoftwareBySlugAction(slugObject.slug);
+    const software = await getSoftwareBySlugAction(slugObject.slug);
+
+    if (!software) notFound();
+
     const sortedCategories = software.categoryIds.sort((a, b) => a - b);
 
     return (
@@ -63,11 +67,9 @@ export default async function SoftwareArticlePage({
                             rel="noopener noreferrer"
                             className="shrink-0"
                         >
-                            <Image
-                                src="/website.svg"
-                                alt="Website"
-                                width={40}
-                                height={40}
+                            <GlobeIcon
+                                color="#f4f4f5"
+                                size={40}
                                 className="hover:scale-110 hover:opacity-60 transition-all duration-300"
                             />
                         </Link>
