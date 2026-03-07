@@ -79,7 +79,10 @@ export default async function SoftwareArticlePage({
                 <h3 className="text-md font-semibold uppercase tracking-wider text-gray-400 mb-2">
                     Categories
                 </h3>
-                <div className="">
+                <div>
+                    {software.categoryIds.length === 0 && (
+                        <p className="text-lg font-medium">No categories</p>
+                    )}
                     <CategoryTags
                         categoryIds={sortedCategories}
                         showAll={true}
@@ -88,48 +91,65 @@ export default async function SoftwareArticlePage({
             </section>
 
             <section className="mb-8">
-                <h2 className="text-xl font-semibold mb-2">Description</h2>
-                <p className="text-lg font-medium mb-4">
-                    {software.shortDescription}
-                </p>
-                <hr className="my-4 border-zinc-800" />{' '}
-                {software.fullDescription && (
-                    <div className="max-w-none prose prose-zinc prose-invert">
-                        <ReactMarkdown>
-                            {software.fullDescription}
-                        </ReactMarkdown>
-                    </div>
+                {software.shortDescription || software.fullDescription ? (
+                    <>
+                        <h2 className="text-xl font-semibold mb-2">
+                            Description
+                        </h2>
+                        <p className="text-lg font-medium mb-4">
+                            {software.shortDescription}
+                        </p>
+                        <hr className="my-4 border-zinc-800" />{' '}
+                        {software.fullDescription && (
+                            <div className="max-w-none prose prose-zinc prose-invert">
+                                <ReactMarkdown>
+                                    {software.fullDescription}
+                                </ReactMarkdown>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <>
+                        <h2 className="text-xl font-semibold mb-2">
+                            No description
+                        </h2>
+                        <hr className="my-4 border-zinc-800" />{' '}
+                    </>
                 )}
             </section>
 
             <ScreenshotGallery screenshots={software.screenshots} />
 
-            <section className="mb-12">
-                <div className="flex items-center gap-4 mb-6">
-                    <h2 className="text-2xl font-bold text-zinc-100">
-                        Features
-                    </h2>
-                    <div className="h-px bg-zinc-800 flex-1"></div>
-                </div>
+            {software.features && Object.keys(software.features).length > 0 && (
+                <section className="mb-12">
+                    <div className="flex items-center gap-4 mb-6">
+                        <h2 className="text-2xl font-bold text-zinc-100">
+                            Features
+                        </h2>
+                        <div className="h-px bg-zinc-800 flex-1"></div>
+                    </div>
 
-                <dl className="flex flex-col gap-3">
-                    {Object.entries(software.features).map(([key, value]) => (
-                        <div
-                            key={key}
-                            className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-zinc-800/30 border border-zinc-700/50 hover:bg-zinc-800/80 hover:border-zinc-500 transition-all duration-300"
-                        >
-                            <dt className="flex items-center gap-4 text-sm font-medium text-zinc-400 mb-2 sm:mb-0">
-                                <div className="w-8 h-8 shrink-0 rounded-lg bg-zinc-800/80 flex items-center justify-center border border-zinc-700 group-hover:border-zinc-500/50 group-hover:bg-zinc-500/10 transition-colors">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-gray-600/80 group-hover:bg-gray-400 transition-colors"></span>
+                    <dl className="flex flex-col gap-3">
+                        {Object.entries(software.features).map(
+                            ([key, value]) => (
+                                <div
+                                    key={key}
+                                    className="group flex flex-row items-center gap-4 p-4 rounded-xl bg-zinc-800/30 border border-zinc-700/50 hover:bg-zinc-800/80 hover:border-zinc-500 transition-all duration-300"
+                                >
+                                    <dt className="text-sm font-medium text-zinc-400">
+                                        <div className="w-8 h-8 shrink-0 rounded-lg bg-zinc-800/80 flex items-center justify-center border border-zinc-700 group-hover:border-zinc-500/50 group-hover:bg-zinc-500/10 transition-colors">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-gray-600/80 group-hover:bg-gray-400 transition-colors" />
+                                        </div>
+                                    </dt>
+                                    <dd className="text-base font-semibold text-zinc-200">
+                                        {String(value)}
+                                    </dd>
                                 </div>
-                                <dd className="text-base font-semibold text-zinc-200 pl-12 sm:pl-0">
-                                    {String(value)}
-                                </dd>
-                            </dt>
-                        </div>
-                    ))}
-                </dl>
-            </section>
+                            ),
+                        )}
+                    </dl>
+                </section>
+            )}
         </article>
     );
 }
