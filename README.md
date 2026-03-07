@@ -17,67 +17,30 @@
 
 * **Frontend:** Next.js 16.1.6, Tailwind CSS.
 * **Backend:** NestJS 11, TypeORM, PostgreSQL.
-* **Infrastructure:** Docker and Docker Compose for database management.
+* **Infrastructure:** Docker and Docker Compose for local development.
 
 ## Installation
 
 ### Prerequisites
 
-* Node.js (v20 or higher recommended)
 * Docker and Docker Compose
-* npm
 
-### 1. Database Setup
+### Quick Start
 
-The project uses PostgreSQL managed via Docker. Start the database container using:
+Start all services (frontend, backend, and database) with:
 
 ```bash
 docker-compose up -d
-
 ```
 
-This will initialize a database named `betterstack_db` on port `5432`.
+The application will be available at `http://localhost:3000`.
 
-### 2. Backend Installation
-
-Navigate to the backend directory and install dependencies:
-
-```bash
-cd backend
-npm install
-
-```
-
-Start the backend in development mode:
-
-```bash
-npm run start:dev
-
-```
-
-The backend includes Swagger documentation for API exploration.
-
-### 3. Frontend Installation
-
-Navigate to the frontend directory and install dependencies:
-
-```bash
-cd ../frontend
-npm install
-
-```
-
-Start the frontend development server:
-
-```bash
-npm run dev
-
-```
-
-The application will be available at `http://localhost:3000` (or the port specified by Next.js).
+* **Frontend:** http://localhost:3000
+* **Backend API:** http://localhost:3010
+* **PostgreSQL:** localhost:5432
 
 ## Project Structure
 
 * **/backend**: NestJS application containing logic for categories, criteria, software, and users.
 * **/frontend**: Next.js application for the user interface.
-* **docker-compose.yml**: Orchestrates the PostgreSQL database service.
+* **docker-compose.yml**: Orchestrates frontend, backend, and PostgreSQL services.

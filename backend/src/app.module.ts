@@ -6,26 +6,42 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from './modules/users/users.module';
+import { ConfigModule, ConfigType } from '@nestjs/config';
+
+import { appConfig } from '@config/app.config';
+import { jwtConfig } from '@config/jwt.config';
+import { postgresConfig } from '@config/postgres.config';
+import { envValidationSchema } from '@config/env.validation';
 
 @Module({
     imports: [
-        TypeOrmModule.forRoot({
-            type: 'postgres',
-            host: 'localhost',
-            port: 5432,
-            username: 'postgres',
-            password: 'postgres',
-            database: 'betterstack_db',
-            autoLoadEntities: true,
-            synchronize: true,
+        ConfigModule.forRoot({
+            isGlobal: true,
+            load: [appConfig, jwtConfig, postgresConfig],
+            validationSchema: envValidationSchema,
         }),
-        JwtModule.register({
+        TypeOrmModule.forRootAsync({
+            inject: [postgresConfig.KEY],
+            useFactory: (postgres: ConfigType<typeof postgresConfig>) => ({
+                type: 'postgres',
+                host: postgres.host,
+                port: postgres.port,
+                username: postgres.username,
+                password: postgres.password,
+                database: postgres.dbName,
+                autoLoadEntities: true,
+                synchronize: true,
+            }),
+        }),
+        JwtModule.registerAsync({
+            inject: [jwtConfig.KEY],
             global: true,
-            secret: 'super-secret-key', // TODO: move to env
-            signOptions: { expiresIn: '1d' },
+            useFactory: (jwt: ConfigType<typeof jwtConfig>) => ({
+                secret: jwt.secret,
+                signOptions: { expiresIn: jwt.expiresInSec },
+            }),
         }),
         EventEmitterModule.forRoot(),
-
         CategoriesModule,
         CriteriaModule,
         SoftwareModule,

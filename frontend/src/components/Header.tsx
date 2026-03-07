@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Logo from './Logo';
 
 export default function Header() {
     return (
@@ -9,7 +10,7 @@ export default function Header() {
                         href="/home"
                         className="text-2xl font-bold tracking-wide hover:text-gray-400 transition-colors"
                     >
-                        betterstack
+                        <Logo/>
                     </Link>
                 </div>
 
