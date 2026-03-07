@@ -131,19 +131,20 @@ export default async function SoftwareArticlePage({
                         <div className="h-px bg-zinc-800 flex-1"></div>
                     </div>
 
-                    <dl className="flex flex-col gap-3">
+                    <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {Object.entries(software.features).map(
                             ([key, value]) => (
                                 <div
                                     key={key}
-                                    className="group flex flex-row items-center gap-4 p-4 rounded-xl bg-zinc-800/30 border border-zinc-700/50 hover:bg-zinc-800/80 hover:border-zinc-500 transition-all duration-300"
+                                    className="group flex flex-row items-center gap-3 p-3 rounded-2xl bg-zinc-800/30 border border-zinc-700/50 hover:bg-zinc-800/80 hover:border-zinc-500 transition-all duration-300"
                                 >
-                                    <dt className="text-sm font-medium text-zinc-400">
-                                        <div className="w-8 h-8 shrink-0 rounded-lg bg-zinc-800/80 flex items-center justify-center border border-zinc-700 group-hover:border-zinc-500/50 group-hover:bg-zinc-500/10 transition-colors">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-gray-600/80 group-hover:bg-gray-400 transition-colors" />
+                                    <dt className="flex items-center text-sm font-medium text-zinc-400">
+                                        <div className="w-8 h-8 shrink-0 rounded-xl bg-zinc-800/80 flex items-center justify-center border border-zinc-700 group-hover:border-zinc-500/50 group-hover:bg-zinc-500/10 transition-colors">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-zinc-600/80 group-hover:bg-zinc-400 transition-colors"></span>
                                         </div>
                                     </dt>
-                                    <dd className="text-base font-semibold text-zinc-200">
+
+                                    <dd className="text-sm sm:text-base font-semibold text-zinc-200 leading-snug">
                                         {String(value)}
                                     </dd>
                                 </div>

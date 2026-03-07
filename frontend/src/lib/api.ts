@@ -1,6 +1,6 @@
 'use server';
 
-import { Software, Category } from './types';
+import { Software, Category, Criterion } from './types';
 
 const SOFTWARE_DB: Software[] = [
     {
@@ -10,7 +10,8 @@ const SOFTWARE_DB: Software[] = [
         shortDescription: 'The React Framework for the Web',
         categoryIds: [1],
         logoUrl: 'https://www.vectorlogo.zone/logos/nextjs/nextjs-icon.svg',
-        features: {},
+        features: [],
+        criteria: {},
     },
     {
         id: 2,
@@ -19,7 +20,8 @@ const SOFTWARE_DB: Software[] = [
         shortDescription: 'A progressive Node.js framework',
         categoryIds: [1],
         logoUrl: 'https://www.vectorlogo.zone/logos/nestjs/nestjs-icon.svg',
-        features: {},
+        features: [],
+        criteria: {},
     },
     {
         id: 3,
@@ -27,8 +29,10 @@ const SOFTWARE_DB: Software[] = [
         slug: 'tailwindcss',
         shortDescription: 'Utility-first CSS framework',
         categoryIds: [3],
-        logoUrl: 'https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg',
-        features: {},
+        logoUrl:
+            'https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg',
+        features: [],
+        criteria: {},
     },
     {
         id: 4,
@@ -36,13 +40,29 @@ const SOFTWARE_DB: Software[] = [
         slug: 'postgresql',
         developer: 'Postgres',
         shortDescription: 'Advanced open source relational database',
-        fullDescription: '## Overview\nPostgreSQL is a powerful, open source relational database management system (RDBMS).',
+        fullDescription:
+            '## Overview\nPostgreSQL is a powerful, open source relational database management system (RDBMS).',
         categoryIds: [2, 1, 3, 4],
-        logoUrl: 'https://www.vectorlogo.zone/logos/postgresql/postgresql-icon.svg',
+        logoUrl:
+            'https://www.vectorlogo.zone/logos/postgresql/postgresql-icon.svg',
         websiteUrl: 'https://www.postgresql.org/',
         githubUrl: 'https://github.com/postgres/postgres',
-        screenshots: ['https://www.vectorlogo.zone/logos/dotnet/dotnet-official.svg', 'https://www.vectorlogo.zone/logos/dotnet/dotnet-official.svg', 'https://www.vectorlogo.zone/logos/postgresql/postgresql-ar21~bgwhite.svg', 'https://www.vectorlogo.zone/logos/postgresql/postgresql-ar21~bgwhite.svg', 'https://www.vectorlogo.zone/logos/postgresql/postgresql-ar21~bgwhite.svg'],
-        features: { 1: true, 2: 3.2, 3: 'test', 4: 'bradar fak u bradar nex comen ok' },
+        screenshots: [
+            'https://www.vectorlogo.zone/logos/dotnet/dotnet-official.svg',
+            'https://www.vectorlogo.zone/logos/dotnet/dotnet-official.svg',
+            'https://www.vectorlogo.zone/logos/postgresql/postgresql-ar21~bgwhite.svg',
+            'https://www.vectorlogo.zone/logos/postgresql/postgresql-ar21~bgwhite.svg',
+            'https://www.vectorlogo.zone/logos/postgresql/postgresql-ar21~bgwhite.svg',
+        ],
+        features: [
+            'Statically typed, interpreted, and compiled high-level language',
+            'Fast, unopinionated, minimalist web framework for Node.js',
+            'JavaScript library for building user interfaces',
+            'A progressive Node.js framework',
+            'Utility-first CSS framework',
+            'Advanced open source relational database',
+        ],
+        criteria: {},
     },
     {
         id: 5,
@@ -51,8 +71,10 @@ const SOFTWARE_DB: Software[] = [
         shortDescription:
             'Statically typed, interpreted, and compiled high-level language',
         categoryIds: [4],
-        logoUrl: 'https://www.vectorlogo.zone/logos/typescriptlang/typescriptlang-icon.svg',
-        features: {},
+        logoUrl:
+            'https://www.vectorlogo.zone/logos/typescriptlang/typescriptlang-icon.svg',
+        features: [],
+        criteria: {},
     },
     {
         id: 6,
@@ -61,7 +83,8 @@ const SOFTWARE_DB: Software[] = [
         shortDescription:
             'Fast, unopinionated, minimalist web framework for Node.js',
         categoryIds: [1],
-        features: {},
+        features: [],
+        criteria: {},
     },
     {
         id: 7,
@@ -69,7 +92,8 @@ const SOFTWARE_DB: Software[] = [
         slug: 'react',
         shortDescription: 'JavaScript library for building user interfaces',
         categoryIds: [1],
-        features: {},
+        features: [],
+        criteria: {},
     },
     {
         id: 8,
@@ -78,7 +102,8 @@ const SOFTWARE_DB: Software[] = [
         shortDescription:
             "JavaScript runtime built on Chrome's V8 JavaScript engine",
         categoryIds: [1],
-        features: {},
+        features: [],
+        criteria: {},
     },
 ];
 
@@ -87,6 +112,10 @@ const CATEGORY_DB: Category[] = [
     { id: 2, name: 'Databases', slug: 'databases' },
     { id: 3, name: 'CSS Tools', slug: 'css-tools' },
     { id: 4, name: 'Languages', slug: 'languages' },
+];
+
+const CRITERIA_DB: Criterion[] = [
+    { id: 1, name: 'Number of stars on GitHub', type: 'number', weight: 1 },
 ];
 
 export async function searchAction(query: string): Promise<Software[]> {
@@ -114,18 +143,32 @@ export async function getFeaturedAction(): Promise<Software[]> {
 
     return SOFTWARE_DB.slice(startIndex, endIndex);
 }
-export async function getSoftwareByIdAction(id: number): Promise<Software | undefined> {
+export async function getSoftwareByIdAction(
+    id: number,
+): Promise<Software | undefined> {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     return SOFTWARE_DB.find((item) => item.id === id);
 }
-export async function getSoftwareBySlugAction(slug: string): Promise<Software | undefined> {
+export async function getSoftwareBySlugAction(
+    slug: string,
+): Promise<Software | undefined> {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     return SOFTWARE_DB.find((item) => item.slug === slug);
 }
-export async function getCategoryByIdAction(id: number): Promise<Category | undefined> {
+export async function getCategoryByIdAction(
+    id: number,
+): Promise<Category | undefined> {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     return CATEGORY_DB.find((item) => item.id === id);
+}
+
+export async function getCriterionByIdAction(
+    id: number,
+): Promise<Criterion | undefined> {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    return CRITERIA_DB.find((item) => item.id === id);
 }

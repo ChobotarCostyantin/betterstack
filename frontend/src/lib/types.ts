@@ -10,10 +10,18 @@ export interface Software {
     websiteUrl?: string;
     githubUrl?: string;
     screenshots?: string[];
-    features: Record<number, any>;
+    features: string[];
+    criteria: Record<number, any>;
 }
 export interface Category {
     id: number;
     name: string;
     slug: string;
+}
+
+export interface Criterion {
+    id: number;
+    name: string;
+    type: string;
+    weight: number;
 }
