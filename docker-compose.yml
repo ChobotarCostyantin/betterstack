@@ -31,17 +31,9 @@ services:
     ports:
       - "3010:3010"
     environment:
-      NODE_ENV: development
-      PORT: 3010
       POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: betterstack_db
-      JWT_SECRET: "VFhmYhyAJDHnclhu"
-      JWT_EXPIRES_IN_SEC: 86400
-      ADMIN_EMAIL: admin@admin.org
-      ADMIN_PASSWORD: password
+    env_file:
+      - ./backend/.env.development
     depends_on:
       - postgres
 

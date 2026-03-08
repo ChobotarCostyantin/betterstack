@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CriterionType } from '../entities/criterion.entity';
 
 export class CreateCriterionDto {
     @ApiProperty({
@@ -8,14 +9,21 @@ export class CreateCriterionDto {
     name: string;
 
     @ApiProperty({
-        example: 'number',
-        description: 'Data type for frontend form generation',
+        enum: CriterionType,
+        example: CriterionType.NUMERIC,
+        description: 'Data type of the criterion',
     })
-    type: 'boolean' | 'number' | 'string';
+    type: CriterionType;
 
     @ApiProperty({
-        example: 10,
-        description: 'Importance weight for calculating the overall score',
+        example: 100,
+        description: 'Numeric value for this criterion',
     })
-    weight: number;
+    value: number;
+
+    @ApiProperty({
+        example: false,
+        description: 'Whether a higher value is considered better',
+    })
+    higherIsBetter: boolean;
 }

@@ -1,9 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { DeepPartial } from 'typeorm';
 import { CreateSoftwareDto } from './dto/create-software.dto';
 import { UpdateSoftwareDto } from './dto/update-software.dto';
+import { Software } from './entities/software.entity';
 import { SoftwareRepository } from './repositories/software.repository';
 import { OnEvent } from '@nestjs/event-emitter';
 import { CategoryDeletedEvent } from 'src/common/events/category.events';
+import {
+    SoftwareMarkedUsedEvent,
+    SoftwareMarkedUnusedEvent,
+} from 'src/common/events/software-usage.events';
 
 @Injectable()
 export class SoftwareService {
@@ -27,15 +33,14 @@ export class SoftwareService {
         return sw;
     }
 
-    async create(dto: CreateSoftwareDto) {
-        const newSoftware = await this.repo.create(dto);
-        return newSoftware;
+    async create(dto: CreateSoftwareDto): Promise<Software> {
+        return this.repo.create(dto as DeepPartial<Software>);
     }
 
     async update(id: number, dto: UpdateSoftwareDto) {
-        const updatedSoftware = await this.repo.update(id, dto);
-        return updatedSoftware;
+        return this.repo.update(id, dto as DeepPartial<Software>);
     }
+
     async remove(id: number) {
         const soft = await this.repo.findById(id);
         if (!soft)
@@ -49,20 +54,40 @@ export class SoftwareService {
     @OnEvent(CategoryDeletedEvent.eventName)
     async handleCategoryDeleted(payload: CategoryDeletedEvent) {
         console.log(
-            `[Event] Category ${payload.categoryId} deleted. Updating software...`,
+            `[Event] Category ${payload.categoryId} deleted. Removing it from all software...`,
         );
 
         const softwareList = await this.repo.findWithCategoryId(
             payload.categoryId,
         );
 
-        const updatePromises = softwareList.map((sw) => {
-            sw.categoryIds = sw.categoryIds.filter(
-                (id) => id !== payload.categoryId,
+        const updatePromises = softwareList.map(async (sw) => {
+            const swWithCategories = await this.repo.findByIdWithCategories(
+                sw.id,
             );
-            return this.repo.update(sw.id, sw);
+            if (!swWithCategories) return;
+            swWithCategories.categories = swWithCategories.categories.filter(
+                (c) => c.id !== payload.categoryId,
+            );
+            return this.repo.save(swWithCategories);
         });
 
         await Promise.all(updatePromises);
+    }
+
+    @OnEvent(SoftwareMarkedUsedEvent.eventName)
+    async handleSoftwareMarkedUsed(payload: SoftwareMarkedUsedEvent) {
+        console.log(
+            `[Event] User ${payload.userId} marked software ${payload.softwareId} as used. Incrementing usageCount...`,
+        );
+        await this.repo.incrementUsageCount(payload.softwareId);
+    }
+
+    @OnEvent(SoftwareMarkedUnusedEvent.eventName)
+    async handleSoftwareMarkedUnused(payload: SoftwareMarkedUnusedEvent) {
+        console.log(
+            `[Event] User ${payload.userId} unmarked software ${payload.softwareId}. Decrementing usageCount...`,
+        );
+        await this.repo.decrementUsageCount(payload.softwareId);
     }
 }

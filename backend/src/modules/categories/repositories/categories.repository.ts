@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ArrayContains, Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { Category } from '../entities/category.entity';
 import { CreateCategoryDto } from '../dto/create-category.dto';
 
@@ -18,21 +18,9 @@ export class CategoriesRepository {
                 '[Categories] Database is empty. Seeding default categories...',
             );
             await this.ormRepo.save([
-                {
-                    slug: 'ides',
-                    name: 'IDEs & Editors',
-                    requiredCriteriaIds: [1, 2],
-                },
-                {
-                    slug: 'databases',
-                    name: 'Database Clients',
-                    requiredCriteriaIds: [1, 3],
-                },
-                {
-                    slug: 'languages',
-                    name: 'Programming Languages',
-                    requiredCriteriaIds: [4, 5],
-                },
+                { slug: 'ides', name: 'IDEs & Editors' },
+                { slug: 'databases', name: 'Database Clients' },
+                { slug: 'languages', name: 'Programming Languages' },
             ]);
         }
     }
@@ -43,18 +31,32 @@ export class CategoriesRepository {
     findById(id: number) {
         return this.ormRepo.findOneBy({ id });
     }
+
+    /** Find all categories that have any of the given criterion IDs linked via the M2M join. */
     findWithCriteriaIds(ids: number[]) {
-        return this.ormRepo.find({
-            where: { requiredCriteriaIds: ArrayContains(ids) },
-        });
+        return this.ormRepo
+            .createQueryBuilder('category')
+            .innerJoin('category.criteria', 'criterion')
+            .where('criterion.id IN (:...ids)', { ids })
+            .getMany();
     }
+
     create(dto: CreateCategoryDto) {
         return this.ormRepo.save(dto);
     }
-    update(id: number, dto: any) {
+    update(id: number, dto: DeepPartial<Category>) {
         return this.ormRepo.update(id, dto);
     }
     delete(id: number) {
         return this.ormRepo.delete(id);
+    }
+
+    /** Load a category with its criteria relation populated. */
+    findByIdWithCriteria(id: number) {
+        return this.ormRepo.findOne({ where: { id }, relations: ['criteria'] });
+    }
+
+    save(entity: Category) {
+        return this.ormRepo.save(entity);
     }
 }

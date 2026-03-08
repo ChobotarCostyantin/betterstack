@@ -5,6 +5,7 @@ import {
     ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { AuthenticatedRequest } from '../interfaces/jwt-payload.interface.js';
 import { ROLE_KEY } from '../decorators/roles.decorator';
 import { Role, RoleWeight } from '../enums/role.enum';
 
@@ -20,9 +21,11 @@ export class RolesGuard implements CanActivate {
 
         if (!requiredRole) return true;
 
-        const { user } = context.switchToHttp().getRequest();
+        const { user } = context
+            .switchToHttp()
+            .getRequest<AuthenticatedRequest>();
 
-        const userWeight = RoleWeight[user.role as Role] || 0;
+        const userWeight = RoleWeight[user.role] ?? 0;
         const requiredWeight = RoleWeight[requiredRole];
 
         if (userWeight < requiredWeight) {

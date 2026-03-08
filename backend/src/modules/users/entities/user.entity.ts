@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Role } from 'src/common/enums/role.enum';
+import type { SoftwareUsage } from './software-usage.entity';
 
 @Entity('users')
 export class User {
@@ -14,4 +15,7 @@ export class User {
 
     @Column({ type: 'varchar', default: Role.USER })
     role: Role;
+
+    @OneToMany('SoftwareUsage', 'user')
+    softwareUsages: SoftwareUsage[];
 }

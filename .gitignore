@@ -74,6 +74,7 @@ jest-results.json
 backend/dist/
 backend/coverage/
 backend/.nyc_output/
+backend/.env.development
 
 # Frontend specific
 frontend/.next/

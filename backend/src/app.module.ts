@@ -9,6 +9,7 @@ import { UsersModule } from './modules/users/users.module';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 
 import { appConfig } from '@config/app.config';
+import { adminConfig } from '@config/admin.config';
 import { jwtConfig } from '@config/jwt.config';
 import { postgresConfig } from '@config/postgres.config';
 import { envValidationSchema } from '@config/env.validation';
@@ -17,7 +18,7 @@ import { envValidationSchema } from '@config/env.validation';
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
-            load: [appConfig, jwtConfig, postgresConfig],
+            load: [appConfig, adminConfig, jwtConfig, postgresConfig],
             validationSchema: envValidationSchema,
         }),
         TypeOrmModule.forRootAsync({

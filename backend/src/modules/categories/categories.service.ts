@@ -51,17 +51,22 @@ export class CategoriesService {
     @OnEvent(CriterionDeletedEvent.eventName)
     async handleCriterionDeletedEvent(payload: CriterionDeletedEvent) {
         console.log(
-            `[Event] Criterion ${payload.criterionId} is deleted. Delete it from categories where it is required...`,
+            `[Event] Criterion ${payload.criterionId} deleted. Removing it from all categories...`,
         );
-        const allCategoriesWithCriterion = await this.repo.findWithCriteriaIds([
+        const categoriesWithCriterion = await this.repo.findWithCriteriaIds([
             payload.criterionId,
         ]);
 
-        const updatePromises = allCategoriesWithCriterion.map((category) => {
-            category.requiredCriteriaIds = category.requiredCriteriaIds.filter(
-                (id) => id !== payload.criterionId,
+        const updatePromises = categoriesWithCriterion.map(async (category) => {
+            const categoryWithCriteria = await this.repo.findByIdWithCriteria(
+                category.id,
             );
-            return this.repo.update(category.id, category);
+            if (!categoryWithCriteria) return;
+            categoryWithCriteria.criteria =
+                categoryWithCriteria.criteria.filter(
+                    (c) => c.id !== payload.criterionId,
+                );
+            return this.repo.save(categoryWithCriteria);
         });
 
         await Promise.all(updatePromises);

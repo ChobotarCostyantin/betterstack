@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ArrayContains } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { Software } from '../entities/software.entity';
 
 @Injectable()
@@ -16,7 +16,6 @@ export class SoftwareRepository implements OnModuleInit {
             console.log('[Software] Database is empty. Seeding...');
             await this.ormRepo.save([
                 {
-                    categoryIds: [1],
                     slug: 'jetbrains-rider',
                     name: 'JetBrains Rider',
                     developer: 'JetBrains',
@@ -24,11 +23,9 @@ export class SoftwareRepository implements OnModuleInit {
                     fullDescription:
                         '## Overview\nRider is an excellent choice for .NET developers.',
                     websiteUrl: 'https://jetbrains.com/rider',
-                    features: ['Amazing Gui', 'Fast', 'Powerful'],
-                    criteria: { '1': true, '2': 3.2 },
+                    screenshotUrls: [],
                 },
                 {
-                    categoryIds: [1],
                     slug: 'visual-studio-code',
                     name: 'Visual Studio Code',
                     developer: 'Microsoft',
@@ -36,8 +33,7 @@ export class SoftwareRepository implements OnModuleInit {
                     logoUrl:
                         'https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg',
                     websiteUrl: 'https://code.visualstudio.com/',
-                    features: ['Amazing Gui', 'Fast', 'Powerful'],
-                    criteria: { '1': true, '2': 3.2 },
+                    screenshotUrls: [],
                 },
             ]);
         }
@@ -52,27 +48,49 @@ export class SoftwareRepository implements OnModuleInit {
     findBySlug(slug: string) {
         return this.ormRepo.findOneBy({ slug });
     }
-    create(dto: any) {
+    create(dto: DeepPartial<Software>) {
         return this.ormRepo.save(dto);
     }
-    update(id: number, dto: any) {
+    update(id: number, dto: DeepPartial<Software>) {
         return this.ormRepo.update(id, dto);
     }
     delete(id: number) {
         return this.ormRepo.delete(id);
     }
 
-    deleteByCategoryId(categoryId: number) {
-        return this.ormRepo.delete({
-            categoryIds: ArrayContains([categoryId]),
+    /** Find all software entries that belong to the given category via the M2M join. */
+    findWithCategoryId(categoryId: number) {
+        return this.ormRepo
+            .createQueryBuilder('software')
+            .innerJoin('software.categories', 'category')
+            .where('category.id = :categoryId', { categoryId })
+            .getMany();
+    }
+
+    /** Load a software entry with its categories relation populated. */
+    findByIdWithCategories(id: number) {
+        return this.ormRepo.findOne({
+            where: { id },
+            relations: ['categories'],
         });
     }
 
-    findWithCategoryId(categoryId: number) {
-        return this.ormRepo.find({
-            where: {
-                categoryIds: ArrayContains([categoryId]),
-            },
-        });
+    save(entity: Software) {
+        return this.ormRepo.save(entity);
+    }
+
+    /** Atomically increment usageCount by 1. */
+    incrementUsageCount(id: number) {
+        return this.ormRepo.increment({ id }, 'usageCount', 1);
+    }
+
+    /** Atomically decrement usageCount by 1, floor at 0. */
+    async decrementUsageCount(id: number) {
+        await this.ormRepo
+            .createQueryBuilder()
+            .update(Software)
+            .set({ usageCount: () => 'GREATEST("usage_count" - 1, 0)' })
+            .where('id = :id', { id })
+            .execute();
     }
 }
