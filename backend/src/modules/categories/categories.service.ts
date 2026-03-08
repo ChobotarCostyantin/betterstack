@@ -1,12 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeepPartial, In, Repository } from 'typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-
+import { Category } from './entities/category.entity';
+import { Factor } from '@modules/criteria/entities/factor.entity';
+import { Metric } from '@modules/criteria/entities/metric.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import {
     RenameCategoryDto,
     UpdateCategoryCriteriaDto,
 } from './dto/update-category.dto';
-import { CategoriesRepository } from './categories.repository';
 import { CategoryDeletedEvent } from '@common/events/category.events';
 import { FactorDeletedEvent } from '@common/events/factor.events';
 import { MetricDeletedEvent } from '@common/events/metric.events';
@@ -17,20 +20,40 @@ import {
 } from './dto/category-response.dto';
 
 @Injectable()
-export class CategoriesService {
+export class CategoriesService implements OnModuleInit {
     constructor(
-        private readonly repo: CategoriesRepository,
+        @InjectRepository(Category)
+        private readonly categoryRepo: Repository<Category>,
+        @InjectRepository(Factor)
+        private readonly factorRepo: Repository<Factor>,
+        @InjectRepository(Metric)
+        private readonly metricRepo: Repository<Metric>,
         private readonly eventEmitter: EventEmitter2,
     ) {}
+
+    async onModuleInit() {
+        const count = await this.categoryRepo.count();
+        if (count === 0) {
+            console.log(
+                '[Categories] Database is empty. Seeding default categories...',
+            );
+            await this.categoryRepo.save([
+                { slug: 'ides', name: 'IDEs & Editors' },
+                { slug: 'databases', name: 'Database Clients' },
+                { slug: 'languages', name: 'Programming Languages' },
+            ]);
+        }
+    }
 
     async findAll(
         page: number,
         perPage: number,
     ): Promise<PaginatedResponseDto<CategoryListItemDto>> {
-        const [categories, total] = await this.repo.findAllPaginated(
-            page,
-            perPage,
-        );
+        const [categories, total] = await this.categoryRepo.findAndCount({
+            skip: (page - 1) * perPage,
+            take: perPage,
+            order: { id: 'ASC' },
+        });
         const items: CategoryListItemDto[] = categories.map((c) => ({
             id: c.id,
             slug: c.slug,
@@ -40,7 +63,10 @@ export class CategoriesService {
     }
 
     async findOneWithCriteria(id: number): Promise<CategoryDetailDto> {
-        const category = await this.repo.findByIdWithFactorsAndMetrics(id);
+        const category = await this.categoryRepo.findOne({
+            where: { id },
+            relations: ['factors', 'metrics'],
+        });
         if (!category)
             throw new NotFoundException(`Category with ID ${id} not found`);
 
@@ -63,32 +89,58 @@ export class CategoriesService {
 
     /** @deprecated use findOneWithCriteria */
     async findOne(id: number) {
-        const category = await this.repo.findById(id);
+        const category = await this.categoryRepo.findOneBy({ id });
         if (!category)
             throw new NotFoundException(`Category with ID ${id} not found`);
         return category;
     }
 
     async create(dto: CreateCategoryDto) {
-        return await this.repo.create(dto);
+        const category = this.categoryRepo.create({
+            slug: dto.slug,
+            name: dto.name,
+        });
+
+        category.factors =
+            dto.factorIds && dto.factorIds.length > 0
+                ? await this.factorRepo.findBy({ id: In(dto.factorIds) })
+                : [];
+
+        category.metrics =
+            dto.metricIds && dto.metricIds.length > 0
+                ? await this.metricRepo.findBy({ id: In(dto.metricIds) })
+                : [];
+
+        return this.categoryRepo.save(category);
     }
 
     async rename(id: number, dto: RenameCategoryDto) {
-        const category = await this.repo.findById(id);
+        const category = await this.categoryRepo.findOneBy({ id });
         if (!category)
             throw new NotFoundException(`Category with ID ${id} not found`);
-        await this.repo.update(id, dto);
+        await this.categoryRepo.update(id, dto as DeepPartial<Category>);
         return { ...category, ...dto };
     }
 
     async updateCriteria(id: number, dto: UpdateCategoryCriteriaDto) {
-        const updated = await this.repo.setFactorsAndMetrics(
-            id,
-            dto.factorIds,
-            dto.metricIds,
-        );
-        if (!updated)
+        const category = await this.categoryRepo.findOne({
+            where: { id },
+            relations: ['factors', 'metrics'],
+        });
+        if (!category)
             throw new NotFoundException(`Category with ID ${id} not found`);
+
+        category.factors =
+            dto.factorIds.length > 0
+                ? await this.factorRepo.findBy({ id: In(dto.factorIds) })
+                : [];
+
+        category.metrics =
+            dto.metricIds.length > 0
+                ? await this.metricRepo.findBy({ id: In(dto.metricIds) })
+                : [];
+
+        const updated = await this.categoryRepo.save(category);
 
         return {
             id: updated.id,
@@ -108,10 +160,10 @@ export class CategoriesService {
     }
 
     async remove(id: number) {
-        const category = await this.repo.findById(id);
+        const category = await this.categoryRepo.findOneBy({ id });
         if (!category) throw new NotFoundException('Category not found');
 
-        await this.repo.delete(id);
+        await this.categoryRepo.delete(id);
 
         this.eventEmitter.emit(
             CategoryDeletedEvent.eventName,
@@ -126,17 +178,22 @@ export class CategoriesService {
         console.log(
             `[Event] Factor ${payload.factorId} deleted. Removing it from all categories...`,
         );
-        const categoriesWithFactor = await this.repo.findWithFactorIds([
-            payload.factorId,
-        ]);
+        const categoriesWithFactor = await this.categoryRepo
+            .createQueryBuilder('category')
+            .innerJoin('category.factors', 'factor')
+            .where('factor.id IN (:...ids)', { ids: [payload.factorId] })
+            .getMany();
 
-        const updatePromises = categoriesWithFactor.map(async (category) => {
-            const cat = await this.repo.findByIdWithFactorsAndMetrics(
-                category.id,
+        const updatePromises = categoriesWithFactor.map(async (cat) => {
+            const full = await this.categoryRepo.findOne({
+                where: { id: cat.id },
+                relations: ['factors', 'metrics'],
+            });
+            if (!full) return;
+            full.factors = full.factors.filter(
+                (f) => f.id !== payload.factorId,
             );
-            if (!cat) return;
-            cat.factors = cat.factors.filter((f) => f.id !== payload.factorId);
-            return this.repo.save(cat);
+            return this.categoryRepo.save(full);
         });
 
         await Promise.all(updatePromises);
@@ -147,17 +204,22 @@ export class CategoriesService {
         console.log(
             `[Event] Metric ${payload.metricId} deleted. Removing it from all categories...`,
         );
-        const categoriesWithMetric = await this.repo.findWithMetricIds([
-            payload.metricId,
-        ]);
+        const categoriesWithMetric = await this.categoryRepo
+            .createQueryBuilder('category')
+            .innerJoin('category.metrics', 'metric')
+            .where('metric.id IN (:...ids)', { ids: [payload.metricId] })
+            .getMany();
 
-        const updatePromises = categoriesWithMetric.map(async (category) => {
-            const cat = await this.repo.findByIdWithFactorsAndMetrics(
-                category.id,
+        const updatePromises = categoriesWithMetric.map(async (cat) => {
+            const full = await this.categoryRepo.findOne({
+                where: { id: cat.id },
+                relations: ['factors', 'metrics'],
+            });
+            if (!full) return;
+            full.metrics = full.metrics.filter(
+                (m) => m.id !== payload.metricId,
             );
-            if (!cat) return;
-            cat.metrics = cat.metrics.filter((m) => m.id !== payload.metricId);
-            return this.repo.save(cat);
+            return this.categoryRepo.save(full);
         });
 
         await Promise.all(updatePromises);

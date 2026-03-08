@@ -6,7 +6,6 @@ import { Software } from './entities/software.entity';
 import { SoftwareFactor } from './entities/software-factor.entity';
 import { SoftwareMetric } from './entities/software-metric.entity';
 import { SoftwareComparisonNote } from './entities/software-comparison-note.entity';
-import { SoftwareRepository } from './software.repository';
 
 @Module({
     imports: [
@@ -18,6 +17,6 @@ import { SoftwareRepository } from './software.repository';
         ]),
     ],
     controllers: [SoftwareController],
-    providers: [SoftwareService, SoftwareRepository],
+    providers: [SoftwareService],
 })
 export class SoftwareModule {}

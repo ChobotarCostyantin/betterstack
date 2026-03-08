@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeepPartial, In, Repository } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { FactorsRepository } from '../repositories/factors.repository';
+import { Factor } from '../entities/factor.entity';
 import { CreateFactorDto } from '../dto/create-factor.dto';
 import { UpdateFactorDto } from '../dto/update-factor.dto';
 import { FactorDto } from '../dto/factor-response.dto';
@@ -9,15 +11,22 @@ import { FactorDeletedEvent } from '@common/events/factor.events';
 @Injectable()
 export class FactorsService {
     constructor(
-        private readonly repo: FactorsRepository,
+        @InjectRepository(Factor)
+        private readonly repo: Repository<Factor>,
         private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async findAll(categoryIds?: number[]): Promise<FactorDto[]> {
         const factors =
             categoryIds && categoryIds.length > 0
-                ? await this.repo.findByCategories(categoryIds)
-                : await this.repo.findAll();
+                ? await this.repo
+                      .createQueryBuilder('factor')
+                      .innerJoin('factor.categories', 'category')
+                      .where('category.id IN (:...categoryIds)', {
+                          categoryIds,
+                      })
+                      .getMany()
+                : await this.repo.find();
         return factors.map((f) => ({
             id: f.id,
             positiveVariant: f.positiveVariant,
@@ -26,7 +35,7 @@ export class FactorsService {
     }
 
     async create(dto: CreateFactorDto): Promise<FactorDto> {
-        const factor = await this.repo.create(dto);
+        const factor = await this.repo.save(this.repo.create(dto));
         return {
             id: factor.id,
             positiveVariant: factor.positiveVariant,
@@ -35,7 +44,8 @@ export class FactorsService {
     }
 
     async update(id: number, dto: UpdateFactorDto): Promise<FactorDto> {
-        const factor = await this.repo.update(id, dto);
+        await this.repo.update(id, dto as DeepPartial<Factor>);
+        const factor = await this.repo.findOneBy({ id });
         if (!factor)
             throw new NotFoundException(`Factor with ID ${id} not found`);
         return {
@@ -46,7 +56,7 @@ export class FactorsService {
     }
 
     async remove(id: number) {
-        const factor = await this.repo.findById(id);
+        const factor = await this.repo.findOneBy({ id });
         if (!factor)
             throw new NotFoundException(`Factor with ID ${id} not found`);
 
@@ -58,5 +68,9 @@ export class FactorsService {
         );
 
         return { success: true };
+    }
+
+    findByIds(ids: number[]): Promise<Factor[]> {
+        return this.repo.findBy({ id: In(ids) });
     }
 }

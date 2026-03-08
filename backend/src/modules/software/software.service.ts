@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { OnEvent } from '@nestjs/event-emitter';
-import { DeepPartial } from 'typeorm';
 
+import { Software } from './entities/software.entity';
 import { CreateSoftwareDto } from './dto/create-software.dto';
 import { UpdateSoftwareDto } from './dto/update-software.dto';
-import { Software } from './entities/software.entity';
-import { SoftwareRepository } from './software.repository';
 import { CategoryDeletedEvent } from '@common/events/category.events';
 import {
     SoftwareMarkedUsedEvent,
@@ -20,8 +20,40 @@ import {
 } from './dto/software-response.dto';
 
 @Injectable()
-export class SoftwareService {
-    constructor(private readonly repo: SoftwareRepository) {}
+export class SoftwareService implements OnModuleInit {
+    constructor(
+        @InjectRepository(Software)
+        private readonly repo: Repository<Software>,
+    ) {}
+
+    async onModuleInit() {
+        const count = await this.repo.count();
+        if (count === 0) {
+            console.log('[Software] Database is empty. Seeding...');
+            await this.repo.save([
+                {
+                    slug: 'jetbrains-rider',
+                    name: 'JetBrains Rider',
+                    developer: 'JetBrains',
+                    shortDescription: 'The cross-platform .NET IDE.',
+                    fullDescription:
+                        '## Overview\nRider is an excellent choice for .NET developers.',
+                    websiteUrl: 'https://jetbrains.com/rider',
+                    screenshotUrls: [],
+                },
+                {
+                    slug: 'visual-studio-code',
+                    name: 'Visual Studio Code',
+                    developer: 'Microsoft',
+                    shortDescription: 'The code editor.',
+                    logoUrl:
+                        'https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg',
+                    websiteUrl: 'https://code.visualstudio.com/',
+                    screenshotUrls: [],
+                },
+            ]);
+        }
+    }
 
     private toListItem(sw: Software): SoftwareListItemDto {
         return {
@@ -40,7 +72,21 @@ export class SoftwareService {
         page: number,
         perPage: number,
     ): Promise<PaginatedResponseDto<SoftwareListItemDto>> {
-        const [items, total] = await this.repo.findPaginated(q, page, perPage);
+        const qb = this.repo
+            .createQueryBuilder('software')
+            .leftJoinAndSelect('software.categories', 'category')
+            .orderBy('software.usageCount', 'DESC')
+            .skip((page - 1) * perPage)
+            .take(perPage);
+
+        if (q) {
+            qb.where(
+                'software.name ILIKE :q OR software.shortDescription ILIKE :q',
+                { q: `%${q}%` },
+            );
+        }
+
+        const [items, total] = await qb.getManyAndCount();
         return new PaginatedResponseDto(
             items.map((sw) => this.toListItem(sw)),
             total,
@@ -50,12 +96,26 @@ export class SoftwareService {
     }
 
     async findMostUsed(limit: number): Promise<SoftwareListItemDto[]> {
-        const items = await this.repo.findMostUsed(limit);
+        const items = await this.repo
+            .createQueryBuilder('software')
+            .leftJoinAndSelect('software.categories', 'category')
+            .orderBy('software.usageCount', 'DESC')
+            .take(limit)
+            .getMany();
         return items.map((sw) => this.toListItem(sw));
     }
 
     async findOneBySlug(slug: string): Promise<SoftwareDetailDto> {
-        const sw = await this.repo.findBySlugWithRelations(slug);
+        const sw = await this.repo.findOne({
+            where: { slug },
+            relations: [
+                'categories',
+                'softwareFactors',
+                'softwareFactors.factor',
+                'softwareMetrics',
+                'softwareMetrics.metric',
+            ],
+        });
         if (!sw)
             throw new NotFoundException(
                 `Software with slug '${slug}' not found`,
@@ -108,17 +168,37 @@ export class SoftwareService {
         page: number,
         perPage: number,
     ): Promise<PaginatedResponseDto<SoftwareListItemDto>> {
-        const sw = await this.repo.findBySlug(slug);
+        const sw = await this.repo.findOneBy({ slug });
         if (!sw)
             throw new NotFoundException(
                 `Software with slug '${slug}' not found`,
             );
 
-        const [items, total] = await this.repo.findAlternatives(
-            sw.id,
-            page,
-            perPage,
-        );
+        const target = await this.repo.findOne({
+            where: { id: sw.id },
+            relations: ['categories'],
+        });
+
+        if (!target || !target.categories.length) {
+            return new PaginatedResponseDto([], 0, page, perPage);
+        }
+
+        const categoryIds = target.categories.map((c) => c.id);
+        const qb = this.repo
+            .createQueryBuilder('software')
+            .leftJoinAndSelect('software.categories', 'category')
+            .innerJoin(
+                'software.categories',
+                'sharedCat',
+                'sharedCat.id IN (:...categoryIds)',
+                { categoryIds },
+            )
+            .where('software.id != :softwareId', { softwareId: sw.id })
+            .orderBy('software.usageCount', 'DESC')
+            .skip((page - 1) * perPage)
+            .take(perPage);
+
+        const [items, total] = await qb.getManyAndCount();
         return new PaginatedResponseDto(
             items.map((s) => this.toListItem(s)),
             total,
@@ -129,14 +209,14 @@ export class SoftwareService {
 
     /** @deprecated use findOneBySlug */
     async findOne(id: number) {
-        const sw = await this.repo.findById(id);
+        const sw = await this.repo.findOneBy({ id });
         if (!sw)
             throw new NotFoundException(`Software with ID ${id} not found`);
         return sw;
     }
 
     async create(dto: CreateSoftwareDto): Promise<Software> {
-        return this.repo.create(dto as DeepPartial<Software>);
+        return this.repo.save(dto as DeepPartial<Software>);
     }
 
     async update(id: number, dto: UpdateSoftwareDto) {
@@ -144,7 +224,7 @@ export class SoftwareService {
     }
 
     async remove(id: number) {
-        const soft = await this.repo.findById(id);
+        const soft = await this.repo.findOneBy({ id });
         if (!soft)
             throw new NotFoundException(`Software with ID ${id} not found`);
 
@@ -159,19 +239,24 @@ export class SoftwareService {
             `[Event] Category ${payload.categoryId} deleted. Removing it from all software...`,
         );
 
-        const softwareList = await this.repo.findWithCategoryId(
-            payload.categoryId,
-        );
+        const softwareList = await this.repo
+            .createQueryBuilder('software')
+            .innerJoin('software.categories', 'category')
+            .where('category.id = :categoryId', {
+                categoryId: payload.categoryId,
+            })
+            .getMany();
 
         const updatePromises = softwareList.map(async (sw) => {
-            const swWithCategories = await this.repo.findByIdWithCategories(
-                sw.id,
-            );
-            if (!swWithCategories) return;
-            swWithCategories.categories = swWithCategories.categories.filter(
+            const full = await this.repo.findOne({
+                where: { id: sw.id },
+                relations: ['categories'],
+            });
+            if (!full) return;
+            full.categories = full.categories.filter(
                 (c) => c.id !== payload.categoryId,
             );
-            return this.repo.save(swWithCategories);
+            return this.repo.save(full);
         });
 
         await Promise.all(updatePromises);
@@ -182,7 +267,7 @@ export class SoftwareService {
         console.log(
             `[Event] User ${payload.userId} marked software ${payload.softwareId} as used. Incrementing usageCount...`,
         );
-        await this.repo.incrementUsageCount(payload.softwareId);
+        await this.repo.increment({ id: payload.softwareId }, 'usageCount', 1);
     }
 
     @OnEvent(SoftwareMarkedUnusedEvent.eventName)
@@ -190,6 +275,11 @@ export class SoftwareService {
         console.log(
             `[Event] User ${payload.userId} unmarked software ${payload.softwareId}. Decrementing usageCount...`,
         );
-        await this.repo.decrementUsageCount(payload.softwareId);
+        await this.repo
+            .createQueryBuilder()
+            .update(Software)
+            .set({ usageCount: () => 'GREATEST("usage_count" - 1, 0)' })
+            .where('id = :id', { id: payload.softwareId })
+            .execute();
     }
 }
