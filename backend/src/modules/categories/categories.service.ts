@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { CategoriesRepository } from './repositories/categories.repository';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { CategoryDeletedEvent } from 'src/common/events/category.events';
-import { CriterionDeletedEvent } from 'src/common/events/criterion.events';
+import { CategoriesRepository } from './categories.repository';
+import { CategoryDeletedEvent } from '@common/events/category.events';
+import { CriterionDeletedEvent } from '@common/events/criterion.events';
 
 @Injectable()
 export class CategoriesService {

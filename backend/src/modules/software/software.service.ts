@@ -1,15 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import { DeepPartial } from 'typeorm';
+
 import { CreateSoftwareDto } from './dto/create-software.dto';
 import { UpdateSoftwareDto } from './dto/update-software.dto';
 import { Software } from './entities/software.entity';
-import { SoftwareRepository } from './repositories/software.repository';
-import { OnEvent } from '@nestjs/event-emitter';
-import { CategoryDeletedEvent } from 'src/common/events/category.events';
+import { SoftwareRepository } from './software.repository';
+import { CategoryDeletedEvent } from '@common/events/category.events';
 import {
     SoftwareMarkedUsedEvent,
     SoftwareMarkedUnusedEvent,
-} from 'src/common/events/software-usage.events';
+} from '@common/events/software-usage.events';
 
 @Injectable()
 export class SoftwareService {

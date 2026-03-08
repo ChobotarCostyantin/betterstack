@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
-import { Software } from '../entities/software.entity';
+import { Software } from './entities/software.entity';
 
 @Injectable()
 export class SoftwareRepository implements OnModuleInit {
@@ -42,23 +42,27 @@ export class SoftwareRepository implements OnModuleInit {
     findAll() {
         return this.ormRepo.find();
     }
+
     findById(id: number) {
         return this.ormRepo.findOneBy({ id });
     }
+
     findBySlug(slug: string) {
         return this.ormRepo.findOneBy({ slug });
     }
+
     create(dto: DeepPartial<Software>) {
         return this.ormRepo.save(dto);
     }
+
     update(id: number, dto: DeepPartial<Software>) {
         return this.ormRepo.update(id, dto);
     }
+
     delete(id: number) {
         return this.ormRepo.delete(id);
     }
 
-    /** Find all software entries that belong to the given category via the M2M join. */
     findWithCategoryId(categoryId: number) {
         return this.ormRepo
             .createQueryBuilder('software')
@@ -67,7 +71,6 @@ export class SoftwareRepository implements OnModuleInit {
             .getMany();
     }
 
-    /** Load a software entry with its categories relation populated. */
     findByIdWithCategories(id: number) {
         return this.ormRepo.findOne({
             where: { id },
@@ -79,12 +82,10 @@ export class SoftwareRepository implements OnModuleInit {
         return this.ormRepo.save(entity);
     }
 
-    /** Atomically increment usageCount by 1. */
     incrementUsageCount(id: number) {
         return this.ormRepo.increment({ id }, 'usageCount', 1);
     }
 
-    /** Atomically decrement usageCount by 1, floor at 0. */
     async decrementUsageCount(id: number) {
         await this.ormRepo
             .createQueryBuilder()

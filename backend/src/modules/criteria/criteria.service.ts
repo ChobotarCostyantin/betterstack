@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
 import { CreateCriterionDto } from './dto/create-criterion.dto';
 import { UpdateCriterionDto } from './dto/update-criterion.dto';
-import { CriteriaRepository } from './repositories/criteria.repository';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CriterionDeletedEvent } from 'src/common/events/criterion.events';
+import { CriteriaRepository } from './criteria.repository';
+import { CriterionDeletedEvent } from '@common/events/criterion.events';
 
 @Injectable()
 export class CriteriaService {

@@ -10,13 +10,13 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
+import { RolesGuard } from '@common/guards/roles.guard';
+import { WithRole } from '@common/decorators/roles.decorator';
+import { Role } from '@common/enums/role.enum';
 import { CriteriaService } from './criteria.service';
 import { CreateCriterionDto } from './dto/create-criterion.dto';
 import { UpdateCriterionDto } from './dto/update-criterion.dto';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/common/guards/roles.guard';
-import { WithRole } from 'src/common/decorators/roles.decorator';
-import { Role } from 'src/common/enums/role.enum';
 
 @ApiTags('Criteria')
 @Controller('criteria')

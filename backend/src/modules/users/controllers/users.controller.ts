@@ -8,11 +8,11 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { Role } from '@common/enums/role.enum';
+import { WithRole } from '@common/decorators/roles.decorator';
+import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
+import { RolesGuard } from '@common/guards/roles.guard';
 import { UsersService } from '../users.service';
-import { Role } from 'src/common/enums/role.enum';
-import { WithRole } from 'src/common/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @ApiTags('Users')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -37,7 +37,7 @@ export class UsersController {
         @Param('userId', ParseIntPipe) userId: number,
         @Param('softwareId', ParseIntPipe) softwareId: number,
     ) {
-        return this.usersService.markAsUsed(userId, softwareId);
+        return this.usersService.markSoftwareAsUsed(userId, softwareId);
     }
 
     @Delete(':userId/software/:softwareId/use')
@@ -47,6 +47,6 @@ export class UsersController {
         @Param('userId', ParseIntPipe) userId: number,
         @Param('softwareId', ParseIntPipe) softwareId: number,
     ) {
-        return this.usersService.markAsUnused(userId, softwareId);
+        return this.usersService.markSoftwareAsUnused(userId, softwareId);
     }
 }

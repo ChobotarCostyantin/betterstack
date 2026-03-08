@@ -35,12 +35,15 @@ export class UsersRepository implements OnModuleInit {
     findByEmail(email: string) {
         return this.ormRepo.findOneBy({ email });
     }
+
     findById(id: number) {
         return this.ormRepo.findOneBy({ id });
     }
+
     create(data: Partial<User>) {
         return this.ormRepo.save(data);
     }
+
     updateRole(id: number, role: Role) {
         return this.ormRepo.update(id, { role });
     }
@@ -49,11 +52,11 @@ export class UsersRepository implements OnModuleInit {
         return this.usageRepo.findOneBy({ userId, softwareId });
     }
 
-    markAsUsed(userId: number, softwareId: number) {
+    markSoftwareAsUsed(userId: number, softwareId: number) {
         return this.usageRepo.save({ userId, softwareId });
     }
 
-    markAsUnused(userId: number, softwareId: number) {
+    markSoftwareAsUnused(userId: number, softwareId: number) {
         return this.usageRepo.delete({ userId, softwareId });
     }
 }

@@ -8,14 +8,15 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import * as bcrypt from 'bcrypt';
-import { UsersRepository } from './repositories/users.repository';
-import { AuthDto } from './dto/auth.dto';
-import { Role } from 'src/common/enums/role.enum';
-import { User } from './entities/user.entity';
+
+import { Role } from '@common/enums/role.enum';
 import {
     SoftwareMarkedUsedEvent,
     SoftwareMarkedUnusedEvent,
-} from 'src/common/events/software-usage.events';
+} from '@common/events/software-usage.events';
+import { UsersRepository } from './users.repository';
+import { AuthDto } from './dto/auth.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -47,7 +48,7 @@ export class UsersService {
         return { success: true };
     }
 
-    async markAsUsed(userId: number, softwareId: number) {
+    async markSoftwareAsUsed(userId: number, softwareId: number) {
         const user = await this.repo.findById(userId);
         if (!user)
             throw new NotFoundException(`User with ID ${userId} not found`);
@@ -55,7 +56,7 @@ export class UsersService {
         const existing = await this.repo.findUsage(userId, softwareId);
         if (existing) throw new ConflictException('Already marked as used');
 
-        await this.repo.markAsUsed(userId, softwareId);
+        await this.repo.markSoftwareAsUsed(userId, softwareId);
 
         this.eventEmitter.emit(
             SoftwareMarkedUsedEvent.eventName,
@@ -65,7 +66,7 @@ export class UsersService {
         return { success: true };
     }
 
-    async markAsUnused(userId: number, softwareId: number) {
+    async markSoftwareAsUnused(userId: number, softwareId: number) {
         const user = await this.repo.findById(userId);
         if (!user)
             throw new NotFoundException(`User with ID ${userId} not found`);
@@ -73,7 +74,7 @@ export class UsersService {
         const existing = await this.repo.findUsage(userId, softwareId);
         if (!existing) throw new NotFoundException('Usage record not found');
 
-        await this.repo.markAsUnused(userId, softwareId);
+        await this.repo.markSoftwareAsUnused(userId, softwareId);
 
         this.eventEmitter.emit(
             SoftwareMarkedUnusedEvent.eventName,

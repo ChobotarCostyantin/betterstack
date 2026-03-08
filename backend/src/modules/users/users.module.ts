@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { User } from './entities/user.entity';
 import { SoftwareUsage } from './entities/software-usage.entity';
-import { UsersRepository } from './repositories/users.repository';
+import { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
 import { AuthController } from './controllers/auth.controller';
 import { UsersController } from './controllers/users.controller';

@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Software } from './entities/software.entity';
 import { SoftwareCriterion } from './entities/software-criterion.entity';
 import { SoftwareComparisonNote } from './entities/software-comparison-note.entity';
-import { SoftwareRepository } from './repositories/software.repository';
+import { SoftwareRepository } from './software.repository';
 
 @Module({
     imports: [

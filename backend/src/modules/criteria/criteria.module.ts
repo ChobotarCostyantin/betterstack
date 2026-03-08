@@ -3,7 +3,7 @@ import { CriteriaService } from './criteria.service';
 import { CriteriaController } from './criteria.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Criterion } from './entities/criterion.entity';
-import { CriteriaRepository } from './repositories/criteria.repository';
+import { CriteriaRepository } from './criteria.repository';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Criterion])],
