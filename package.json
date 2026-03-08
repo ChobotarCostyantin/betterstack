@@ -9,12 +9,18 @@
     "frontend"
   ],
   "scripts": {
+    "be:dev": "npm run start:dev -w backend",
+    "fe:dev": "npm run dev -w frontend",
+    "dev": "concurrently --names backend,frontend -c auto 'npm run be:dev' 'npm run fe:dev'",
     "lint": "npm run lint -w backend && npm run lint -w frontend",
     "format": "npm run format -w backend && npm run format -w frontend",
     "typecheck": "npm run tsc --workspaces --if-present --workspaces-flag=--noEmit",
+    "db:local:up": "docker-compose up -d postgres",
+    "db:local:down": "docker-compose down postgres",
     "prepare": "husky"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.3.2"
   }
