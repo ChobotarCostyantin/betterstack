@@ -4,12 +4,13 @@ services:
   frontend:
     container_name: bs-frontend
     build:
-      context: ./frontend
+      context: .
+      dockerfile: ./frontend/Dockerfile
       target: development
     volumes:
-      - ./frontend:/usr/src/app     # for hot-reload
-      - /usr/src/app/node_modules   # but prevent overwriting container's node_modules
-      - /usr/src/app/.next          # as well as .next
+      - ./frontend:/usr/src/app/frontend    # for hot-reload
+      - /usr/src/app/frontend/node_modules  # but prevent overwriting container's node_modules
+      - /usr/src/app/frontend/.next         # as well as .next
     ports:
       - "3000:3000"
     environment:
@@ -21,11 +22,12 @@ services:
   backend:
     container_name: bs-backend
     build:
-      context: ./backend
+      context: .
+      dockerfile: ./backend/Dockerfile
       target: development
     volumes:
-      - ./backend:/usr/src/app      # for hot-reload
-      - /usr/src/app/node_modules   # but prevent overwriting container's node_modules
+      - ./backend:/usr/src/app/backend      # for hot-reload
+      - /usr/src/app/backend/node_modules   # but prevent overwriting container's node_modules
     ports:
       - "3010:3010"
     environment:
@@ -38,6 +40,8 @@ services:
       POSTGRES_DB: betterstack_db
       JWT_SECRET: "VFhmYhyAJDHnclhu"
       JWT_EXPIRES_IN_SEC: 86400
+      ADMIN_EMAIL: admin@admin.org
+      ADMIN_PASSWORD: password
     depends_on:
       - postgres
 
@@ -53,7 +57,7 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      test: ["CMD-SHELL", "pg_isready", "-d", "betterstack_db"]
       interval: 30s
       timeout: 60s
       retries: 5

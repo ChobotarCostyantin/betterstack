@@ -10,25 +10,27 @@ WORKDIR /usr/src/app
 RUN apk add --no-cache libc6-compat
 
 COPY package*.json ./
+COPY frontend/package.json ./frontend/package.json
 
 # ------------------------------
 # Dependencies
 # ------------------------------
 FROM base AS deps
-RUN npm ci
+WORKDIR /usr/src/app
+RUN npm ci --workspace=frontend
 
 # ------------------------------
 # Development runner
 # ------------------------------
 FROM deps AS development
 WORKDIR /usr/src/app
-COPY . .
+COPY frontend ./frontend
 
 # Ensure .next is owned by node
-RUN mkdir -p .next && chown -R node:node .next
+RUN mkdir -p frontend/.next && chown -R node:node frontend/.next
 
 USER node
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev", "--workspace=frontend"]
 
 # ------------------------------
 # Build
@@ -36,7 +38,7 @@ CMD ["npm", "run", "dev"]
 FROM deps AS build
 WORKDIR /usr/src/app
 COPY . .
-RUN npm run build
+RUN npm run build --workspace=frontend
 
 # ------------------------------
 # Production runner
@@ -44,9 +46,14 @@ RUN npm run build
 FROM node:${NODE_VERSION} AS production
 WORKDIR /usr/src/app
 
-COPY --from=build /usr/src/app/public ./public
-COPY --from=build /usr/src/app/.next/standalone ./
-COPY --from=build /usr/src/app/.next/static ./.next/static
+COPY package*.json ./
+COPY frontend/package.json ./frontend/package.json
+
+RUN npm ci --workspace=frontend --omit=dev
+
+COPY --from=build /usr/src/app/frontend/public ./frontend/public
+COPY --from=build /usr/src/app/frontend/.next/standalone ./frontend
+COPY --from=build /usr/src/app/frontend/.next/static ./frontend/.next/static
 
 USER node
-CMD ["node", "server.js"]
+CMD ["node", "frontend/server.js"]
