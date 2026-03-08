@@ -5,9 +5,9 @@ import {
     ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AuthenticatedRequest } from '../interfaces/jwt-payload.interface.js';
-import { ROLE_KEY } from '../decorators/roles.decorator';
-import { Role, RoleWeight } from '../enums/role.enum';
+import { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
+import { ROLE_KEY } from '@common/decorators/roles.decorator';
+import { Role, RoleWeight } from '@common/enums/role.enum';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
