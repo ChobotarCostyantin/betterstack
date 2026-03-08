@@ -3,7 +3,12 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { CreateCriterionDto } from './dto/create-criterion.dto';
 import { UpdateCriterionDto } from './dto/update-criterion.dto';
+import {
+    BooleanCriterionDto,
+    NumericCriterionDto,
+} from './dto/criterion-response.dto';
 import { CriteriaRepository } from './criteria.repository';
+import { CriterionType } from './entities/criterion.entity';
 import { CriterionDeletedEvent } from '@common/events/criterion.events';
 
 @Injectable()
@@ -13,8 +18,22 @@ export class CriteriaService {
         private readonly eventEmitter: EventEmitter2,
     ) {}
 
-    async findAll() {
-        return await this.repo.findAll();
+    async findBoolean(): Promise<BooleanCriterionDto[]> {
+        const criteria = await this.repo.findByType(CriterionType.BOOLEAN);
+        return criteria.map((c) => ({
+            id: c.id,
+            name: c.name,
+            isPositive: c.value !== 0,
+        }));
+    }
+
+    async findNumeric(): Promise<NumericCriterionDto[]> {
+        const criteria = await this.repo.findByType(CriterionType.NUMERIC);
+        return criteria.map((c) => ({
+            id: c.id,
+            name: c.name,
+            higherIsBetter: c.higherIsBetter,
+        }));
     }
 
     async findOne(id: number) {
@@ -25,13 +44,11 @@ export class CriteriaService {
     }
 
     async create(dto: CreateCriterionDto) {
-        const newCriterion = await this.repo.create(dto);
-        return newCriterion;
+        return this.repo.create(dto);
     }
 
     async update(id: number, dto: UpdateCriterionDto) {
-        const newCriterion = await this.repo.update(id, dto);
-        return newCriterion;
+        return this.repo.update(id, dto);
     }
 
     async remove(id: number) {

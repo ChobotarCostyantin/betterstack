@@ -11,26 +11,132 @@ import {
     SoftwareMarkedUsedEvent,
     SoftwareMarkedUnusedEvent,
 } from '@common/events/software-usage.events';
+import { PaginatedResponseDto } from '@common/dto/paginated-response.dto';
+import {
+    SoftwareListItemDto,
+    SoftwareDetailDto,
+    SoftwareBooleanCriterionDto,
+    SoftwareNumericCriterionDto,
+} from './dto/software-response.dto';
+import { CriterionType } from '../criteria/entities/criterion.entity';
 
 @Injectable()
 export class SoftwareService {
     constructor(private readonly repo: SoftwareRepository) {}
 
-    async findAll() {
-        return await this.repo.findAll();
+    private toListItem(sw: Software): SoftwareListItemDto {
+        return {
+            id: sw.id,
+            slug: sw.slug,
+            name: sw.name,
+            logoUrl: sw.logoUrl,
+            shortDescription: sw.shortDescription,
+            usageCount: sw.usageCount,
+            categories: (sw.categories ?? []).map((c) => c.name),
+        };
     }
 
+    async findAll(
+        q: string | undefined,
+        page: number,
+        perPage: number,
+    ): Promise<PaginatedResponseDto<SoftwareListItemDto>> {
+        const [items, total] = await this.repo.findPaginated(q, page, perPage);
+        return new PaginatedResponseDto(
+            items.map((sw) => this.toListItem(sw)),
+            total,
+            page,
+            perPage,
+        );
+    }
+
+    async findMostUsed(limit: number): Promise<SoftwareListItemDto[]> {
+        const items = await this.repo.findMostUsed(limit);
+        return items.map((sw) => this.toListItem(sw));
+    }
+
+    async findOneBySlug(slug: string): Promise<SoftwareDetailDto> {
+        const sw = await this.repo.findBySlugWithRelations(slug);
+        if (!sw)
+            throw new NotFoundException(
+                `Software with slug '${slug}' not found`,
+            );
+
+        const booleanCriteria: SoftwareBooleanCriterionDto[] = (
+            sw.softwareCriteria ?? []
+        )
+            .filter((sc) => sc.type === CriterionType.BOOLEAN)
+            .map((sc) => ({
+                id: sc.criterion?.id ?? sc.id,
+                name: sc.name,
+                isPositive: sc.value !== 0,
+                value: sc.value,
+            }));
+
+        const numericCriteria: SoftwareNumericCriterionDto[] = (
+            sw.softwareCriteria ?? []
+        )
+            .filter((sc) => sc.type === CriterionType.NUMERIC)
+            .map((sc) => ({
+                id: sc.criterion?.id ?? sc.id,
+                name: sc.name,
+                higherIsBetter: sc.higherIsBetter,
+                value: sc.value,
+            }));
+
+        return {
+            id: sw.id,
+            slug: sw.slug,
+            name: sw.name,
+            developer: sw.developer,
+            shortDescription: sw.shortDescription,
+            fullDescription: sw.fullDescription,
+            websiteUrl: sw.websiteUrl,
+            gitRepoUrl: sw.gitRepoUrl,
+            logoUrl: sw.logoUrl,
+            screenshotUrls: sw.screenshotUrls,
+            usageCount: sw.usageCount,
+            createdAt: sw.createdAt,
+            updatedAt: sw.updatedAt,
+            categories: (sw.categories ?? []).map((c) => ({
+                id: c.id,
+                slug: c.slug,
+                name: c.name,
+            })),
+            booleanCriteria,
+            numericCriteria,
+        };
+    }
+
+    async findAlternatives(
+        slug: string,
+        page: number,
+        perPage: number,
+    ): Promise<PaginatedResponseDto<SoftwareListItemDto>> {
+        const sw = await this.repo.findBySlug(slug);
+        if (!sw)
+            throw new NotFoundException(
+                `Software with slug '${slug}' not found`,
+            );
+
+        const [items, total] = await this.repo.findAlternatives(
+            sw.id,
+            page,
+            perPage,
+        );
+        return new PaginatedResponseDto(
+            items.map((s) => this.toListItem(s)),
+            total,
+            page,
+            perPage,
+        );
+    }
+
+    /** @deprecated use findOneBySlug */
     async findOne(id: number) {
         const sw = await this.repo.findById(id);
         if (!sw)
             throw new NotFoundException(`Software with ID ${id} not found`);
-        return sw;
-    }
-
-    async findOneBySlug(slug: string) {
-        const sw = await this.repo.findBySlug(slug);
-        if (!sw)
-            throw new NotFoundException(`Software with slug ${slug} not found`);
         return sw;
     }
 

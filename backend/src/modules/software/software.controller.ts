@@ -6,10 +6,16 @@ import {
     Delete,
     Body,
     Param,
+    Query,
     ParseIntPipe,
     UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import {
+    ApiTags,
+    ApiOperation,
+    ApiBearerAuth,
+    ApiQuery,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { RolesGuard } from '@common/guards/roles.guard';
 import { WithRole } from '@common/decorators/roles.decorator';
@@ -25,15 +31,43 @@ export class SoftwareController {
     constructor(private readonly service: SoftwareService) {}
 
     @Get()
-    @ApiOperation({ summary: 'Get all software' })
-    findAll() {
-        return this.service.findAll();
+    @ApiOperation({ summary: 'Get all software (paginated, searchable)' })
+    @ApiQuery({
+        name: 'q',
+        required: false,
+        description: 'Search by name or description',
+    })
+    @ApiQuery({ name: 'page', required: false, example: 1 })
+    @ApiQuery({ name: 'perPage', required: false, example: 10 })
+    findAll(
+        @Query('q') q?: string,
+        @Query('page', new ParseIntPipe({ optional: true })) page = 1,
+        @Query('perPage', new ParseIntPipe({ optional: true })) perPage = 10,
+    ) {
+        return this.service.findAll(q, page, perPage);
     }
 
-    @Get('id/:id')
-    @ApiOperation({ summary: 'Get software by id' })
-    findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.service.findOne(id);
+    @Get('most-used')
+    @ApiOperation({ summary: 'Get most-used software' })
+    @ApiQuery({ name: 'limit', required: false, example: 10 })
+    findMostUsed(
+        @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
+    ) {
+        return this.service.findMostUsed(limit);
+    }
+
+    @Get(':slug/alternatives')
+    @ApiOperation({
+        summary: 'Get alternative software sharing at least 1 category',
+    })
+    @ApiQuery({ name: 'page', required: false, example: 1 })
+    @ApiQuery({ name: 'perPage', required: false, example: 10 })
+    findAlternatives(
+        @Param('slug') slug: string,
+        @Query('page', new ParseIntPipe({ optional: true })) page = 1,
+        @Query('perPage', new ParseIntPipe({ optional: true })) perPage = 10,
+    ) {
+        return this.service.findAlternatives(slug, page, perPage);
     }
 
     @Get(':slug')
@@ -45,7 +79,7 @@ export class SoftwareController {
     @Post()
     @ApiOperation({ summary: 'Create new software' })
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.USER)
+    @WithRole(Role.ADMIN)
     create(@Body() dto: CreateSoftwareDto) {
         return this.service.create(dto);
     }

@@ -43,12 +43,90 @@ export class SoftwareRepository implements OnModuleInit {
         return this.ormRepo.find();
     }
 
+    async findPaginated(
+        q: string | undefined,
+        page: number,
+        perPage: number,
+    ): Promise<[Software[], number]> {
+        const qb = this.ormRepo
+            .createQueryBuilder('software')
+            .leftJoinAndSelect('software.categories', 'category')
+            .orderBy('software.usageCount', 'DESC')
+            .skip((page - 1) * perPage)
+            .take(perPage);
+
+        if (q) {
+            qb.where(
+                'software.name ILIKE :q OR software.shortDescription ILIKE :q',
+                { q: `%${q}%` },
+            );
+        }
+
+        return qb.getManyAndCount();
+    }
+
+    async findMostUsed(limit: number): Promise<Software[]> {
+        return this.ormRepo
+            .createQueryBuilder('software')
+            .leftJoinAndSelect('software.categories', 'category')
+            .orderBy('software.usageCount', 'DESC')
+            .take(limit)
+            .getMany();
+    }
+
     findById(id: number) {
         return this.ormRepo.findOneBy({ id });
     }
 
     findBySlug(slug: string) {
         return this.ormRepo.findOneBy({ slug });
+    }
+
+    findBySlugWithRelations(slug: string) {
+        return this.ormRepo.findOne({
+            where: { slug },
+            relations: [
+                'categories',
+                'softwareCriteria',
+                'softwareCriteria.criterion',
+            ],
+        });
+    }
+
+    async findAlternatives(
+        softwareId: number,
+        page: number,
+        perPage: number,
+    ): Promise<[Software[], number]> {
+        // Find categories of the target software
+        const target = await this.ormRepo.findOne({
+            where: { id: softwareId },
+            relations: ['categories'],
+        });
+
+        if (!target || !target.categories.length) {
+            return [[], 0];
+        }
+
+        const categoryIds = target.categories.map((c) => c.id);
+
+        const qb = this.ormRepo
+            .createQueryBuilder('software')
+            .leftJoinAndSelect('software.categories', 'category')
+            .innerJoin(
+                'software.categories',
+                'sharedCat',
+                'sharedCat.id IN (:...categoryIds)',
+                {
+                    categoryIds,
+                },
+            )
+            .where('software.id != :softwareId', { softwareId })
+            .orderBy('software.usageCount', 'DESC')
+            .skip((page - 1) * perPage)
+            .take(perPage);
+
+        return qb.getManyAndCount();
     }
 
     create(dto: DeepPartial<Software>) {

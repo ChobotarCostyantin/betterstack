@@ -60,6 +60,10 @@ export class CriteriaRepository {
         return this.ormRepo.findOneBy({ id });
     }
 
+    findByType(type: CriterionType) {
+        return this.ormRepo.findBy({ type });
+    }
+
     create(dto: CreateCriterionDto) {
         return this.ormRepo.save(dto);
     }

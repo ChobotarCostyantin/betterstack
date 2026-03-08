@@ -6,6 +6,7 @@ import {
     Param,
     ParseIntPipe,
     UseGuards,
+    Req,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Role } from '@common/enums/role.enum';
@@ -13,6 +14,7 @@ import { WithRole } from '@common/decorators/roles.decorator';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { RolesGuard } from '@common/guards/roles.guard';
 import { UsersService } from '../users.service';
+import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
 
 @ApiTags('Users')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -28,25 +30,27 @@ export class UsersController {
         return this.usersService.makeAdmin(+id);
     }
 
-    @Post(':userId/software/:softwareId/use')
+    @Post('software/:softwareId/use')
     @WithRole(Role.USER)
     @ApiOperation({
-        summary: 'Mark a software as used by the user',
+        summary: 'Mark a software as used by the authenticated user',
     })
     markAsUsed(
-        @Param('userId', ParseIntPipe) userId: number,
+        @Req() req: AuthenticatedRequest,
         @Param('softwareId', ParseIntPipe) softwareId: number,
     ) {
-        return this.usersService.markSoftwareAsUsed(userId, softwareId);
+        return this.usersService.markSoftwareAsUsed(req.user.id, softwareId);
     }
 
-    @Delete(':userId/software/:softwareId/use')
+    @Delete('software/:softwareId/use')
     @WithRole(Role.USER)
-    @ApiOperation({ summary: "Remove a software from the user's used list" })
+    @ApiOperation({
+        summary: "Remove a software from the authenticated user's used list",
+    })
     markAsUnused(
-        @Param('userId', ParseIntPipe) userId: number,
+        @Req() req: AuthenticatedRequest,
         @Param('softwareId', ParseIntPipe) softwareId: number,
     ) {
-        return this.usersService.markSoftwareAsUnused(userId, softwareId);
+        return this.usersService.markSoftwareAsUnused(req.user.id, softwareId);
     }
 }

@@ -24,16 +24,16 @@ import { UpdateCriterionDto } from './dto/update-criterion.dto';
 export class CriteriaController {
     constructor(private readonly service: CriteriaService) {}
 
-    @Get()
-    @ApiOperation({ summary: 'Get all criteria' })
-    findAll() {
-        return this.service.findAll();
+    @Get('boolean')
+    @ApiOperation({ summary: 'Get all boolean criteria' })
+    findBoolean() {
+        return this.service.findBoolean();
     }
 
-    @Get(':id')
-    @ApiOperation({ summary: 'Get criterion by ID' })
-    findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.service.findOne(id);
+    @Get('numeric')
+    @ApiOperation({ summary: 'Get all numeric criteria' })
+    findNumeric() {
+        return this.service.findNumeric();
     }
 
     @Post()
