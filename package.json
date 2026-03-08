@@ -1,0 +1,21 @@
+{
+  "name": "betterstack",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "license": "MIT",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "lint": "npm run lint -w backend && npm run lint -w frontend",
+    "format": "npm run format -w backend && npm run format -w frontend",
+    "typecheck": "npm run tsc --workspaces --if-present --workspaces-flag=--noEmit",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.3.2"
+  }
+}
