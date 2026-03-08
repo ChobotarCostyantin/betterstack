@@ -10,12 +10,7 @@ import {
     ParseIntPipe,
     UseGuards,
 } from '@nestjs/common';
-import {
-    ApiTags,
-    ApiOperation,
-    ApiBearerAuth,
-    ApiQuery,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { RolesGuard } from '@common/guards/roles.guard';
 import { WithRole } from '@common/decorators/roles.decorator';
@@ -42,26 +37,10 @@ export class CategoriesController {
         return this.service.findAll(page, perPage);
     }
 
-    @Get('criteria')
-    @ApiOperation({
-        summary: 'Get unique criteria across given category IDs',
-    })
-    @ApiQuery({
-        name: 'categoryIds',
-        required: true,
-        description: 'Comma-separated category IDs',
-        example: '1,2,3',
-    })
-    getUniqueCriteria(@Query('categoryIds') categoryIds: string) {
-        const ids = categoryIds
-            .split(',')
-            .map((id) => parseInt(id.trim(), 10))
-            .filter((id) => !isNaN(id));
-        return this.service.getUniqueCriteriaByCategoryIds(ids);
-    }
-
     @Get(':id')
-    @ApiOperation({ summary: 'Get category by ID with its criteria' })
+    @ApiOperation({
+        summary: 'Get category by ID with its factors and metrics',
+    })
     findOne(@Param('id', ParseIntPipe) id: number) {
         return this.service.findOneWithCriteria(id);
     }
@@ -88,7 +67,9 @@ export class CategoriesController {
     @Put(':id/criteria')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
-    @ApiOperation({ summary: 'Replace the full criteria list for a category' })
+    @ApiOperation({
+        summary: 'Replace the full factors and metrics list for a category',
+    })
     updateCriteria(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateCategoryCriteriaDto,

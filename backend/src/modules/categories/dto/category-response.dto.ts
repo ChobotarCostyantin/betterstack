@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-    BooleanCriterionDto,
-    NumericCriterionDto,
-} from '../../criteria/dto/criterion-response.dto';
+import { FactorDto } from '../../criteria/dto/factor-response.dto';
+import { MetricDto } from '../../criteria/dto/metric-response.dto';
 
 export class CategoryListItemDto {
     @ApiProperty()
@@ -25,17 +23,9 @@ export class CategoryDetailDto {
     @ApiProperty()
     name: string;
 
-    @ApiProperty({ type: [BooleanCriterionDto] })
-    booleanCriteria: BooleanCriterionDto[];
+    @ApiProperty({ type: [FactorDto] })
+    factors: FactorDto[];
 
-    @ApiProperty({ type: [NumericCriterionDto] })
-    numericCriteria: NumericCriterionDto[];
-}
-
-export class UniqueCriteriaDto {
-    @ApiProperty({ type: [BooleanCriterionDto] })
-    booleanCriteria: BooleanCriterionDto[];
-
-    @ApiProperty({ type: [NumericCriterionDto] })
-    numericCriteria: NumericCriterionDto[];
+    @ApiProperty({ type: [MetricDto] })
+    metrics: MetricDto[];
 }

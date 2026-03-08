@@ -15,10 +15,9 @@ import { PaginatedResponseDto } from '@common/dto/paginated-response.dto';
 import {
     SoftwareListItemDto,
     SoftwareDetailDto,
-    SoftwareBooleanCriterionDto,
-    SoftwareNumericCriterionDto,
+    SoftwareFactorDto,
+    SoftwareMetricDto,
 } from './dto/software-response.dto';
-import { CriterionType } from '../criteria/entities/criterion.entity';
 
 @Injectable()
 export class SoftwareService {
@@ -62,27 +61,23 @@ export class SoftwareService {
                 `Software with slug '${slug}' not found`,
             );
 
-        const booleanCriteria: SoftwareBooleanCriterionDto[] = (
-            sw.softwareCriteria ?? []
-        )
-            .filter((sc) => sc.type === CriterionType.BOOLEAN)
-            .map((sc) => ({
-                id: sc.criterion?.id ?? sc.id,
-                name: sc.name,
-                isPositive: sc.value !== 0,
-                value: sc.value,
-            }));
+        const factors: SoftwareFactorDto[] = (sw.softwareFactors ?? []).map(
+            (sf) => ({
+                id: sf.id,
+                name: sf.name,
+                isPositive: sf.isPositive,
+            }),
+        );
 
-        const numericCriteria: SoftwareNumericCriterionDto[] = (
-            sw.softwareCriteria ?? []
-        )
-            .filter((sc) => sc.type === CriterionType.NUMERIC)
-            .map((sc) => ({
-                id: sc.criterion?.id ?? sc.id,
-                name: sc.name,
-                higherIsBetter: sc.higherIsBetter,
-                value: sc.value,
-            }));
+        const metrics: SoftwareMetricDto[] = (sw.softwareMetrics ?? []).map(
+            (sm) => ({
+                id: sm.id,
+                metricId: sm.metric?.id ?? sm.id,
+                name: sm.metric?.name ?? '',
+                higherIsBetter: sm.metric?.higherIsBetter ?? false,
+                value: sm.value,
+            }),
+        );
 
         return {
             id: sw.id,
@@ -103,8 +98,8 @@ export class SoftwareService {
                 slug: c.slug,
                 name: c.name,
             })),
-            booleanCriteria,
-            numericCriteria,
+            factors,
+            metrics,
         };
     }
 

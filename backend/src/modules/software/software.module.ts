@@ -3,7 +3,8 @@ import { SoftwareController } from './software.controller';
 import { SoftwareService } from './software.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Software } from './entities/software.entity';
-import { SoftwareCriterion } from './entities/software-criterion.entity';
+import { SoftwareFactor } from './entities/software-factor.entity';
+import { SoftwareMetric } from './entities/software-metric.entity';
 import { SoftwareComparisonNote } from './entities/software-comparison-note.entity';
 import { SoftwareRepository } from './software.repository';
 
@@ -11,7 +12,8 @@ import { SoftwareRepository } from './software.repository';
     imports: [
         TypeOrmModule.forFeature([
             Software,
-            SoftwareCriterion,
+            SoftwareFactor,
+            SoftwareMetric,
             SoftwareComparisonNote,
         ]),
     ],

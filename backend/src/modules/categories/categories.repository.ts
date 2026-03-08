@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, In, Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
-import { Criterion } from '@modules/criteria/entities/criterion.entity';
+import { Factor } from '@modules/criteria/entities/factor.entity';
+import { Metric } from '@modules/criteria/entities/metric.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 
 @Injectable()
@@ -10,8 +11,10 @@ export class CategoriesRepository {
     constructor(
         @InjectRepository(Category)
         private readonly ormRepo: Repository<Category>,
-        @InjectRepository(Criterion)
-        private readonly criterionRepo: Repository<Criterion>,
+        @InjectRepository(Factor)
+        private readonly factorRepo: Repository<Factor>,
+        @InjectRepository(Metric)
+        private readonly metricRepo: Repository<Metric>,
     ) {}
 
     async onModuleInit() {
@@ -51,11 +54,19 @@ export class CategoriesRepository {
         return this.ormRepo.findBy({ id: In(ids) });
     }
 
-    findWithCriteriaIds(ids: number[]) {
+    findWithFactorIds(ids: number[]) {
         return this.ormRepo
             .createQueryBuilder('category')
-            .innerJoin('category.criteria', 'criterion')
-            .where('criterion.id IN (:...ids)', { ids })
+            .innerJoin('category.factors', 'factor')
+            .where('factor.id IN (:...ids)', { ids })
+            .getMany();
+    }
+
+    findWithMetricIds(ids: number[]) {
+        return this.ormRepo
+            .createQueryBuilder('category')
+            .innerJoin('category.metrics', 'metric')
+            .where('metric.id IN (:...ids)', { ids })
             .getMany();
     }
 
@@ -65,17 +76,15 @@ export class CategoriesRepository {
             name: dto.name,
         });
 
-        const criteriaIds = [
-            ...(dto.booleanCriteriaIds ?? []),
-            ...(dto.numericCriteriaIds ?? []),
-        ];
-        if (criteriaIds.length > 0) {
-            category.criteria = await this.criterionRepo.findBy({
-                id: In(criteriaIds),
-            });
-        } else {
-            category.criteria = [];
-        }
+        category.factors =
+            dto.factorIds && dto.factorIds.length > 0
+                ? await this.factorRepo.findBy({ id: In(dto.factorIds) })
+                : [];
+
+        category.metrics =
+            dto.metricIds && dto.metricIds.length > 0
+                ? await this.metricRepo.findBy({ id: In(dto.metricIds) })
+                : [];
 
         return this.ormRepo.save(category);
     }
@@ -88,29 +97,36 @@ export class CategoriesRepository {
         return this.ormRepo.delete(id);
     }
 
-    findByIdWithCriteria(id: number) {
-        return this.ormRepo.findOne({ where: { id }, relations: ['criteria'] });
-    }
-
-    async findByIdsWithCriteria(ids: number[]) {
-        return this.ormRepo.find({
-            where: { id: In(ids) },
-            relations: ['criteria'],
+    findByIdWithFactorsAndMetrics(id: number) {
+        return this.ormRepo.findOne({
+            where: { id },
+            relations: ['factors', 'metrics'],
         });
     }
 
-    async setCriteria(
+    async findByIdsWithFactorsAndMetrics(ids: number[]) {
+        return this.ormRepo.find({
+            where: { id: In(ids) },
+            relations: ['factors', 'metrics'],
+        });
+    }
+
+    async setFactorsAndMetrics(
         categoryId: number,
-        booleanCriteriaIds: number[],
-        numericCriteriaIds: number[],
+        factorIds: number[],
+        metricIds: number[],
     ) {
-        const category = await this.findByIdWithCriteria(categoryId);
+        const category = await this.findByIdWithFactorsAndMetrics(categoryId);
         if (!category) return null;
 
-        const allIds = [...booleanCriteriaIds, ...numericCriteriaIds];
-        category.criteria =
-            allIds.length > 0
-                ? await this.criterionRepo.findBy({ id: In(allIds) })
+        category.factors =
+            factorIds.length > 0
+                ? await this.factorRepo.findBy({ id: In(factorIds) })
+                : [];
+
+        category.metrics =
+            metricIds.length > 0
+                ? await this.metricRepo.findBy({ id: In(metricIds) })
                 : [];
 
         return this.ormRepo.save(category);

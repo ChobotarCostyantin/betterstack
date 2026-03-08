@@ -1,8 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-    BooleanCriterionDto,
-    NumericCriterionDto,
-} from '../../criteria/dto/criterion-response.dto';
 
 export class SoftwareListItemDto {
     @ApiProperty()
@@ -27,12 +23,30 @@ export class SoftwareListItemDto {
     categories: string[];
 }
 
-export class SoftwareBooleanCriterionDto extends BooleanCriterionDto {
+export class SoftwareFactorDto {
     @ApiProperty()
-    value: number;
+    id: number;
+
+    @ApiProperty()
+    name: string;
+
+    @ApiProperty()
+    isPositive: boolean;
 }
 
-export class SoftwareNumericCriterionDto extends NumericCriterionDto {
+export class SoftwareMetricDto {
+    @ApiProperty()
+    id: number;
+
+    @ApiProperty()
+    metricId: number;
+
+    @ApiProperty()
+    name: string;
+
+    @ApiProperty()
+    higherIsBetter: boolean;
+
     @ApiProperty()
     value: number;
 }
@@ -80,11 +94,11 @@ export class SoftwareDetailDto {
     @ApiProperty({ type: () => Array })
     categories: { id: number; slug: string; name: string }[];
 
-    @ApiProperty({ type: [SoftwareBooleanCriterionDto] })
-    booleanCriteria: SoftwareBooleanCriterionDto[];
+    @ApiProperty({ type: [SoftwareFactorDto] })
+    factors: SoftwareFactorDto[];
 
-    @ApiProperty({ type: [SoftwareNumericCriterionDto] })
-    numericCriteria: SoftwareNumericCriterionDto[];
+    @ApiProperty({ type: [SoftwareMetricDto] })
+    metrics: SoftwareMetricDto[];
 }
 
 export class SoftwareQueryDto {

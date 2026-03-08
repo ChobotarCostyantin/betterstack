@@ -9,13 +9,13 @@ export class CreateCategoryDto {
 
     @ApiPropertyOptional({
         type: [Number],
-        description: 'IDs of boolean criteria',
+        description: 'IDs of factors to associate',
     })
-    booleanCriteriaIds?: number[];
+    factorIds?: number[];
 
     @ApiPropertyOptional({
         type: [Number],
-        description: 'IDs of numeric criteria',
+        description: 'IDs of metrics to associate',
     })
-    numericCriteriaIds?: number[];
+    metricIds?: number[];
 }

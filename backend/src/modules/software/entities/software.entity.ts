@@ -9,7 +9,8 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { Category } from '@modules/categories/entities/category.entity';
-import { SoftwareCriterion } from './software-criterion.entity';
+import { SoftwareFactor } from './software-factor.entity';
+import { SoftwareMetric } from './software-metric.entity';
 import { SoftwareComparisonNote } from './software-comparison-note.entity';
 
 @Entity('software')
@@ -61,8 +62,11 @@ export class Software {
     })
     categories: Category[];
 
-    @OneToMany(() => SoftwareCriterion, (sc) => sc.software)
-    softwareCriteria: SoftwareCriterion[];
+    @OneToMany(() => SoftwareFactor, (sf) => sf.software)
+    softwareFactors: SoftwareFactor[];
+
+    @OneToMany(() => SoftwareMetric, (sm) => sm.software)
+    softwareMetrics: SoftwareMetric[];
 
     @OneToMany(() => SoftwareComparisonNote, (note) => note.softwareA)
     comparisonsAsA: SoftwareComparisonNote[];

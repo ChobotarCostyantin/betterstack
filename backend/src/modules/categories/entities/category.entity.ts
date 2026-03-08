@@ -5,7 +5,8 @@ import {
     ManyToMany,
     JoinTable,
 } from 'typeorm';
-import { Criterion } from '@modules/criteria/entities/criterion.entity';
+import { Factor } from '@modules/criteria/entities/factor.entity';
+import { Metric } from '@modules/criteria/entities/metric.entity';
 import type { Software } from '@modules/software/entities/software.entity';
 
 @Entity('categories')
@@ -19,13 +20,21 @@ export class Category {
     @Column({ length: 50 })
     name: string;
 
-    @ManyToMany(() => Criterion, (criterion) => criterion.categories)
+    @ManyToMany(() => Factor, (factor) => factor.categories)
     @JoinTable({
-        name: 'category_criteria',
+        name: 'category_factors',
         joinColumn: { name: 'category_id', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'criterion_id', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'factor_id', referencedColumnName: 'id' },
     })
-    criteria: Criterion[];
+    factors: Factor[];
+
+    @ManyToMany(() => Metric, (metric) => metric.categories)
+    @JoinTable({
+        name: 'category_metrics',
+        joinColumn: { name: 'category_id', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'metric_id', referencedColumnName: 'id' },
+    })
+    metrics: Metric[];
 
     @ManyToMany('Software', 'categories')
     softwares: Software[];

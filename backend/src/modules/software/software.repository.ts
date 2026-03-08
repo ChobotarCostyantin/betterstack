@@ -87,8 +87,10 @@ export class SoftwareRepository implements OnModuleInit {
             where: { slug },
             relations: [
                 'categories',
-                'softwareCriteria',
-                'softwareCriteria.criterion',
+                'softwareFactors',
+                'softwareFactors.factor',
+                'softwareMetrics',
+                'softwareMetrics.metric',
             ],
         });
     }

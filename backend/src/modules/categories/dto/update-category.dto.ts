@@ -9,11 +9,11 @@ export class RenameCategoryDto {
 }
 
 export class UpdateCategoryCriteriaDto {
-    @ApiProperty({ type: [Number], description: 'IDs of boolean criteria' })
-    booleanCriteriaIds: number[];
+    @ApiProperty({ type: [Number], description: 'IDs of factors' })
+    factorIds: number[];
 
-    @ApiProperty({ type: [Number], description: 'IDs of numeric criteria' })
-    numericCriteriaIds: number[];
+    @ApiProperty({ type: [Number], description: 'IDs of metrics' })
+    metricIds: number[];
 }
 
 /** @deprecated kept for compatibility during transition */
