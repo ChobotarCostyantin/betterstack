@@ -23,7 +23,7 @@ export class Software {
     @Column({ type: 'varchar', unique: true, length: 50 })
     name: string;
 
-    @Column({ type: 'varchar', unique: true, length: 50 })
+    @Column({ type: 'varchar', length: 50 })
     developer: string;
 
     @Column({ type: 'varchar', length: 255 })
