@@ -6,7 +6,7 @@ import {
     JoinColumn,
 } from 'typeorm';
 import { Software } from './software.entity';
-import { Metric } from '@modules/criteria/entities/metric.entity';
+import type { Metric } from '@modules/criteria/entities/metric.entity';
 
 @Entity('software_metrics')
 export class SoftwareMetric {
@@ -22,7 +22,7 @@ export class SoftwareMetric {
     @JoinColumn({ name: 'software_id' })
     software: Software;
 
-    @ManyToOne(() => Metric, (metric) => metric.softwareMetrics, {
+    @ManyToOne('Metric', {
         onDelete: 'CASCADE',
         eager: false,
     })

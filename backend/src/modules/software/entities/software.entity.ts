@@ -8,7 +8,7 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Category } from '@modules/categories/entities/category.entity';
+import type { Category } from '@modules/categories/entities/category.entity';
 import { SoftwareFactor } from './software-factor.entity';
 import { SoftwareMetric } from './software-metric.entity';
 import { SoftwareComparisonNote } from './software-comparison-note.entity';
@@ -54,7 +54,7 @@ export class Software {
     @UpdateDateColumn({ type: 'timestamptz' })
     updatedAt: Date;
 
-    @ManyToMany(() => Category, (category) => category.softwares)
+    @ManyToMany('Category')
     @JoinTable({
         name: 'software_categories',
         joinColumn: { name: 'software_id', referencedColumnName: 'id' },

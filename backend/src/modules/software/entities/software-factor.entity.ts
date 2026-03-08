@@ -6,7 +6,7 @@ import {
     JoinColumn,
 } from 'typeorm';
 import { Software } from './software.entity';
-import { Factor } from '@modules/criteria/entities/factor.entity';
+import type { Factor } from '@modules/criteria/entities/factor.entity';
 
 @Entity('software_factors')
 export class SoftwareFactor {
@@ -25,7 +25,7 @@ export class SoftwareFactor {
     @JoinColumn({ name: 'software_id' })
     software: Software;
 
-    @ManyToOne(() => Factor, (factor) => factor.softwareFactors, {
+    @ManyToOne('Factor', {
         onDelete: 'CASCADE',
         eager: false,
     })

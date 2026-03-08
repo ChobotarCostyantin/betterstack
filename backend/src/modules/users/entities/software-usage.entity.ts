@@ -6,6 +6,7 @@ import {
     CreateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
+import type { Software } from '@modules/software/entities/software.entity';
 
 @Entity('software_usages')
 export class SoftwareUsage {
@@ -23,4 +24,8 @@ export class SoftwareUsage {
     })
     @JoinColumn({ name: 'user_id' })
     user: User;
+
+    @ManyToOne('Software', { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'software_id' })
+    software: Software;
 }

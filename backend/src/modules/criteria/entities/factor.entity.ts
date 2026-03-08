@@ -1,12 +1,5 @@
-import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    ManyToMany,
-    OneToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
 import type { Category } from '@modules/categories/entities/category.entity';
-import type { SoftwareFactor } from '@modules/software/entities/software-factor.entity';
 
 @Entity('factors')
 export class Factor {
@@ -21,7 +14,4 @@ export class Factor {
 
     @ManyToMany('Category', 'factors')
     categories: Category[];
-
-    @OneToMany('SoftwareFactor', 'factor')
-    softwareFactors: SoftwareFactor[];
 }

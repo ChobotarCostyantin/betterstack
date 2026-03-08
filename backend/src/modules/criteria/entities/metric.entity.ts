@@ -1,12 +1,5 @@
-import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    ManyToMany,
-    OneToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
 import type { Category } from '@modules/categories/entities/category.entity';
-import type { SoftwareMetric } from '@modules/software/entities/software-metric.entity';
 
 @Entity('metrics')
 export class Metric {
@@ -21,7 +14,4 @@ export class Metric {
 
     @ManyToMany('Category', 'metrics')
     categories: Category[];
-
-    @OneToMany('SoftwareMetric', 'metric')
-    softwareMetrics: SoftwareMetric[];
 }

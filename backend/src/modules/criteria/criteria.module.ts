@@ -18,6 +18,5 @@ import { MetricsController } from './controllers/metrics.controller';
         FactorsRepository,
         MetricsRepository,
     ],
-    exports: [FactorsRepository, MetricsRepository],
 })
 export class CriteriaModule {}
