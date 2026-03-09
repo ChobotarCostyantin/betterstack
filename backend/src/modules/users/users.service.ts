@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import type { ConfigType } from '@nestjs/config';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import * as bcrypt from 'bcrypt';
 
 import { Role } from '@common/enums/role.enum';
@@ -29,6 +30,8 @@ import type { PaginationQueryDto } from '@common/dto/pagination-query.dto';
 @Injectable()
 export class UsersService implements OnModuleInit {
     constructor(
+        @InjectPinoLogger(UsersService.name)
+        private readonly logger: PinoLogger,
         @InjectRepository(User)
         private readonly userRepo: Repository<User>,
         @InjectRepository(SoftwareUsage)
@@ -42,7 +45,7 @@ export class UsersService implements OnModuleInit {
     async onModuleInit() {
         const count = await this.userRepo.count();
         if (count === 0) {
-            console.log('[Users] Database is empty. Seeding default admin...');
+            this.logger.info('Database is empty. Seeding default admin...');
             const passwordHash = await bcrypt.hash(this.admin.password, 10);
             await this.userRepo.save({
                 email: this.admin.email,

@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, In, Repository } from 'typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { Category } from './entities/category.entity';
 import { Factor } from '@modules/criteria/entities/factor.entity';
 import { Metric } from '@modules/criteria/entities/metric.entity';
@@ -22,6 +23,8 @@ import {
 @Injectable()
 export class CategoriesService implements OnModuleInit {
     constructor(
+        @InjectPinoLogger(CategoriesService.name)
+        private readonly logger: PinoLogger,
         @InjectRepository(Category)
         private readonly categoryRepo: Repository<Category>,
         @InjectRepository(Factor)
@@ -34,8 +37,8 @@ export class CategoriesService implements OnModuleInit {
     async onModuleInit() {
         const count = await this.categoryRepo.count();
         if (count === 0) {
-            console.log(
-                '[Categories] Database is empty. Seeding default categories...',
+            this.logger.info(
+                'Database is empty. Seeding default categories...',
             );
             await this.categoryRepo.save([
                 { slug: 'ides', name: 'IDEs & Editors' },
@@ -175,8 +178,9 @@ export class CategoriesService implements OnModuleInit {
 
     @OnEvent(FactorDeletedEvent.eventName)
     async handleFactorDeletedEvent(payload: FactorDeletedEvent) {
-        console.log(
-            `[Event] Factor ${payload.factorId} deleted. Removing it from all categories...`,
+        this.logger.info(
+            { factorId: payload.factorId },
+            'Factor deleted. Removing it from all categories...',
         );
         const categoriesWithFactor = await this.categoryRepo
             .createQueryBuilder('category')
@@ -201,8 +205,9 @@ export class CategoriesService implements OnModuleInit {
 
     @OnEvent(MetricDeletedEvent.eventName)
     async handleMetricDeletedEvent(payload: MetricDeletedEvent) {
-        console.log(
-            `[Event] Metric ${payload.metricId} deleted. Removing it from all categories...`,
+        this.logger.info(
+            { metricId: payload.metricId },
+            'Metric deleted. Removing it from all categories...',
         );
         const categoriesWithMetric = await this.categoryRepo
             .createQueryBuilder('category')

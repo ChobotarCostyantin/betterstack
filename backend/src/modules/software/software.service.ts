@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { OnEvent } from '@nestjs/event-emitter';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { Software } from './entities/software.entity';
 import { CreateSoftwareDto } from './dto/create-software.dto';
@@ -22,6 +23,8 @@ import {
 @Injectable()
 export class SoftwareService implements OnModuleInit {
     constructor(
+        @InjectPinoLogger(SoftwareService.name)
+        private readonly logger: PinoLogger,
         @InjectRepository(Software)
         private readonly repo: Repository<Software>,
     ) {}
@@ -29,7 +32,7 @@ export class SoftwareService implements OnModuleInit {
     async onModuleInit() {
         const count = await this.repo.count();
         if (count === 0) {
-            console.log('[Software] Database is empty. Seeding...');
+            this.logger.info('Database is empty. Seeding...');
             await this.repo.save([
                 {
                     slug: 'jetbrains-rider',
@@ -235,8 +238,9 @@ export class SoftwareService implements OnModuleInit {
 
     @OnEvent(CategoryDeletedEvent.eventName)
     async handleCategoryDeleted(payload: CategoryDeletedEvent) {
-        console.log(
-            `[Event] Category ${payload.categoryId} deleted. Removing it from all software...`,
+        this.logger.info(
+            { categoryId: payload.categoryId },
+            'Category deleted. Removing it from all software...',
         );
 
         const softwareList = await this.repo
@@ -264,16 +268,18 @@ export class SoftwareService implements OnModuleInit {
 
     @OnEvent(SoftwareMarkedUsedEvent.eventName)
     async handleSoftwareMarkedUsed(payload: SoftwareMarkedUsedEvent) {
-        console.log(
-            `[Event] User ${payload.userId} marked software ${payload.softwareId} as used. Incrementing usageCount...`,
+        this.logger.info(
+            { userId: payload.userId, softwareId: payload.softwareId },
+            'Software marked as used. Incrementing usageCount...',
         );
         await this.repo.increment({ id: payload.softwareId }, 'usageCount', 1);
     }
 
     @OnEvent(SoftwareMarkedUnusedEvent.eventName)
     async handleSoftwareMarkedUnused(payload: SoftwareMarkedUnusedEvent) {
-        console.log(
-            `[Event] User ${payload.userId} unmarked software ${payload.softwareId}. Decrementing usageCount...`,
+        this.logger.info(
+            { userId: payload.userId, softwareId: payload.softwareId },
+            'Software unmarked as used. Decrementing usageCount...',
         );
         await this.repo
             .createQueryBuilder()

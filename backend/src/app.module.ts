@@ -7,6 +7,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from './modules/users/users.module';
 import { ConfigModule, ConfigType } from '@nestjs/config';
+import { LoggerModule } from 'nestjs-pino';
 
 import { appConfig } from '@config/app.config';
 import { adminConfig } from '@config/admin.config';
@@ -16,6 +17,19 @@ import { envValidationSchema } from '@config/env.validation';
 
 @Module({
     imports: [
+        LoggerModule.forRoot({
+            pinoHttp: {
+                transport:
+                    process.env.NODE_ENV !== 'production'
+                        ? {
+                              target: 'pino-pretty',
+                              options: { singleLine: true },
+                          }
+                        : undefined,
+                autoLogging: true,
+                redact: ['req.headers.authorization'],
+            },
+        }),
         ConfigModule.forRoot({
             isGlobal: true,
             load: [appConfig, adminConfig, jwtConfig, postgresConfig],
