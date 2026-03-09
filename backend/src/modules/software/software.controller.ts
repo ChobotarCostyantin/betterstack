@@ -14,8 +14,11 @@ import {
     ApiTags,
     ApiOperation,
     ApiBearerAuth,
+    ApiOkResponse,
     ApiQuery,
 } from '@nestjs/swagger';
+import { PaginatedOf } from '@common/dto/paginated-response.dto';
+import { SoftwareListItemDto } from './dto/software-response.dto';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { RolesGuard } from '@common/guards/roles.guard';
 import { WithRole } from '@common/decorators/roles.decorator';
@@ -32,6 +35,7 @@ export class SoftwareController {
 
     @Get()
     @ApiOperation({ summary: 'Get all software (paginated, searchable)' })
+    @ApiOkResponse({ type: PaginatedOf(SoftwareListItemDto) })
     @ApiQuery({
         name: 'q',
         required: false,
@@ -60,6 +64,7 @@ export class SoftwareController {
     @ApiOperation({
         summary: 'Get alternative software sharing at least 1 category',
     })
+    @ApiOkResponse({ type: PaginatedOf(SoftwareListItemDto) })
     @ApiQuery({ name: 'page', required: false, example: 1 })
     @ApiQuery({ name: 'perPage', required: false, example: 10 })
     findAlternatives(

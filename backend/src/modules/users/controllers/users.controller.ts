@@ -21,6 +21,7 @@ import { WithRole } from '@common/decorators/roles.decorator';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { RolesGuard } from '@common/guards/roles.guard';
 import { PaginationQueryDto } from '@common/dto/pagination-query.dto';
+import { PaginatedOf } from '@common/dto/paginated-response.dto';
 import { UsersService } from '../users.service';
 import { UserDto } from '../dto/user.dto';
 import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
@@ -35,6 +36,7 @@ export class UsersController {
     @Get()
     @WithRole(Role.ADMIN)
     @ApiOperation({ summary: 'Get paginated list of users (admin only)' })
+    @ApiOkResponse({ type: PaginatedOf(UserDto) })
     findAll(@Query() query: PaginationQueryDto) {
         return this.usersService.findAll(query);
     }

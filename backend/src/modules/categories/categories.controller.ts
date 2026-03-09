@@ -10,7 +10,14 @@ import {
     ParseIntPipe,
     UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import {
+    ApiTags,
+    ApiOperation,
+    ApiOkResponse,
+    ApiBearerAuth,
+} from '@nestjs/swagger';
+import { PaginatedOf } from '@common/dto/paginated-response.dto';
+import { CategoryListItemDto } from './dto/category-response.dto';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { RolesGuard } from '@common/guards/roles.guard';
 import { WithRole } from '@common/decorators/roles.decorator';
@@ -30,6 +37,7 @@ export class CategoriesController {
 
     @Get()
     @ApiOperation({ summary: 'Get all categories (paginated)' })
+    @ApiOkResponse({ type: PaginatedOf(CategoryListItemDto) })
     findAll(
         @Query('page', new ParseIntPipe({ optional: true })) page = 1,
         @Query('perPage', new ParseIntPipe({ optional: true })) perPage = 10,
