@@ -17,7 +17,7 @@ services:
       - ./frontend/.env.development
     environment:
       NODE_ENV: development
-      BACKEND_BASE_URL: "http://backend:3010"
+      BACKEND_BASE_URL: "http://backend:3010/api/v1"
     depends_on:
       - backend
 
