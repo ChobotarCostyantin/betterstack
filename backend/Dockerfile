@@ -16,7 +16,7 @@ COPY backend/package.json ./backend/package.json
 # Production dependencies
 # ------------------------------
 FROM base AS prod-deps
-RUN npm ci --workspace=backend --omit=dev --ignore-scripts
+RUN npm ci --workspace=backend --omit=dev
 
 # ------------------------------
 # Development dependencies

@@ -176,7 +176,7 @@ async function seed() {
                 fullDescription:
                     '## Overview\nRider is an excellent choice for .NET developers.',
                 websiteUrl: 'https://jetbrains.com/rider',
-                screenshotUrls: '{}',
+                screenshotUrls: [],
             },
             {
                 slug: 'visual-studio-code',
@@ -186,7 +186,7 @@ async function seed() {
                 logoUrl:
                     'https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg',
                 websiteUrl: 'https://code.visualstudio.com/',
-                screenshotUrls: '{}',
+                screenshotUrls: [],
             },
         ];
 

@@ -365,14 +365,6 @@ export class SoftwareService {
         );
     }
 
-    /** @deprecated use findOneBySlug */
-    async findOne(id: number) {
-        const sw = await this.repo.findOneBy({ id });
-        if (!sw)
-            throw new NotFoundException(`Software with ID ${id} not found`);
-        return sw;
-    }
-
     async create(dto: CreateSoftwareDto): Promise<Software> {
         return this.repo.save(dto as DeepPartial<Software>);
     }
@@ -417,45 +409,43 @@ export class SoftwareService {
             );
         }
 
-        await this.softwareFactorRepo.delete({ softwareId: id });
+        // Fetch Factor variants before entering the transaction so that the
+        // insert can include the correct factorName in a single statement —
+        // avoiding a window where rows are visible with an empty name.
+        const factorEntities =
+            dto.factors.length > 0
+                ? await this.factorsService.findByIds(
+                      dto.factors.map((f) => f.factorId),
+                  )
+                : [];
+        const factorMap = new Map(factorEntities.map((f) => [f.id, f]));
 
-        if (dto.factors.length > 0) {
-            await this.softwareFactorRepo
-                .createQueryBuilder()
-                .insert()
-                .into(SoftwareFactor)
-                .values(
-                    dto.factors.map((f) => ({
-                        softwareId: id,
-                        factorId: f.factorId,
-                        isPositive: f.isPositive,
-                        // factorName is a denormalized cache — fetch from Factor entities
-                        factorName: '', // placeholder, resolved below
-                    })),
-                )
-                .execute();
+        await this.softwareFactorRepo.manager.transaction(async (em) => {
+            await em.delete(SoftwareFactor, { softwareId: id });
 
-            // Resolve cached factorName from actual Factor entities
-            const factors = await this.factorsService.findByIds(
-                dto.factors.map((f) => f.factorId),
-            );
-            const factorMap = new Map(factors.map((f) => [f.id, f]));
-
-            await Promise.all(
-                dto.factors.map((f) => {
-                    const factor = factorMap.get(f.factorId);
-                    if (!factor) return Promise.resolve();
-                    return this.softwareFactorRepo.update(
-                        { softwareId: id, factorId: f.factorId },
-                        {
-                            factorName: f.isPositive
-                                ? factor.positiveVariant
-                                : factor.negativeVariant,
-                        },
-                    );
-                }),
-            );
-        }
+            if (dto.factors.length > 0) {
+                await em
+                    .createQueryBuilder()
+                    .insert()
+                    .into(SoftwareFactor)
+                    .values(
+                        dto.factors.map((f) => {
+                            const factor = factorMap.get(f.factorId);
+                            return {
+                                softwareId: id,
+                                factorId: f.factorId,
+                                isPositive: f.isPositive,
+                                factorName: factor
+                                    ? f.isPositive
+                                        ? factor.positiveVariant
+                                        : factor.negativeVariant
+                                    : '',
+                            };
+                        }),
+                    )
+                    .execute();
+            }
+        });
 
         return { success: true };
     }
@@ -522,6 +512,7 @@ export class SoftwareService {
         return { success: true };
     }
 
+    @OnEvent(CategoryDeletedEvent.eventName)
     async handleCategoryDeleted(payload: CategoryDeletedEvent) {
         this.logger.info(
             { categoryId: payload.categoryId },
@@ -569,7 +560,7 @@ export class SoftwareService {
         await this.repo
             .createQueryBuilder()
             .update(Software)
-            .set({ usageCount: () => 'GREATEST("usage_count" - 1, 0)' })
+            .set({ usageCount: () => 'GREATEST("usageCount" - 1, 0)' })
             .where('id = :id', { id: payload.softwareId })
             .execute();
     }
