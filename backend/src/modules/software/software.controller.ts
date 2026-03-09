@@ -25,7 +25,8 @@ import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { RolesGuard } from '@common/guards/roles.guard';
 import { WithRole } from '@common/decorators/roles.decorator';
 import { Role } from '@common/enums/role.enum';
-import { SoftwareService } from './software.service';
+import { SoftwareQueryService } from './services/software-query.service';
+import { SoftwareManagementService } from './services/software-management.service';
 import { CreateSoftwareDto } from './dto/create-software.dto';
 import {
     UpdateSoftwareDto,
@@ -36,7 +37,10 @@ import {
 @ApiTags('Software')
 @Controller('software')
 export class SoftwareController {
-    constructor(private readonly service: SoftwareService) {}
+    constructor(
+        private readonly queryService: SoftwareQueryService,
+        private readonly managementService: SoftwareManagementService,
+    ) {}
 
     @Get()
     @ApiOperation({ summary: 'Get all software (paginated, searchable)' })
@@ -60,7 +64,7 @@ export class SoftwareController {
         @Query('perPage', new ParseIntPipe({ optional: true })) perPage = 10,
         @Query('categoryIds', new ParseIdsPipe()) categoryIds?: number[],
     ) {
-        return this.service.findAll(q, page, perPage, categoryIds);
+        return this.queryService.findAll(q, page, perPage, categoryIds);
     }
 
     @Get('most-used')
@@ -69,7 +73,7 @@ export class SoftwareController {
     findMostUsed(
         @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
     ) {
-        return this.service.findMostUsed(limit);
+        return this.queryService.findMostUsed(limit);
     }
 
     @Get('compare')
@@ -83,7 +87,7 @@ export class SoftwareController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.USER)
     compare(@Query('a') slugA: string, @Query('b') slugB: string) {
-        return this.service.compareBySlug(slugA, slugB);
+        return this.queryService.compareBySlug(slugA, slugB);
     }
 
     @Get(':slug/alternatives')
@@ -98,13 +102,13 @@ export class SoftwareController {
         @Query('page', new ParseIntPipe({ optional: true })) page = 1,
         @Query('perPage', new ParseIntPipe({ optional: true })) perPage = 10,
     ) {
-        return this.service.findAlternatives(slug, page, perPage);
+        return this.queryService.findAlternatives(slug, page, perPage);
     }
 
     @Get(':slug')
     @ApiOperation({ summary: 'Get software by slug' })
     findOneBySlug(@Param('slug') slug: string) {
-        return this.service.findOneBySlug(slug);
+        return this.queryService.findOneBySlug(slug);
     }
 
     @Post()
@@ -113,7 +117,7 @@ export class SoftwareController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     create(@Body() dto: CreateSoftwareDto) {
-        return this.service.create(dto);
+        return this.managementService.create(dto);
     }
 
     @Put(':id')
@@ -125,7 +129,7 @@ export class SoftwareController {
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateSoftwareDto,
     ) {
-        return this.service.update(id, dto);
+        return this.managementService.update(id, dto);
     }
 
     @Put(':id/factors')
@@ -140,7 +144,7 @@ export class SoftwareController {
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateSoftwareFactorsDto,
     ) {
-        return this.service.updateFactors(id, dto);
+        return this.managementService.updateFactors(id, dto);
     }
 
     @Put(':id/metrics')
@@ -154,7 +158,7 @@ export class SoftwareController {
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateSoftwareMetricsDto,
     ) {
-        return this.service.updateMetrics(id, dto);
+        return this.managementService.updateMetrics(id, dto);
     }
 
     @Delete(':id')
@@ -163,6 +167,6 @@ export class SoftwareController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     remove(@Param('id', ParseIntPipe) id: number) {
-        return this.service.remove(id);
+        return this.managementService.remove(id);
     }
 }
