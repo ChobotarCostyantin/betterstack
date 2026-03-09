@@ -44,5 +44,10 @@ export function PaginatedOf<T>(ItemDto: Type<T>) {
         @ApiProperty({ type: [ItemDto] })
         declare data: T[];
     }
+    // Give the class a unique name so the Swagger plugin registers distinct
+    // schemas (e.g. "PaginatedUserDto") instead of all colliding on "PaginatedDtoClass".
+    Object.defineProperty(PaginatedDtoClass, 'name', {
+        value: `Paginated${ItemDto.name}`,
+    });
     return PaginatedDtoClass;
 }
