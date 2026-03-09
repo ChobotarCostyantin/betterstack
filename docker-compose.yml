@@ -8,11 +8,13 @@ services:
       dockerfile: ./frontend/Dockerfile
       target: development
     volumes:
-      - ./frontend:/usr/src/app/frontend    # for hot-reload
-      - /usr/src/app/frontend/node_modules  # but prevent overwriting container's node_modules
-      - /usr/src/app/frontend/.next         # as well as .next
+      - ./frontend:/usr/src/app/frontend
+      - /usr/src/app/frontend/node_modules
+      - /usr/src/app/frontend/.next
     ports:
       - "3000:3000"
+    env_file:
+      - ./frontend/.env.local
     environment:
       NODE_ENV: development
       BACKEND_BASE_URL: "http://backend:3010"
@@ -26,8 +28,8 @@ services:
       dockerfile: ./backend/Dockerfile
       target: development
     volumes:
-      - ./backend:/usr/src/app/backend      # for hot-reload
-      - /usr/src/app/backend/node_modules   # but prevent overwriting container's node_modules
+      - ./backend:/usr/src/app/backend
+      - /usr/src/app/backend/node_modules
     ports:
       - "3010:3010"
     environment:
