@@ -42,6 +42,11 @@ RUN npm run build --workspace=backend
 FROM node:${NODE_VERSION} AS production
 WORKDIR /usr/src/app
 
+# Required for native add-ons (e.g. bcrypt) on Alpine
+RUN apk add --no-cache libc6-compat
+
+ENV NODE_ENV=production
+
 COPY package*.json ./
 COPY backend/package.json ./backend/package.json
 
