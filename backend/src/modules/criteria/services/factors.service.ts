@@ -6,6 +6,7 @@ import { Factor } from '../entities/factor.entity';
 import { CreateFactorDto } from '../dto/create-factor.dto';
 import { UpdateFactorDto } from '../dto/update-factor.dto';
 import { FactorDto } from '../dto/factor-response.dto';
+import { PaginatedResponseDto } from '@common/dto/paginated-response.dto';
 import {
     FactorDeletedEvent,
     FactorUpdatedEvent,
@@ -19,17 +20,30 @@ export class FactorsService {
         private readonly eventEmitter: EventEmitter2,
     ) {}
 
-    async findAll(categoryIds?: number[]): Promise<FactorDto[]> {
-        const factors =
-            categoryIds && categoryIds.length > 0
-                ? await this.repo
-                      .createQueryBuilder('factor')
-                      .innerJoin('factor.categories', 'category')
-                      .where('category.id IN (:...categoryIds)', {
-                          categoryIds,
-                      })
-                      .getMany()
-                : await this.repo.find();
+    async findAllPaginated(
+        page: number,
+        perPage: number,
+    ): Promise<PaginatedResponseDto<FactorDto>> {
+        const [factors, total] = await this.repo.findAndCount({
+            skip: (page - 1) * perPage,
+            take: perPage,
+            order: { id: 'ASC' },
+        });
+        const data = factors.map((f) => ({
+            id: f.id,
+            positiveVariant: f.positiveVariant,
+            negativeVariant: f.negativeVariant,
+        }));
+        return new PaginatedResponseDto(data, total, page, perPage);
+    }
+
+    async findByCategories(categoryIds: number[]): Promise<FactorDto[]> {
+        const factors = await this.repo
+            .createQueryBuilder('factor')
+            .innerJoin('factor.categories', 'category')
+            .where('category.id IN (:...categoryIds)', { categoryIds })
+            .orderBy('factor.id', 'ASC')
+            .getMany();
         return factors.map((f) => ({
             id: f.id,
             positiveVariant: f.positiveVariant,
