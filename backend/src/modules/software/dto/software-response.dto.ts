@@ -29,9 +29,14 @@ export class SoftwareFactorDto {
 
     @ApiProperty()
     factorName: string;
+}
 
-    @ApiProperty()
-    isPositive: boolean;
+export class SoftwareFactorsDto {
+    @ApiProperty({ type: [SoftwareFactorDto] })
+    positive: SoftwareFactorDto[];
+
+    @ApiProperty({ type: [SoftwareFactorDto] })
+    negative: SoftwareFactorDto[];
 }
 
 export class SoftwareMetricDto {
@@ -91,8 +96,8 @@ export class SoftwareDetailDto {
     @ApiProperty({ type: () => Array })
     categories: { id: number; slug: string; name: string }[];
 
-    @ApiProperty({ type: [SoftwareFactorDto] })
-    factors: SoftwareFactorDto[];
+    @ApiProperty({ type: () => SoftwareFactorsDto })
+    factors: SoftwareFactorsDto;
 
     @ApiProperty({ type: [SoftwareMetricDto] })
     metrics: SoftwareMetricDto[];

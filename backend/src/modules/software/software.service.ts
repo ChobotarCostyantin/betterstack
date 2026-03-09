@@ -21,6 +21,7 @@ import {
     SoftwareListItemDto,
     SoftwareDetailDto,
     SoftwareFactorDto,
+    SoftwareFactorsDto,
     SoftwareMetricDto,
 } from './dto/software-response.dto';
 
@@ -102,12 +103,23 @@ export class SoftwareService {
                 `Software with slug '${slug}' not found`,
             );
 
-        const factors: SoftwareFactorDto[] = (sw.softwareFactors ?? []).map(
-            (sf) => ({
-                factorId: sf.factorId,
-                factorName: sf.factorName,
-                isPositive: sf.isPositive,
-            }),
+        const toFactorDto = (sf: SoftwareFactor): SoftwareFactorDto => ({
+            factorId: sf.factorId,
+            factorName: sf.factorName,
+        });
+
+        const factors: SoftwareFactorsDto = (
+            sw.softwareFactors ?? []
+        ).reduce<SoftwareFactorsDto>(
+            (acc, sf) => {
+                if (sf.isPositive) {
+                    acc.positive.push(toFactorDto(sf));
+                } else {
+                    acc.negative.push(toFactorDto(sf));
+                }
+                return acc;
+            },
+            { positive: [], negative: [] },
         );
 
         const metrics: SoftwareMetricDto[] = (sw.softwareMetrics ?? []).map(
