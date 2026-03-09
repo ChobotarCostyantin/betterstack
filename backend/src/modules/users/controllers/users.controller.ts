@@ -40,7 +40,7 @@ export class UsersController {
     }
 
     @Post('software/:softwareId/use')
-    @Authenticated(Role.USER)
+    @Authenticated()
     @ApiOperation({
         summary: 'Mark a software as used by the authenticated user',
     })
@@ -52,7 +52,7 @@ export class UsersController {
     }
 
     @Delete('software/:softwareId/use')
-    @Authenticated(Role.USER)
+    @Authenticated()
     @ApiOperation({
         summary: "Remove a software from the authenticated user's used list",
     })

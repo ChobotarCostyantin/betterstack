@@ -5,9 +5,10 @@ import { RolesGuard } from '@common/guards/roles.guard';
 import { Role } from '@common/enums/role.enum';
 import { WithRole } from './roles.decorator';
 
-export const Authenticated = (role: Role) =>
-    applyDecorators(
+export function Authenticated(role: Role = Role.USER) {
+    return applyDecorators(
         ApiCookieAuth(),
         UseGuards(JwtAuthGuard, RolesGuard),
         WithRole(role),
     );
+}

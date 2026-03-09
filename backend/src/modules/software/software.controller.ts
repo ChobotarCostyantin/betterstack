@@ -73,7 +73,7 @@ export class SoftwareController {
     }
 
     @Get('compare')
-    @Authenticated(Role.USER)
+    @Authenticated()
     @ApiOperation({
         summary: 'Compare two software items by slug (USER+ role required)',
     })

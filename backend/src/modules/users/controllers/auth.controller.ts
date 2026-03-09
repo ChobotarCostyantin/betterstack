@@ -7,7 +7,6 @@ import {
     Req,
     HttpCode,
     HttpStatus,
-    UseGuards,
     Inject,
 } from '@nestjs/common';
 import type { Response } from 'express';
@@ -16,13 +15,12 @@ import {
     ApiOperation,
     ApiCreatedResponse,
     ApiOkResponse,
-    ApiCookieAuth,
 } from '@nestjs/swagger';
 import { UsersService } from '../users.service';
 import { RegisterDto, LoginDto, AuthResponseDto } from '../dto/auth.dto';
 import { UserDto } from '../dto/user.dto';
-import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
+import { Authenticated } from '@common/decorators/authenticated.decorator';
 import { authConfig, type AuthConfig } from '@config/auth.config';
 
 @ApiTags('Auth')
@@ -67,8 +65,7 @@ export class AuthController {
     }
 
     @Get('me')
-    @UseGuards(JwtAuthGuard)
-    @ApiCookieAuth()
+    @Authenticated()
     @ApiOperation({ summary: 'Return the currently authenticated user' })
     @ApiOkResponse({ type: UserDto })
     me(@Req() req: AuthenticatedRequest): UserDto {
