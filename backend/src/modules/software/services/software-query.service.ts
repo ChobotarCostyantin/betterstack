@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { Software } from '../entities/software.entity';
 import { SoftwareFactor } from '../entities/software-factor.entity';
@@ -27,8 +26,6 @@ import {
 @Injectable()
 export class SoftwareQueryService {
     constructor(
-        @InjectPinoLogger(SoftwareQueryService.name)
-        private readonly logger: PinoLogger,
         @InjectRepository(Software)
         private readonly repo: Repository<Software>,
         @InjectRepository(SoftwareComparisonNote)
