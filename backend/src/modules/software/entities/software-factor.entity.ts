@@ -1,20 +1,17 @@
-import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    ManyToOne,
-    JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Software } from './software.entity';
 import type { Factor } from '@modules/criteria/entities/factor.entity';
 
 @Entity('software_factors')
 export class SoftwareFactor {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryColumn({ name: 'software_id' })
+    softwareId: number;
+
+    @PrimaryColumn({ name: 'factor_id' })
+    factorId: number;
 
     @Column({ length: 50 })
-    name: string;
+    factorName: string;
 
     @Column()
     isPositive: boolean;

@@ -25,10 +25,10 @@ export class SoftwareListItemDto {
 
 export class SoftwareFactorDto {
     @ApiProperty()
-    id: number;
+    factorId: number;
 
     @ApiProperty()
-    name: string;
+    factorName: string;
 
     @ApiProperty()
     isPositive: boolean;
@@ -36,13 +36,10 @@ export class SoftwareFactorDto {
 
 export class SoftwareMetricDto {
     @ApiProperty()
-    id: number;
-
-    @ApiProperty()
     metricId: number;
 
     @ApiProperty()
-    name: string;
+    metricName: string;
 
     @ApiProperty()
     higherIsBetter: boolean;

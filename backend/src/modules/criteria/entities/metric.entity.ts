@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
-import type { Category } from '@modules/categories/entities/category.entity';
+import { Category } from '@modules/categories/entities/category.entity';
 
 @Entity('metrics')
 export class Metric {
@@ -12,6 +12,6 @@ export class Metric {
     @Column({ default: true })
     higherIsBetter: boolean;
 
-    @ManyToMany('Category', 'metrics')
+    @ManyToMany(() => Category, (category) => category.metrics)
     categories: Category[];
 }

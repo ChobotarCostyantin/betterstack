@@ -5,8 +5,8 @@ import {
     ManyToMany,
     JoinTable,
 } from 'typeorm';
-import type { Factor } from '@modules/criteria/entities/factor.entity';
-import type { Metric } from '@modules/criteria/entities/metric.entity';
+import { Factor } from '@modules/criteria/entities/factor.entity';
+import { Metric } from '@modules/criteria/entities/metric.entity';
 import type { Software } from '@modules/software/entities/software.entity';
 
 @Entity('categories')
@@ -20,7 +20,7 @@ export class Category {
     @Column({ length: 50 })
     name: string;
 
-    @ManyToMany('Factor')
+    @ManyToMany(() => Factor, (factor) => factor.categories)
     @JoinTable({
         name: 'category_factors',
         joinColumn: { name: 'category_id', referencedColumnName: 'id' },
@@ -28,7 +28,7 @@ export class Category {
     })
     factors: Factor[];
 
-    @ManyToMany('Metric')
+    @ManyToMany(() => Metric, (metric) => metric.categories)
     @JoinTable({
         name: 'category_metrics',
         joinColumn: { name: 'category_id', referencedColumnName: 'id' },

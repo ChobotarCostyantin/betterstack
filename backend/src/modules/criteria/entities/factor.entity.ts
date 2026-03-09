@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
-import type { Category } from '@modules/categories/entities/category.entity';
+import { Category } from '@modules/categories/entities/category.entity';
 
 @Entity('factors')
 export class Factor {
@@ -12,6 +12,6 @@ export class Factor {
     @Column({ length: 50, unique: true })
     negativeVariant: string;
 
-    @ManyToMany('Category', 'factors')
+    @ManyToMany(() => Category, (category) => category.factors)
     categories: Category[];
 }

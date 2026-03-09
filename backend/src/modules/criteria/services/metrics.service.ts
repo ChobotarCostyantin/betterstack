@@ -6,7 +6,10 @@ import { Metric } from '../entities/metric.entity';
 import { CreateMetricDto } from '../dto/create-metric.dto';
 import { UpdateMetricDto } from '../dto/update-metric.dto';
 import { MetricDto } from '../dto/metric-response.dto';
-import { MetricDeletedEvent } from '@common/events/metric.events';
+import {
+    MetricDeletedEvent,
+    MetricUpdatedEvent,
+} from '@common/events/metric.events';
 
 @Injectable()
 export class MetricsService {
@@ -48,6 +51,12 @@ export class MetricsService {
         const metric = await this.repo.findOneBy({ id });
         if (!metric)
             throw new NotFoundException(`Metric with ID ${id} not found`);
+
+        this.eventEmitter.emit(
+            MetricUpdatedEvent.eventName,
+            new MetricUpdatedEvent(id, metric.name),
+        );
+
         return {
             id: metric.id,
             name: metric.name,

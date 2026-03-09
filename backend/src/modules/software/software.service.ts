@@ -5,9 +5,13 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { Software } from './entities/software.entity';
+import { SoftwareFactor } from './entities/software-factor.entity';
+import { SoftwareMetric } from './entities/software-metric.entity';
 import { CreateSoftwareDto } from './dto/create-software.dto';
 import { UpdateSoftwareDto } from './dto/update-software.dto';
 import { CategoryDeletedEvent } from '@common/events/category.events';
+import { FactorUpdatedEvent } from '@common/events/factor.events';
+import { MetricUpdatedEvent } from '@common/events/metric.events';
 import {
     SoftwareMarkedUsedEvent,
     SoftwareMarkedUnusedEvent,
@@ -27,6 +31,10 @@ export class SoftwareService implements OnModuleInit {
         private readonly logger: PinoLogger,
         @InjectRepository(Software)
         private readonly repo: Repository<Software>,
+        @InjectRepository(SoftwareFactor)
+        private readonly softwareFactorRepo: Repository<SoftwareFactor>,
+        @InjectRepository(SoftwareMetric)
+        private readonly softwareMetricRepo: Repository<SoftwareMetric>,
     ) {}
 
     async onModuleInit() {
@@ -114,7 +122,6 @@ export class SoftwareService implements OnModuleInit {
             relations: [
                 'categories',
                 'softwareFactors',
-                'softwareFactors.factor',
                 'softwareMetrics',
                 'softwareMetrics.metric',
             ],
@@ -126,17 +133,16 @@ export class SoftwareService implements OnModuleInit {
 
         const factors: SoftwareFactorDto[] = (sw.softwareFactors ?? []).map(
             (sf) => ({
-                id: sf.id,
-                name: sf.name,
+                factorId: sf.factorId,
+                factorName: sf.factorName,
                 isPositive: sf.isPositive,
             }),
         );
 
         const metrics: SoftwareMetricDto[] = (sw.softwareMetrics ?? []).map(
             (sm) => ({
-                id: sm.id,
-                metricId: sm.metric?.id ?? sm.id,
-                name: sm.metric?.name ?? '',
+                metricId: sm.metricId,
+                metricName: sm.metricName,
                 higherIsBetter: sm.metric?.higherIsBetter ?? false,
                 value: sm.value,
             }),
@@ -287,5 +293,44 @@ export class SoftwareService implements OnModuleInit {
             .set({ usageCount: () => 'GREATEST("usage_count" - 1, 0)' })
             .where('id = :id', { id: payload.softwareId })
             .execute();
+    }
+
+    @OnEvent(FactorUpdatedEvent.eventName)
+    async handleFactorUpdated(payload: FactorUpdatedEvent) {
+        this.logger.info(
+            { factorId: payload.factorId },
+            'Factor renamed. Syncing cached names in software_factors...',
+        );
+        // SoftwareFactor.factorName caches the human-readable variant label.
+        // Positive rows get positiveVariant; negative rows get negativeVariant.
+        await this.softwareFactorRepo
+            .createQueryBuilder()
+            .update(SoftwareFactor)
+            .set({ factorName: payload.positiveVariant })
+            .where('factor_id = :factorId AND is_positive = true', {
+                factorId: payload.factorId,
+            })
+            .execute();
+
+        await this.softwareFactorRepo
+            .createQueryBuilder()
+            .update(SoftwareFactor)
+            .set({ factorName: payload.negativeVariant })
+            .where('factor_id = :factorId AND is_positive = false', {
+                factorId: payload.factorId,
+            })
+            .execute();
+    }
+
+    @OnEvent(MetricUpdatedEvent.eventName)
+    async handleMetricUpdated(payload: MetricUpdatedEvent) {
+        this.logger.info(
+            { metricId: payload.metricId },
+            'Metric renamed. Syncing cached name in software_metrics...',
+        );
+        await this.softwareMetricRepo.update(
+            { metricId: payload.metricId },
+            { metricName: payload.name },
+        );
     }
 }

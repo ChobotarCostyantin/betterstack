@@ -6,7 +6,10 @@ import { Factor } from '../entities/factor.entity';
 import { CreateFactorDto } from '../dto/create-factor.dto';
 import { UpdateFactorDto } from '../dto/update-factor.dto';
 import { FactorDto } from '../dto/factor-response.dto';
-import { FactorDeletedEvent } from '@common/events/factor.events';
+import {
+    FactorDeletedEvent,
+    FactorUpdatedEvent,
+} from '@common/events/factor.events';
 
 @Injectable()
 export class FactorsService {
@@ -48,6 +51,16 @@ export class FactorsService {
         const factor = await this.repo.findOneBy({ id });
         if (!factor)
             throw new NotFoundException(`Factor with ID ${id} not found`);
+
+        this.eventEmitter.emit(
+            FactorUpdatedEvent.eventName,
+            new FactorUpdatedEvent(
+                id,
+                factor.positiveVariant,
+                factor.negativeVariant,
+            ),
+        );
+
         return {
             id: factor.id,
             positiveVariant: factor.positiveVariant,
