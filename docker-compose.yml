@@ -8,11 +8,13 @@ services:
       dockerfile: ./frontend/Dockerfile
       target: development
     volumes:
-      - ./frontend:/usr/src/app/frontend    # for hot-reload
-      - /usr/src/app/frontend/node_modules  # but prevent overwriting container's node_modules
-      - /usr/src/app/frontend/.next         # as well as .next
+      - ./frontend:/usr/src/app/frontend
+      - /usr/src/app/frontend/node_modules
+      - /usr/src/app/frontend/.next
     ports:
       - "3000:3000"
+    env_file:
+      - ./frontend/.env.development
     environment:
       NODE_ENV: development
       BACKEND_BASE_URL: "http://backend:3010"
@@ -26,28 +28,22 @@ services:
       dockerfile: ./backend/Dockerfile
       target: development
     volumes:
-      - ./backend:/usr/src/app/backend      # for hot-reload
-      - /usr/src/app/backend/node_modules   # but prevent overwriting container's node_modules
+      - ./backend:/usr/src/app/backend
+      - /usr/src/app/backend/node_modules
     ports:
       - "3010:3010"
     environment:
-      NODE_ENV: development
       PORT: 3010
       POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: betterstack_db
-      JWT_SECRET: "VFhmYhyAJDHnclhu"
-      JWT_EXPIRES_IN_SEC: 86400
-      ADMIN_EMAIL: admin@admin.org
-      ADMIN_PASSWORD: password
+    env_file:
+      - ./backend/.env.development
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   postgres:
     container_name: bs-postgres
-    image: postgres:18
+    image: postgres:18-alpine
     volumes:
       - postgres-volume:/var/lib/postgresql
     ports:
@@ -57,11 +53,11 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "betterstack_db"]
-      interval: 30s
-      timeout: 60s
+      test: ["CMD-SHELL", "pg_isready -U user -d betterstack_db"]
+      interval: 10s
+      timeout: 5s
       retries: 5
-      start_period: 80s
+      start_period: 30s
 
 volumes:
   postgres-volume:

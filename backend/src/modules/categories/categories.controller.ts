@@ -6,37 +6,54 @@ import {
     Delete,
     Body,
     Param,
+    Query,
     ParseIntPipe,
     UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import {
+    ApiTags,
+    ApiOperation,
+    ApiOkResponse,
+    ApiBearerAuth,
+} from '@nestjs/swagger';
+import { PaginatedOf } from '@common/dto/paginated-response.dto';
+import { CategoryListItemDto } from './dto/category-response.dto';
+import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
+import { RolesGuard } from '@common/guards/roles.guard';
+import { WithRole } from '@common/decorators/roles.decorator';
+import { Role } from '@common/enums/role.enum';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/common/guards/roles.guard';
-import { WithRole } from 'src/common/decorators/roles.decorator';
-import { Role } from 'src/common/enums/role.enum';
+import {
+    RenameCategoryDto,
+    UpdateCategoryCriteriaDto,
+} from './dto/update-category.dto';
 
 @ApiTags('Categories')
 @Controller('categories')
-@ApiBearerAuth()
 export class CategoriesController {
     constructor(private readonly service: CategoriesService) {}
 
     @Get()
-    @ApiOperation({ summary: 'Get all categories' })
-    findAll() {
-        return this.service.findAll();
+    @ApiOperation({ summary: 'Get all categories (paginated)' })
+    @ApiOkResponse({ type: PaginatedOf(CategoryListItemDto) })
+    findAll(
+        @Query('page', new ParseIntPipe({ optional: true })) page = 1,
+        @Query('perPage', new ParseIntPipe({ optional: true })) perPage = 10,
+    ) {
+        return this.service.findAll(page, perPage);
     }
 
     @Get(':id')
-    @ApiOperation({ summary: 'Get category by ID' })
+    @ApiOperation({
+        summary: 'Get category by ID with its factors and metrics',
+    })
     findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.service.findOne(id);
+        return this.service.findOneWithCriteria(id);
     }
 
     @Post()
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     @ApiOperation({ summary: 'Create new category' })
@@ -45,17 +62,33 @@ export class CategoriesController {
     }
 
     @Put(':id')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
-    @ApiOperation({ summary: 'Update category' })
-    update(
+    @ApiOperation({ summary: 'Update category (slug and/or name)' })
+    rename(
         @Param('id', ParseIntPipe) id: number,
-        @Body() dto: UpdateCategoryDto,
+        @Body() dto: RenameCategoryDto,
     ) {
-        return this.service.update(id, dto);
+        return this.service.rename(id, dto);
+    }
+
+    @Put(':id/criteria')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @WithRole(Role.ADMIN)
+    @ApiOperation({
+        summary: 'Replace the full factors and metrics list for a category',
+    })
+    updateCriteria(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: UpdateCategoryCriteriaDto,
+    ) {
+        return this.service.updateCriteria(id, dto);
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     @ApiOperation({ summary: 'Delete category' })

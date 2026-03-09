@@ -1,8 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateSoftwareDto {
-    @ApiProperty({ example: [1, 2], description: 'Array of Category IDs' })
-    categoryIds: number[];
+    @ApiProperty({
+        example: 'jetbrains-rider',
+        description: 'Unique slug for URL',
+    })
+    slug: string;
 
     @ApiProperty({ example: 'JetBrains Rider' })
     name: string;
@@ -10,7 +13,7 @@ export class CreateSoftwareDto {
     @ApiPropertyOptional({ example: 'JetBrains' })
     developer?: string;
 
-    @ApiPropertyOptional({ example: 'Fast & powerful cross-platform .NET IDE' })
+    @ApiProperty({ example: 'Fast & powerful cross-platform .NET IDE' })
     shortDescription: string;
 
     @ApiPropertyOptional({
@@ -22,18 +25,17 @@ export class CreateSoftwareDto {
     @ApiPropertyOptional({ example: 'https://jetbrains.com/rider' })
     websiteUrl?: string;
 
-    @ApiPropertyOptional({ example: 'https://github.com/JetBrains/...' })
-    githubUrl?: string;
+    @ApiPropertyOptional({ example: 'https://github.com/JetBrains/rider' })
+    gitRepoUrl?: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/logo.png' })
     logoUrl?: string;
 
-    @ApiPropertyOptional({ example: ['img1.png', 'img2.png'] })
-    screenshots?: string[];
-
-    @ApiPropertyOptional({ example: ['feature1', 'feature2'] })
-    features: string[];
-
-    @ApiProperty({ example: { '1': true, '2': 3.2 } })
-    criteria: Record<number, any>;
+    @ApiPropertyOptional({
+        example: [
+            'https://example.com/img1.png',
+            'https://example.com/img2.png',
+        ],
+    })
+    screenshotUrls?: string[];
 }

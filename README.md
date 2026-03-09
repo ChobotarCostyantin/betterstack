@@ -12,8 +12,8 @@
 [![TypeORM](https://img.shields.io/badge/TypeORM-FE0803?style=flat-square&logo=typeorm&logoColor=white&link=https%3A%2F%2Ftypeorm.io%2F)](https://typeorm.io/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-white?style=flat-square&logo=tailwindcss&logoColor=06B6D4&link=https%3A%2F%2Ftailwindcss.com%2F)](https://tailwindcss.com/)
 [![Last commit](https://img.shields.io/github/last-commit/TeseySTD/betterstack?style=flat-square)](https://github.com/TeseySTD/betterstack/commits/main/)
-</div>
 
+</div>
 
 ## Overview
 
@@ -21,32 +21,140 @@
 
 ## Tech Stack
 
-* **Frontend:** Next.js 16.1.6, Tailwind CSS.
-* **Backend:** NestJS 11, TypeORM, PostgreSQL.
-* **Infrastructure:** Docker and Docker Compose for local development.
+- **Frontend:** Next.js 16.1.6, Tailwind CSS.
+- **Backend:** NestJS 11, TypeORM, PostgreSQL.
+- **Infrastructure:** Docker and Docker Compose for local development.
 
-## Installation
+## Project Structure
+
+```
+betterstack/
+├── backend/          # NestJS API — categories, criteria, software, users
+├── frontend/         # Next.js UI
+└── docker-compose.yml
+```
+
+## Development
 
 ### Prerequisites
 
-* Docker and Docker Compose
+- Node.js 22+ and npm 10+
+- Docker and Docker Compose (required for the database)
 
-### Quick Start
+### Set up .env files
 
-Start all services (frontend, backend, and database) with:
+The applications require `backend/.env.development` and `frontend/.env.development`
+to run. These files are git-ignored, so you need to create them manually.
+
+You can use the contents of `backend/.env.development.example` and
+`frontend/.env.development.example` as a starting point.
+
+### Option A — Everything in Docker (recommended for a clean start)
+
+Starts the frontend, backend, and PostgreSQL in containers with hot reload via
+volume mounts:
 
 ```bash
 docker-compose up -d
 ```
 
-The application will be available at `http://localhost:3000`.
+| Service    | URL                   |
+| ---------- | --------------------- |
+| Frontend   | http://localhost:3000 |
+| Backend    | http://localhost:3010 |
+| PostgreSQL | localhost:5432        |
 
-* **Frontend:** http://localhost:3000
-* **Backend API:** http://localhost:3010
-* **PostgreSQL:** localhost:5432
+Stop all services:
 
-## Project Structure
+```bash
+docker-compose down
+```
 
-* **/backend**: NestJS application containing logic for categories, criteria, software, and users.
-* **/frontend**: Next.js application for the user interface.
-* **docker-compose.yml**: Orchestrates frontend, backend, and PostgreSQL services.
+### Option B — DB in Docker, apps on the host
+
+Useful when you want native Node.js performance and direct access to logs.
+
+1. Start only PostgreSQL:
+
+   ```bash
+   npm run db:local:up
+   ```
+
+2. Install dependencies (once):
+
+   ```bash
+   npm install
+   ```
+
+3. (Optional) Seed the database with sample data:
+
+   ```bash
+   npm run db:seed:dev
+   ```
+
+4. Start backend and frontend concurrently with hot reload:
+
+   ```bash
+   npm run dev
+   ```
+
+   Or start them separately:
+
+   ```bash
+   npm run be:dev   # NestJS on port 3010
+   npm run fe:dev   # Next.js on port 3000
+   ```
+
+   > [!NOTE]
+   > Pending migrations are applied automatically when the backend starts.
+
+5. Stop PostgreSQL when done:
+
+   ```bash
+   npm run db:local:down
+   ```
+
+## Database Migrations
+
+Migrations are plain JS files tracked in `backend/database/migrations/`.  
+The TypeORM data-source is at `backend/database/data-source.js`.
+
+> [!NOTE]
+> Build the backend before generating a migration so the data-source reads
+> up-to-date compiled entities:
+>
+> ```bash
+> npm run build
+> ```
+
+| Command                                                  | Description                           |
+| -------------------------------------------------------- | ------------------------------------- |
+| `npm run db:migration:gen -- database/migrations/MyName` | Generate a migration from entity diff |
+| `npm run db:migration:rev`                               | Revert the last migration             |
+
+## Dev Seeding
+
+The `backend/database/dev-seed.js` script populates a **development** database
+with a representative graph of sample data. It is **idempotent** — re-running
+it skips any entity that already exists by its unique key.
+
+```bash
+npm run db:seed:dev
+```
+
+> [!NOTE]
+> Requires the database to be running. Pending migrations are applied
+> automatically when the backend starts.
+
+### What gets seeded
+
+| Entity     | Records                                                                 |
+| ---------- | ----------------------------------------------------------------------- |
+| Factors    | 5 (fast startup, low memory, good IntelliSense, rich plugins, free/OSS) |
+| Metrics    | 4 (indexing time, memory footprint, GitHub stars, extensions count)     |
+| Categories | 3 (IDEs & Editors, Database Clients, Programming Languages)             |
+| Software   | 2 (JetBrains Rider, Visual Studio Code)                                 |
+
+The _IDEs & Editors_ category is wired up with all factors and metrics. Both
+software items are linked to that category with realistic factor and metric
+values.

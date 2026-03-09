@@ -16,4 +16,8 @@ export const envValidationSchema = Joi.object({
     // JWT
     JWT_SECRET: Joi.string().min(10).required(),
     JWT_EXPIRES_IN_SEC: Joi.number().default(86400),
+
+    // Admin seed
+    ADMIN_EMAIL: Joi.string().email().required(),
+    ADMIN_PASSWORD: Joi.string().min(8).required(),
 });

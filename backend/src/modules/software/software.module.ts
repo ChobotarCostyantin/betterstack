@@ -1,13 +1,25 @@
 import { Module } from '@nestjs/common';
 import { SoftwareController } from './software.controller';
-import { SoftwareService } from './software.service';
+import { SoftwareQueryService } from './services/software-query.service';
+import { SoftwareManagementService } from './services/software-management.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Software } from './entities/software.entity';
-import { SoftwareRepository } from './repositories/software.repository';
+import { SoftwareFactor } from './entities/software-factor.entity';
+import { SoftwareMetric } from './entities/software-metric.entity';
+import { SoftwareComparisonNote } from './entities/software-comparison-note.entity';
+import { CriteriaModule } from '@modules/criteria/criteria.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Software])],
+    imports: [
+        TypeOrmModule.forFeature([
+            Software,
+            SoftwareFactor,
+            SoftwareMetric,
+            SoftwareComparisonNote,
+        ]),
+        CriteriaModule,
+    ],
     controllers: [SoftwareController],
-    providers: [SoftwareService, SoftwareRepository],
+    providers: [SoftwareQueryService, SoftwareManagementService],
 })
 export class SoftwareModule {}

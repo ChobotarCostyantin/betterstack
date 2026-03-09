@@ -1,50 +1,155 @@
 import {
     Injectable,
-    BadRequestException,
     UnauthorizedException,
+    NotFoundException,
+    ConflictException,
+    OnModuleInit,
+    Inject,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import type { ConfigType } from '@nestjs/config';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import * as bcrypt from 'bcrypt';
-import { UsersRepository } from './repositories/users.repository';
-import { AuthDto } from './dto/auth.dto';
-import { Role } from 'src/common/enums/role.enum';
+
+import { Role } from '@common/enums/role.enum';
+import { PaginatedResponseDto } from '@common/dto/paginated-response.dto';
+import {
+    SoftwareMarkedUsedEvent,
+    SoftwareMarkedUnusedEvent,
+} from '@common/events/software-usage.events';
+import { User } from './entities/user.entity';
+import { SoftwareUsage } from './entities/software-usage.entity';
+import { RegisterDto, LoginDto } from './dto/auth.dto';
+import { UserDto, AuthResponseDto } from './dto/user.dto';
+import { adminConfig } from '@config/admin.config';
+import type { PaginationQueryDto } from '@common/dto/pagination-query.dto';
 
 @Injectable()
-export class UsersService {
+export class UsersService implements OnModuleInit {
     constructor(
-        private readonly repo: UsersRepository,
+        @InjectPinoLogger(UsersService.name)
+        private readonly logger: PinoLogger,
+        @InjectRepository(User)
+        private readonly userRepo: Repository<User>,
+        @InjectRepository(SoftwareUsage)
+        private readonly usageRepo: Repository<SoftwareUsage>,
+        @Inject(adminConfig.KEY)
+        private readonly admin: ConfigType<typeof adminConfig>,
         private readonly jwtService: JwtService,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
-    async register(dto: AuthDto) {
-        if (await this.repo.findByEmail(dto.email)) {
-            throw new BadRequestException('Email already exists');
+    async onModuleInit() {
+        const count = await this.userRepo.count();
+        if (count === 0) {
+            this.logger.info('Database is empty. Seeding default admin...');
+            const passwordHash = await bcrypt.hash(this.admin.password, 10);
+            await this.userRepo.save({
+                email: this.admin.email,
+                passwordHash,
+                role: Role.ADMIN,
+            });
         }
-        const passwordHash = await bcrypt.hash(dto.password, 10);
-        const user = await this.repo.create({ email: dto.email, passwordHash });
-        return this.generateToken(user);
     }
 
-    async login(dto: AuthDto) {
-        const user = await this.repo.findByEmail(dto.email);
+    async register(dto: RegisterDto): Promise<AuthResponseDto> {
+        const existing = await this.userRepo.findOneBy({ email: dto.email });
+        if (existing) {
+            throw new ConflictException('Email already in use');
+        }
+        const passwordHash = await bcrypt.hash(dto.password, 10);
+        const user = await this.userRepo.save({
+            email: dto.email,
+            passwordHash,
+        });
+        return this.buildAuthResponse(user);
+    }
+
+    async login(dto: LoginDto): Promise<AuthResponseDto> {
+        const user = await this.userRepo.findOneBy({ email: dto.email });
         if (!user || !(await bcrypt.compare(dto.password, user.passwordHash))) {
             throw new UnauthorizedException('Invalid credentials');
         }
-        return this.generateToken(user);
+        return this.buildAuthResponse(user);
     }
 
-    async makeAdmin(id: number) {
-        await this.repo.updateRole(id, Role.ADMIN);
+    async findAll(
+        query: PaginationQueryDto,
+    ): Promise<PaginatedResponseDto<UserDto>> {
+        const page = query.page ?? 1;
+        const perPage = query.perPage ?? 10;
+
+        const [users, total] = await this.userRepo.findAndCount({
+            order: { id: 'ASC' },
+            skip: (page - 1) * perPage,
+            take: perPage,
+        });
+
+        return new PaginatedResponseDto(
+            users.map((u) => UserDto.from(u)),
+            total,
+            page,
+            perPage,
+        );
+    }
+
+    async makeAdmin(id: number): Promise<UserDto> {
+        const user = await this.userRepo.findOneBy({ id });
+        if (!user) {
+            throw new NotFoundException(`User with ID ${id} not found`);
+        }
+        user.role = Role.ADMIN;
+        const updated = await this.userRepo.save(user);
+        return UserDto.from(updated);
+    }
+
+    async markSoftwareAsUsed(userId: number, softwareId: number) {
+        const user = await this.userRepo.findOneBy({ id: userId });
+        if (!user)
+            throw new NotFoundException(`User with ID ${userId} not found`);
+
+        const existing = await this.usageRepo.findOneBy({ userId, softwareId });
+        if (existing) throw new ConflictException('Already marked as used');
+
+        await this.usageRepo.save({ userId, softwareId });
+
+        this.eventEmitter.emit(
+            SoftwareMarkedUsedEvent.eventName,
+            new SoftwareMarkedUsedEvent(userId, softwareId),
+        );
+
         return { success: true };
     }
 
-    private generateToken(user: any) {
-        return {
-            access_token: this.jwtService.sign({
-                id: user.id,
-                email: user.email,
-                role: user.role,
-            }),
-        };
+    async markSoftwareAsUnused(userId: number, softwareId: number) {
+        const user = await this.userRepo.findOneBy({ id: userId });
+        if (!user)
+            throw new NotFoundException(`User with ID ${userId} not found`);
+
+        const existing = await this.usageRepo.findOneBy({ userId, softwareId });
+        if (!existing) throw new NotFoundException('Usage record not found');
+
+        await this.usageRepo.delete({ userId, softwareId });
+
+        this.eventEmitter.emit(
+            SoftwareMarkedUnusedEvent.eventName,
+            new SoftwareMarkedUnusedEvent(userId, softwareId),
+        );
+
+        return { success: true };
+    }
+
+    private buildAuthResponse(user: User): AuthResponseDto {
+        const response = new AuthResponseDto();
+        response.access_token = this.jwtService.sign({
+            id: user.id,
+            email: user.email,
+            role: user.role,
+        });
+        response.user = UserDto.from(user);
+        return response;
     }
 }

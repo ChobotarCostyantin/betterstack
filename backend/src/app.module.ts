@@ -7,17 +7,22 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from './modules/users/users.module';
 import { ConfigModule, ConfigType } from '@nestjs/config';
+import { LoggerModule } from 'nestjs-pino';
 
 import { appConfig } from '@config/app.config';
+import { adminConfig } from '@config/admin.config';
 import { jwtConfig } from '@config/jwt.config';
 import { postgresConfig } from '@config/postgres.config';
 import { envValidationSchema } from '@config/env.validation';
+import { loggerConfig } from '@config/logger.config';
 
 @Module({
     imports: [
+        LoggerModule.forRoot(loggerConfig),
         ConfigModule.forRoot({
             isGlobal: true,
-            load: [appConfig, jwtConfig, postgresConfig],
+            envFilePath: ['.env.development'],
+            load: [appConfig, adminConfig, jwtConfig, postgresConfig],
             validationSchema: envValidationSchema,
         }),
         TypeOrmModule.forRootAsync({
@@ -30,7 +35,11 @@ import { envValidationSchema } from '@config/env.validation';
                 password: postgres.password,
                 database: postgres.dbName,
                 autoLoadEntities: true,
-                synchronize: true,
+                synchronize: false,
+                migrationsRun: true,
+                migrations: [__dirname + '/../database/migrations/*.js'],
+                retryAttempts: 5,
+                retryDelay: 3000,
             }),
         }),
         JwtModule.registerAsync({

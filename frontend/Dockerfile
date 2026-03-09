@@ -16,44 +16,40 @@ COPY frontend/package.json ./frontend/package.json
 # Dependencies
 # ------------------------------
 FROM base AS deps
-WORKDIR /usr/src/app
 RUN npm ci --workspace=frontend
-
-# ------------------------------
-# Development runner
-# ------------------------------
-FROM deps AS development
-WORKDIR /usr/src/app
-COPY frontend ./frontend
-
-# Ensure .next is owned by node
-RUN mkdir -p frontend/.next && chown -R node:node frontend/.next
-
-USER node
-CMD ["npm", "run", "dev", "--workspace=frontend"]
 
 # ------------------------------
 # Build
 # ------------------------------
 FROM deps AS build
-WORKDIR /usr/src/app
 COPY . .
-RUN npm run build --workspace=frontend
+RUN npm run build -w frontend
+
+# ------------------------------
+# Development runner
+# ------------------------------
+FROM deps AS development
+COPY frontend ./frontend
+
+# Ensure .next is owned by node before dropping privileges
+RUN mkdir -p frontend/.next && chown -R node:node frontend/.next
+
+USER node
+CMD ["npm", "run", "dev", "-w", "frontend"]
 
 # ------------------------------
 # Production runner
+#
+# The Next.js standalone output is entirely self-contained:
+# it includes its own trimmed node_modules and a server.js
+# entrypoint, so no npm install is needed here.
 # ------------------------------
-FROM node:${NODE_VERSION} AS production
-WORKDIR /usr/src/app
+FROM base AS production
+ENV NODE_ENV=production
 
-COPY package*.json ./
-COPY frontend/package.json ./frontend/package.json
-
-RUN npm ci --workspace=frontend --omit=dev
-
-COPY --from=build /usr/src/app/frontend/public ./frontend/public
 COPY --from=build /usr/src/app/frontend/.next/standalone ./frontend
 COPY --from=build /usr/src/app/frontend/.next/static ./frontend/.next/static
+COPY --from=build /usr/src/app/frontend/public ./frontend/public
 
 USER node
 CMD ["node", "frontend/server.js"]
