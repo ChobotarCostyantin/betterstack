@@ -31,7 +31,7 @@ import { envValidationSchema } from '@config/env.validation';
                 password: postgres.password,
                 database: postgres.dbName,
                 autoLoadEntities: true,
-                synchronize: true,
+                synchronize: false,
             }),
         }),
         JwtModule.registerAsync({
