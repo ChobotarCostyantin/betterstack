@@ -6,52 +6,47 @@ ARG NODE_VERSION=22-alpine
 FROM node:${NODE_VERSION} AS base
 WORKDIR /usr/src/app
 
-# Avoid common issues of Alpine Docker images
+# Required for native add-ons (e.g. bcrypt) on Alpine
 RUN apk add --no-cache libc6-compat
 
 COPY package*.json ./
 COPY backend/package.json ./backend/package.json
 
 # ------------------------------
-# Dependencies
+# Production dependencies
 # ------------------------------
-FROM base AS deps
-WORKDIR /usr/src/app
-RUN npm ci --workspace=backend
+FROM base AS prod-deps
+RUN npm ci --workspace=backend --omit=dev
 
 # ------------------------------
-# Development runner
+# Development dependencies
 # ------------------------------
-FROM deps AS development
-WORKDIR /usr/src/app
-COPY backend ./backend
-USER node
-CMD ["npm", "run", "start:dev", "--workspace=backend"]
+FROM prod-deps AS dev-deps
+RUN npm ci --workspace=backend
 
 # ------------------------------
 # Build
 # ------------------------------
-FROM deps AS build
-WORKDIR /usr/src/app
+FROM dev-deps AS build
 COPY . .
-RUN npm run build --workspace=backend
+RUN npm run build -w backend
+
+# ------------------------------
+# Development runner
+# ------------------------------
+FROM dev-deps AS development
+COPY backend ./backend
+USER node
+CMD ["npm", "run", "start:dev", "-w", "backend"]
 
 # ------------------------------
 # Production runner
 # ------------------------------
-FROM node:${NODE_VERSION} AS production
-WORKDIR /usr/src/app
-
-# Required for native add-ons (e.g. bcrypt) on Alpine
-RUN apk add --no-cache libc6-compat
-
+FROM base AS production
 ENV NODE_ENV=production
 
-COPY package*.json ./
-COPY backend/package.json ./backend/package.json
-
-RUN npm ci --workspace=backend --omit=dev
-
+COPY --from=prod-deps /usr/src/app/node_modules ./node_modules
+COPY --from=prod-deps /usr/src/app/backend/node_modules ./backend/node_modules
 COPY --from=build /usr/src/app/backend/dist ./backend/dist
 
 USER node

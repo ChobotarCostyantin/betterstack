@@ -35,11 +35,12 @@ services:
     env_file:
       - ./backend/.env.development
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   postgres:
     container_name: bs-postgres
-    image: postgres:18
+    image: postgres:18-alpine
     volumes:
       - postgres-volume:/var/lib/postgresql
     ports:
@@ -49,11 +50,11 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "betterstack_db"]
-      interval: 30s
-      timeout: 60s
+      test: ["CMD-SHELL", "pg_isready -U user -d betterstack_db"]
+      interval: 10s
+      timeout: 5s
       retries: 5
-      start_period: 80s
+      start_period: 30s
 
 volumes:
   postgres-volume:
