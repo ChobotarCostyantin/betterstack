@@ -93,32 +93,32 @@ export class SoftwareManagementService {
                 : [];
         const factorMap = new Map(factorEntities.map((f) => [f.id, f]));
 
-        await this.softwareFactorRepo.delete(SoftwareFactor, {
-            softwareId: id,
-        });
+        await this.softwareFactorRepo.manager.transaction(async (em) => {
+            await em.delete(SoftwareFactor, { softwareId: id });
 
-        if (dto.factors.length > 0) {
-            await this.softwareFactorRepo
-                .createQueryBuilder()
-                .insert()
-                .into(SoftwareFactor)
-                .values(
-                    dto.factors.map((f) => {
-                        const factor = factorMap.get(f.factorId);
-                        return {
-                            softwareId: id,
-                            factorId: f.factorId,
-                            isPositive: f.isPositive,
-                            factorName: factor
-                                ? f.isPositive
-                                    ? factor.positiveVariant
-                                    : factor.negativeVariant
-                                : '',
-                        };
-                    }),
-                )
-                .execute();
-        }
+            if (dto.factors.length > 0) {
+                await em
+                    .createQueryBuilder()
+                    .insert()
+                    .into(SoftwareFactor)
+                    .values(
+                        dto.factors.map((f) => {
+                            const factor = factorMap.get(f.factorId);
+                            return {
+                                softwareId: id,
+                                factorId: f.factorId,
+                                isPositive: f.isPositive,
+                                factorName: factor
+                                    ? f.isPositive
+                                        ? factor.positiveVariant
+                                        : factor.negativeVariant
+                                    : '',
+                            };
+                        }),
+                    )
+                    .execute();
+            }
+        });
 
         return { success: true };
     }
@@ -158,28 +158,30 @@ export class SoftwareManagementService {
             );
         }
 
-        await this.softwareMetricRepo.delete({ softwareId: id });
+        await this.softwareFactorRepo.manager.transaction(async (em) => {
+            await em.delete({ softwareId: id });
 
-        if (dto.metrics.length > 0) {
-            const metrics = await this.metricsService.findByIds(
-                dto.metrics.map((m) => m.metricId),
-            );
-            const metricMap = new Map(metrics.map((m) => [m.id, m]));
+            if (dto.metrics.length > 0) {
+                const metrics = await this.metricsService.findByIds(
+                    dto.metrics.map((m) => m.metricId),
+                );
+                const metricMap = new Map(metrics.map((m) => [m.id, m]));
 
-            await this.softwareMetricRepo
-                .createQueryBuilder()
-                .insert()
-                .into(SoftwareMetric)
-                .values(
-                    dto.metrics.map((m) => ({
-                        softwareId: id,
-                        metricId: m.metricId,
-                        value: m.value,
-                        metricName: metricMap.get(m.metricId)?.name ?? '',
-                    })),
-                )
-                .execute();
-        }
+                await em
+                    .createQueryBuilder()
+                    .insert()
+                    .into(SoftwareMetric)
+                    .values(
+                        dto.metrics.map((m) => ({
+                            softwareId: id,
+                            metricId: m.metricId,
+                            value: m.value,
+                            metricName: metricMap.get(m.metricId)?.name ?? '',
+                        })),
+                    )
+                    .execute();
+            }
+        });
 
         return { success: true };
     }
