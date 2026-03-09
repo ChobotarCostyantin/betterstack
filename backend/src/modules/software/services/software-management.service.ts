@@ -158,8 +158,8 @@ export class SoftwareManagementService {
             );
         }
 
-        await this.softwareFactorRepo.manager.transaction(async (em) => {
-            await em.delete({ softwareId: id });
+        await this.softwareMetricRepo.manager.transaction(async (em) => {
+            await em.delete(SoftwareMetric, { softwareId: id });
 
             if (dto.metrics.length > 0) {
                 const metrics = await this.metricsService.findByIds(
