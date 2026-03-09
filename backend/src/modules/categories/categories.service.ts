@@ -76,14 +76,6 @@ export class CategoriesService {
         };
     }
 
-    /** @deprecated use findOneWithCriteria */
-    async findOne(id: number) {
-        const category = await this.categoryRepo.findOneBy({ id });
-        if (!category)
-            throw new NotFoundException(`Category with ID ${id} not found`);
-        return category;
-    }
-
     async create(dto: CreateCategoryDto) {
         const category = this.categoryRepo.create({
             slug: dto.slug,
