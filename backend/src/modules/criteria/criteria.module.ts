@@ -11,5 +11,6 @@ import { MetricsController } from './controllers/metrics.controller';
     imports: [TypeOrmModule.forFeature([Factor, Metric])],
     controllers: [FactorsController, MetricsController],
     providers: [FactorsService, MetricsService],
+    exports: [FactorsService, MetricsService],
 })
 export class CriteriaModule {}

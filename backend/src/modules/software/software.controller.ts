@@ -26,7 +26,11 @@ import { WithRole } from '@common/decorators/roles.decorator';
 import { Role } from '@common/enums/role.enum';
 import { SoftwareService } from './software.service';
 import { CreateSoftwareDto } from './dto/create-software.dto';
-import { UpdateSoftwareDto } from './dto/update-software.dto';
+import {
+    UpdateSoftwareDto,
+    UpdateSoftwareFactorsDto,
+    UpdateSoftwareMetricsDto,
+} from './dto/update-software.dto';
 
 @ApiTags('Software')
 @Controller('software')
@@ -114,6 +118,35 @@ export class SoftwareController {
         @Body() dto: UpdateSoftwareDto,
     ) {
         return this.service.update(id, dto);
+    }
+
+    @Put(':id/factors')
+    @ApiOperation({
+        summary:
+            "Replace software's factors (must belong to software's categories)",
+    })
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @WithRole(Role.ADMIN)
+    updateFactors(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: UpdateSoftwareFactorsDto,
+    ) {
+        return this.service.updateFactors(id, dto);
+    }
+
+    @Put(':id/metrics')
+    @ApiOperation({
+        summary: "Replace software's metrics (all category metrics required)",
+    })
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @WithRole(Role.ADMIN)
+    updateMetrics(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: UpdateSoftwareMetricsDto,
+    ) {
+        return this.service.updateMetrics(id, dto);
     }
 
     @Delete(':id')

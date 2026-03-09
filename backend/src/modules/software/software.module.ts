@@ -6,6 +6,7 @@ import { Software } from './entities/software.entity';
 import { SoftwareFactor } from './entities/software-factor.entity';
 import { SoftwareMetric } from './entities/software-metric.entity';
 import { SoftwareComparisonNote } from './entities/software-comparison-note.entity';
+import { CriteriaModule } from '@modules/criteria/criteria.module';
 
 @Module({
     imports: [
@@ -15,6 +16,7 @@ import { SoftwareComparisonNote } from './entities/software-comparison-note.enti
             SoftwareMetric,
             SoftwareComparisonNote,
         ]),
+        CriteriaModule,
     ],
     controllers: [SoftwareController],
     providers: [SoftwareService],

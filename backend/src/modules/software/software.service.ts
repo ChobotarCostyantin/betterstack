@@ -13,7 +13,11 @@ import { SoftwareFactor } from './entities/software-factor.entity';
 import { SoftwareMetric } from './entities/software-metric.entity';
 import { SoftwareComparisonNote } from './entities/software-comparison-note.entity';
 import { CreateSoftwareDto } from './dto/create-software.dto';
-import { UpdateSoftwareDto } from './dto/update-software.dto';
+import {
+    UpdateSoftwareDto,
+    UpdateSoftwareFactorsDto,
+    UpdateSoftwareMetricsDto,
+} from './dto/update-software.dto';
 import { CategoryDeletedEvent } from '@common/events/category.events';
 import { FactorUpdatedEvent } from '@common/events/factor.events';
 import { MetricUpdatedEvent } from '@common/events/metric.events';
@@ -21,6 +25,8 @@ import {
     SoftwareMarkedUsedEvent,
     SoftwareMarkedUnusedEvent,
 } from '@common/events/software-usage.events';
+import { FactorsService } from '@modules/criteria/services/factors.service';
+import { MetricsService } from '@modules/criteria/services/metrics.service';
 import { PaginatedResponseDto } from '@common/dto/paginated-response.dto';
 import {
     SoftwareListItemDto,
@@ -48,6 +54,8 @@ export class SoftwareService {
         private readonly softwareMetricRepo: Repository<SoftwareMetric>,
         @InjectRepository(SoftwareComparisonNote)
         private readonly comparisonNoteRepo: Repository<SoftwareComparisonNote>,
+        private readonly factorsService: FactorsService,
+        private readonly metricsService: MetricsService,
     ) {}
 
     private toListItem(sw: Software): SoftwareListItemDto {
@@ -373,7 +381,137 @@ export class SoftwareService {
         return { success: true };
     }
 
-    @OnEvent(CategoryDeletedEvent.eventName)
+    async updateFactors(
+        id: number,
+        dto: UpdateSoftwareFactorsDto,
+    ): Promise<{ success: true }> {
+        const sw = await this.repo.findOne({
+            where: { id },
+            relations: ['categories', 'categories.factors'],
+        });
+        if (!sw)
+            throw new NotFoundException(`Software with ID ${id} not found`);
+
+        // Collect all factor IDs allowed by the software's categories
+        const allowedFactorIds = new Set(
+            sw.categories.flatMap((c) => (c.factors ?? []).map((f) => f.id)),
+        );
+
+        const invalidIds = dto.factors
+            .map((f) => f.factorId)
+            .filter((fId) => !allowedFactorIds.has(fId));
+
+        if (invalidIds.length > 0) {
+            throw new BadRequestException(
+                `Factor(s) ${invalidIds.join(', ')} do not belong to any of this software's categories`,
+            );
+        }
+
+        await this.softwareFactorRepo.delete({ softwareId: id });
+
+        if (dto.factors.length > 0) {
+            await this.softwareFactorRepo
+                .createQueryBuilder()
+                .insert()
+                .into(SoftwareFactor)
+                .values(
+                    dto.factors.map((f) => ({
+                        softwareId: id,
+                        factorId: f.factorId,
+                        isPositive: f.isPositive,
+                        // factorName is a denormalized cache — fetch from Factor entities
+                        factorName: '', // placeholder, resolved below
+                    })),
+                )
+                .execute();
+
+            // Resolve cached factorName from actual Factor entities
+            const factors = await this.factorsService.findByIds(
+                dto.factors.map((f) => f.factorId),
+            );
+            const factorMap = new Map(factors.map((f) => [f.id, f]));
+
+            await Promise.all(
+                dto.factors.map((f) => {
+                    const factor = factorMap.get(f.factorId);
+                    if (!factor) return Promise.resolve();
+                    return this.softwareFactorRepo.update(
+                        { softwareId: id, factorId: f.factorId },
+                        {
+                            factorName: f.isPositive
+                                ? factor.positiveVariant
+                                : factor.negativeVariant,
+                        },
+                    );
+                }),
+            );
+        }
+
+        return { success: true };
+    }
+
+    async updateMetrics(
+        id: number,
+        dto: UpdateSoftwareMetricsDto,
+    ): Promise<{ success: true }> {
+        const sw = await this.repo.findOne({
+            where: { id },
+            relations: ['categories', 'categories.metrics'],
+        });
+        if (!sw)
+            throw new NotFoundException(`Software with ID ${id} not found`);
+
+        // Collect all metric IDs allowed (and required) by the software's categories
+        const allowedMetricIds = new Set(
+            sw.categories.flatMap((c) => (c.metrics ?? []).map((m) => m.id)),
+        );
+
+        const submittedMetricIds = new Set(dto.metrics.map((m) => m.metricId));
+
+        const invalidIds = [...submittedMetricIds].filter(
+            (mId) => !allowedMetricIds.has(mId),
+        );
+        if (invalidIds.length > 0) {
+            throw new BadRequestException(
+                `Metric(s) ${invalidIds.join(', ')} do not belong to any of this software's categories`,
+            );
+        }
+
+        const missingIds = [...allowedMetricIds].filter(
+            (mId) => !submittedMetricIds.has(mId),
+        );
+        if (missingIds.length > 0) {
+            throw new BadRequestException(
+                `All category metrics must be provided. Missing metric(s): ${missingIds.join(', ')}`,
+            );
+        }
+
+        await this.softwareMetricRepo.delete({ softwareId: id });
+
+        if (dto.metrics.length > 0) {
+            const metrics = await this.metricsService.findByIds(
+                dto.metrics.map((m) => m.metricId),
+            );
+            const metricMap = new Map(metrics.map((m) => [m.id, m]));
+
+            await this.softwareMetricRepo
+                .createQueryBuilder()
+                .insert()
+                .into(SoftwareMetric)
+                .values(
+                    dto.metrics.map((m) => ({
+                        softwareId: id,
+                        metricId: m.metricId,
+                        value: m.value,
+                        metricName: metricMap.get(m.metricId)?.name ?? '',
+                    })),
+                )
+                .execute();
+        }
+
+        return { success: true };
+    }
+
     async handleCategoryDeleted(payload: CategoryDeletedEvent) {
         this.logger.info(
             { categoryId: payload.categoryId },

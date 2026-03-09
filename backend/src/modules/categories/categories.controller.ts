@@ -61,11 +61,11 @@ export class CategoriesController {
         return this.service.create(dto);
     }
 
-    @Put(':id/rename')
+    @Put(':id')
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
-    @ApiOperation({ summary: 'Rename category (slug and/or name)' })
+    @ApiOperation({ summary: 'Update category (slug and/or name)' })
     rename(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: RenameCategoryDto,
