@@ -8,23 +8,19 @@ import {
     Param,
     Query,
     ParseIntPipe,
-    UseGuards,
 } from '@nestjs/common';
 import {
     ApiTags,
     ApiOperation,
-    ApiBearerAuth,
     ApiOkResponse,
     ApiQuery,
 } from '@nestjs/swagger';
+import { Role } from '@common/enums/role.enum';
+import { Authenticated } from '@common/decorators/authenticated.decorator';
 import { PaginatedOf } from '@common/dto/paginated-response.dto';
 import { ParseIdsPipe } from '@common/pipes/parse-ids.pipe';
 import { SoftwareListItemDto } from './dto/software-response.dto';
 import { SoftwareComparisonDto } from './dto/software-comparison.dto';
-import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
-import { RolesGuard } from '@common/guards/roles.guard';
-import { WithRole } from '@common/decorators/roles.decorator';
-import { Role } from '@common/enums/role.enum';
 import { SoftwareQueryService } from './services/software-query.service';
 import { SoftwareManagementService } from './services/software-management.service';
 import { CreateSoftwareDto } from './dto/create-software.dto';
@@ -77,15 +73,13 @@ export class SoftwareController {
     }
 
     @Get('compare')
+    @Authenticated(Role.USER)
     @ApiOperation({
         summary: 'Compare two software items by slug (USER+ role required)',
     })
     @ApiOkResponse({ type: SoftwareComparisonDto })
     @ApiQuery({ name: 'a', required: true, description: 'Slug of software A' })
     @ApiQuery({ name: 'b', required: true, description: 'Slug of software B' })
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.USER)
     compare(@Query('a') slugA: string, @Query('b') slugB: string) {
         return this.queryService.compareBySlug(slugA, slugB);
     }
@@ -112,19 +106,15 @@ export class SoftwareController {
     }
 
     @Post()
+    @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Create new software' })
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.ADMIN)
     create(@Body() dto: CreateSoftwareDto) {
         return this.managementService.create(dto);
     }
 
     @Put(':id')
+    @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Update software' })
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.ADMIN)
     update(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateSoftwareDto,
@@ -133,13 +123,11 @@ export class SoftwareController {
     }
 
     @Put(':id/factors')
+    @Authenticated(Role.ADMIN)
     @ApiOperation({
         summary:
             "Replace software's factors (must belong to software's categories)",
     })
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.ADMIN)
     updateFactors(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateSoftwareFactorsDto,
@@ -148,12 +136,10 @@ export class SoftwareController {
     }
 
     @Put(':id/metrics')
+    @Authenticated(Role.ADMIN)
     @ApiOperation({
         summary: "Replace software's metrics (all category metrics required)",
     })
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.ADMIN)
     updateMetrics(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateSoftwareMetricsDto,
@@ -162,10 +148,8 @@ export class SoftwareController {
     }
 
     @Delete(':id')
+    @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Delete software' })
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.ADMIN)
     remove(@Param('id', ParseIntPipe) id: number) {
         return this.managementService.remove(id);
     }

@@ -8,6 +8,7 @@ import { HttpExceptionFilter } from '@common/filters/http-exception.filter';
 import { TransformInterceptor } from '@common/interceptors/transform.interceptor';
 import { corsConfig, type CorsConfig } from '@config/cors.config';
 import { appConfig, type AppConfig } from '@config/app.config';
+import { authConfig, type AuthConfig } from '@config/auth.config';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -26,10 +27,12 @@ async function bootstrap() {
     app.useGlobalFilters(new HttpExceptionFilter(logger));
     app.useGlobalInterceptors(new TransformInterceptor());
 
+    const { cookieName } = app.get<AuthConfig>(authConfig.KEY);
+
     const config = new DocumentBuilder()
         .setTitle('Betterstack API')
         .setVersion('1.0')
-        .addBearerAuth()
+        .addCookieAuth(cookieName)
         .build();
 
     app.setGlobalPrefix('api/v1');

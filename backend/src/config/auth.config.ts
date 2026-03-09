@@ -1,7 +1,7 @@
 import { registerAs, ConfigType } from '@nestjs/config';
 
 export const authConfig = registerAs('auth', () => ({
-    cookieName: 'access_token',
+    cookieName: 'access-token',
     cookieOptions: {
         httpOnly: true,
         sameSite: 'lax' as const,

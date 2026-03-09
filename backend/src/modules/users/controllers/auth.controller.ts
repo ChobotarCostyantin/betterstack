@@ -16,7 +16,7 @@ import {
     ApiOperation,
     ApiCreatedResponse,
     ApiOkResponse,
-    ApiBearerAuth,
+    ApiCookieAuth,
 } from '@nestjs/swagger';
 import { UsersService } from '../users.service';
 import { RegisterDto, LoginDto, AuthResponseDto } from '../dto/auth.dto';
@@ -68,7 +68,7 @@ export class AuthController {
 
     @Get('me')
     @UseGuards(JwtAuthGuard)
-    @ApiBearerAuth()
+    @ApiCookieAuth()
     @ApiOperation({ summary: 'Return the currently authenticated user' })
     @ApiOkResponse({ type: UserDto })
     me(@Req() req: AuthenticatedRequest): UserDto {
