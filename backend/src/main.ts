@@ -41,4 +41,8 @@ async function bootstrap() {
         'Bootstrap',
     );
 }
-void bootstrap();
+
+void bootstrap().catch((err) => {
+    console.error('Fatal error during bootstrap', err);
+    process.exit(1);
+});

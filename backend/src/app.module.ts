@@ -14,24 +14,14 @@ import { adminConfig } from '@config/admin.config';
 import { jwtConfig } from '@config/jwt.config';
 import { postgresConfig } from '@config/postgres.config';
 import { envValidationSchema } from '@config/env.validation';
+import { loggerConfig } from '@config/logger.config';
 
 @Module({
     imports: [
-        LoggerModule.forRoot({
-            pinoHttp: {
-                transport:
-                    process.env.NODE_ENV !== 'production'
-                        ? {
-                              target: 'pino-pretty',
-                              options: { singleLine: true },
-                          }
-                        : undefined,
-                autoLogging: true,
-                redact: ['req.headers.authorization'],
-            },
-        }),
+        LoggerModule.forRoot(loggerConfig),
         ConfigModule.forRoot({
             isGlobal: true,
+            envFilePath: ['.env.local'],
             load: [appConfig, adminConfig, jwtConfig, postgresConfig],
             validationSchema: envValidationSchema,
         }),
@@ -46,6 +36,8 @@ import { envValidationSchema } from '@config/env.validation';
                 database: postgres.dbName,
                 autoLoadEntities: true,
                 synchronize: false,
+                retryAttempts: 5,
+                retryDelay: 3000,
             }),
         }),
         JwtModule.registerAsync({
