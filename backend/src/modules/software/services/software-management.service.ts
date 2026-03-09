@@ -93,32 +93,32 @@ export class SoftwareManagementService {
                 : [];
         const factorMap = new Map(factorEntities.map((f) => [f.id, f]));
 
-        await this.softwareFactorRepo.manager.transaction(async (em) => {
-            await em.delete(SoftwareFactor, { softwareId: id });
-
-            if (dto.factors.length > 0) {
-                await em
-                    .createQueryBuilder()
-                    .insert()
-                    .into(SoftwareFactor)
-                    .values(
-                        dto.factors.map((f) => {
-                            const factor = factorMap.get(f.factorId);
-                            return {
-                                softwareId: id,
-                                factorId: f.factorId,
-                                isPositive: f.isPositive,
-                                factorName: factor
-                                    ? f.isPositive
-                                        ? factor.positiveVariant
-                                        : factor.negativeVariant
-                                    : '',
-                            };
-                        }),
-                    )
-                    .execute();
-            }
+        await this.softwareFactorRepo.delete(SoftwareFactor, {
+            softwareId: id,
         });
+
+        if (dto.factors.length > 0) {
+            await this.softwareFactorRepo
+                .createQueryBuilder()
+                .insert()
+                .into(SoftwareFactor)
+                .values(
+                    dto.factors.map((f) => {
+                        const factor = factorMap.get(f.factorId);
+                        return {
+                            softwareId: id,
+                            factorId: f.factorId,
+                            isPositive: f.isPositive,
+                            factorName: factor
+                                ? f.isPositive
+                                    ? factor.positiveVariant
+                                    : factor.negativeVariant
+                                : '',
+                        };
+                    }),
+                )
+                .execute();
+        }
 
         return { success: true };
     }
@@ -199,19 +199,20 @@ export class SoftwareManagementService {
             })
             .getMany();
 
-        const updatePromises = softwareList.map(async (sw) => {
-            const full = await this.repo.findOne({
-                where: { id: sw.id },
-                relations: ['categories'],
-            });
-            if (!full) return;
-            full.categories = full.categories.filter(
-                (c) => c.id !== payload.categoryId,
-            );
-            return this.repo.save(full);
-        });
+        await this.repo.manager.transaction(async (em) => {
+            for (const sw of softwareList) {
+                const full = await em.findOne(Software, {
+                    where: { id: sw.id },
+                    relations: ['categories'],
+                });
+                if (!full) continue;
 
-        await Promise.all(updatePromises);
+                full.categories = full.categories.filter(
+                    (c) => c.id !== payload.categoryId,
+                );
+                await em.save(full);
+            }
+        });
     }
 
     @OnEvent(SoftwareMarkedUsedEvent.eventName)
