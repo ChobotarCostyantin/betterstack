@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { OnEvent } from '@nestjs/event-emitter';
@@ -25,7 +25,7 @@ import {
 } from './dto/software-response.dto';
 
 @Injectable()
-export class SoftwareService implements OnModuleInit {
+export class SoftwareService {
     constructor(
         @InjectPinoLogger(SoftwareService.name)
         private readonly logger: PinoLogger,
@@ -36,35 +36,6 @@ export class SoftwareService implements OnModuleInit {
         @InjectRepository(SoftwareMetric)
         private readonly softwareMetricRepo: Repository<SoftwareMetric>,
     ) {}
-
-    async onModuleInit() {
-        const count = await this.repo.count();
-        if (count === 0) {
-            this.logger.info('Database is empty. Seeding...');
-            await this.repo.save([
-                {
-                    slug: 'jetbrains-rider',
-                    name: 'JetBrains Rider',
-                    developer: 'JetBrains',
-                    shortDescription: 'The cross-platform .NET IDE.',
-                    fullDescription:
-                        '## Overview\nRider is an excellent choice for .NET developers.',
-                    websiteUrl: 'https://jetbrains.com/rider',
-                    screenshotUrls: [],
-                },
-                {
-                    slug: 'visual-studio-code',
-                    name: 'Visual Studio Code',
-                    developer: 'Microsoft',
-                    shortDescription: 'The code editor.',
-                    logoUrl:
-                        'https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg',
-                    websiteUrl: 'https://code.visualstudio.com/',
-                    screenshotUrls: [],
-                },
-            ]);
-        }
-    }
 
     private toListItem(sw: Software): SoftwareListItemDto {
         return {

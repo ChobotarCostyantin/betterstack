@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, In, Repository } from 'typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
@@ -21,7 +21,7 @@ import {
 } from './dto/category-response.dto';
 
 @Injectable()
-export class CategoriesService implements OnModuleInit {
+export class CategoriesService {
     constructor(
         @InjectPinoLogger(CategoriesService.name)
         private readonly logger: PinoLogger,
@@ -33,20 +33,6 @@ export class CategoriesService implements OnModuleInit {
         private readonly metricRepo: Repository<Metric>,
         private readonly eventEmitter: EventEmitter2,
     ) {}
-
-    async onModuleInit() {
-        const count = await this.categoryRepo.count();
-        if (count === 0) {
-            this.logger.info(
-                'Database is empty. Seeding default categories...',
-            );
-            await this.categoryRepo.save([
-                { slug: 'ides', name: 'IDEs & Editors' },
-                { slug: 'databases', name: 'Database Clients' },
-                { slug: 'languages', name: 'Programming Languages' },
-            ]);
-        }
-    }
 
     async findAll(
         page: number,
