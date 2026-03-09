@@ -19,6 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { PaginatedOf } from '@common/dto/paginated-response.dto';
 import { SoftwareListItemDto } from './dto/software-response.dto';
+import { SoftwareComparisonDto } from './dto/software-comparison.dto';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { RolesGuard } from '@common/guards/roles.guard';
 import { WithRole } from '@common/decorators/roles.decorator';
@@ -57,6 +58,20 @@ export class SoftwareController {
         @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
     ) {
         return this.service.findMostUsed(limit);
+    }
+
+    @Get('compare')
+    @ApiOperation({
+        summary: 'Compare two software items by slug (USER+ role required)',
+    })
+    @ApiOkResponse({ type: SoftwareComparisonDto })
+    @ApiQuery({ name: 'a', required: true, description: 'Slug of software A' })
+    @ApiQuery({ name: 'b', required: true, description: 'Slug of software B' })
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @WithRole(Role.USER)
+    compare(@Query('a') slugA: string, @Query('b') slugB: string) {
+        return this.service.compareBySlug(slugA, slugB);
     }
 
     @Get(':slug/alternatives')

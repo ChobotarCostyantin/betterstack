@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    Injectable,
+    NotFoundException,
+    BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { OnEvent } from '@nestjs/event-emitter';
@@ -7,6 +11,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { Software } from './entities/software.entity';
 import { SoftwareFactor } from './entities/software-factor.entity';
 import { SoftwareMetric } from './entities/software-metric.entity';
+import { SoftwareComparisonNote } from './entities/software-comparison-note.entity';
 import { CreateSoftwareDto } from './dto/create-software.dto';
 import { UpdateSoftwareDto } from './dto/update-software.dto';
 import { CategoryDeletedEvent } from '@common/events/category.events';
@@ -24,6 +29,11 @@ import {
     SoftwareFactorsDto,
     SoftwareMetricDto,
 } from './dto/software-response.dto';
+import {
+    SoftwareComparisonDto,
+    SoftwareComparisonSideDto,
+    MetricComparisonItemDto,
+} from './dto/software-comparison.dto';
 
 @Injectable()
 export class SoftwareService {
@@ -36,6 +46,8 @@ export class SoftwareService {
         private readonly softwareFactorRepo: Repository<SoftwareFactor>,
         @InjectRepository(SoftwareMetric)
         private readonly softwareMetricRepo: Repository<SoftwareMetric>,
+        @InjectRepository(SoftwareComparisonNote)
+        private readonly comparisonNoteRepo: Repository<SoftwareComparisonNote>,
     ) {}
 
     private toListItem(sw: Software): SoftwareListItemDto {
@@ -152,6 +164,142 @@ export class SoftwareService {
             })),
             factors,
             metrics,
+        };
+    }
+
+    private toComparisonSide(sw: Software): SoftwareComparisonSideDto {
+        const toFactorDto = (sf: SoftwareFactor): SoftwareFactorDto => ({
+            factorId: sf.factorId,
+            factorName: sf.factorName,
+        });
+
+        const factors: SoftwareFactorsDto = (
+            sw.softwareFactors ?? []
+        ).reduce<SoftwareFactorsDto>(
+            (acc, sf) => {
+                if (sf.isPositive) {
+                    acc.positive.push(toFactorDto(sf));
+                } else {
+                    acc.negative.push(toFactorDto(sf));
+                }
+                return acc;
+            },
+            { positive: [], negative: [] },
+        );
+
+        return {
+            id: sw.id,
+            slug: sw.slug,
+            name: sw.name,
+            developer: sw.developer,
+            shortDescription: sw.shortDescription,
+            websiteUrl: sw.websiteUrl,
+            gitRepoUrl: sw.gitRepoUrl,
+            logoUrl: sw.logoUrl,
+            screenshotUrls: sw.screenshotUrls,
+            usageCount: sw.usageCount,
+            createdAt: sw.createdAt,
+            updatedAt: sw.updatedAt,
+            categories: (sw.categories ?? []).map((c) => ({
+                id: c.id,
+                slug: c.slug,
+                name: c.name,
+            })),
+            factors,
+        };
+    }
+
+    async compareBySlug(
+        slugA: string,
+        slugB: string,
+    ): Promise<SoftwareComparisonDto> {
+        if (slugA === slugB) {
+            throw new BadRequestException(
+                'The two software slugs must be different',
+            );
+        }
+
+        const relations = [
+            'categories',
+            'softwareFactors',
+            'softwareMetrics',
+            'softwareMetrics.metric',
+        ];
+
+        const [swA, swB] = await Promise.all([
+            this.repo.findOne({ where: { slug: slugA }, relations }),
+            this.repo.findOne({ where: { slug: slugB }, relations }),
+        ]);
+
+        if (!swA)
+            throw new NotFoundException(
+                `Software with slug '${slugA}' not found`,
+            );
+        if (!swB)
+            throw new NotFoundException(
+                `Software with slug '${slugB}' not found`,
+            );
+
+        if (swA.id === swB.id) {
+            throw new BadRequestException(
+                'The two software slugs must be different',
+            );
+        }
+
+        // Lookup comparison note in both orderings (A,B) and (B,A)
+        const note = await this.comparisonNoteRepo.findOne({
+            where: [
+                { softwareAId: swA.id, softwareBId: swB.id },
+                { softwareAId: swB.id, softwareBId: swA.id },
+            ],
+        });
+
+        // Build metric maps keyed by metricId
+        const aMetrics = new Map(
+            (swA.softwareMetrics ?? []).map((sm) => [sm.metricId, sm]),
+        );
+        const bMetrics = new Map(
+            (swB.softwareMetrics ?? []).map((sm) => [sm.metricId, sm]),
+        );
+
+        const allMetricIds = new Set([...aMetrics.keys(), ...bMetrics.keys()]);
+
+        const metricsComparison: MetricComparisonItemDto[] = [];
+
+        for (const metricId of allMetricIds) {
+            const aSm = aMetrics.get(metricId);
+            const bSm = bMetrics.get(metricId);
+
+            // Prefer the side that has the metric for higherIsBetter
+            const higherIsBetter =
+                (aSm?.metric ?? bSm?.metric)?.higherIsBetter ?? false;
+
+            const aValue = aSm ? Number(aSm.value) : null;
+            const bValue = bSm ? Number(bSm.value) : null;
+            const metricName = (aSm ?? bSm)!.metricName;
+
+            let winner: 'a' | 'b' | null = null;
+            if (aValue !== null && bValue !== null && aValue !== bValue) {
+                winner = (higherIsBetter ? aValue > bValue : aValue < bValue)
+                    ? 'a'
+                    : 'b';
+            }
+
+            metricsComparison.push({
+                metricId,
+                metricName,
+                higherIsBetter,
+                aValue,
+                bValue,
+                winner,
+            });
+        }
+
+        return {
+            softwareA: this.toComparisonSide(swA),
+            softwareB: this.toComparisonSide(swB),
+            metricsComparison,
+            comparisonNote: note?.note ?? null,
         };
     }
 
