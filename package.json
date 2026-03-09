@@ -24,7 +24,7 @@
     "db:migration:run": "npm run db:migration:run -w backend",
     "db:migration:rev": "npm run db:migration:rev -w backend",
     "db:seed:dev": "npm run db:seed:dev -w backend",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
