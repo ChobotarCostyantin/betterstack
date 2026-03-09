@@ -26,7 +26,6 @@ import { UpdateMetricDto } from '../dto/update-metric.dto';
 
 @ApiTags('Criteria')
 @Controller('criteria/metrics')
-@ApiBearerAuth()
 export class MetricsController {
     constructor(private readonly service: MetricsService) {}
 
@@ -51,6 +50,7 @@ export class MetricsController {
     }
 
     @Post()
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     @ApiOperation({ summary: 'Create a new metric' })
@@ -59,6 +59,7 @@ export class MetricsController {
     }
 
     @Put(':id')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     @ApiOperation({ summary: 'Update a metric' })
@@ -70,6 +71,7 @@ export class MetricsController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     @ApiOperation({ summary: 'Delete a metric' })

@@ -29,7 +29,6 @@ import { UpdateSoftwareDto } from './dto/update-software.dto';
 
 @ApiTags('Software')
 @Controller('software')
-@ApiBearerAuth()
 export class SoftwareController {
     constructor(private readonly service: SoftwareService) {}
 
@@ -83,6 +82,7 @@ export class SoftwareController {
 
     @Post()
     @ApiOperation({ summary: 'Create new software' })
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     create(@Body() dto: CreateSoftwareDto) {
@@ -91,6 +91,7 @@ export class SoftwareController {
 
     @Put(':id')
     @ApiOperation({ summary: 'Update software' })
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     update(
@@ -102,6 +103,7 @@ export class SoftwareController {
 
     @Delete(':id')
     @ApiOperation({ summary: 'Delete software' })
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     remove(@Param('id', ParseIntPipe) id: number) {

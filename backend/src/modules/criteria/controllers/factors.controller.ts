@@ -26,7 +26,6 @@ import { UpdateFactorDto } from '../dto/update-factor.dto';
 
 @ApiTags('Criteria')
 @Controller('criteria/factors')
-@ApiBearerAuth()
 export class FactorsController {
     constructor(private readonly service: FactorsService) {}
 
@@ -51,6 +50,7 @@ export class FactorsController {
     }
 
     @Post()
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     @ApiOperation({ summary: 'Create a new factor' })
@@ -59,6 +59,7 @@ export class FactorsController {
     }
 
     @Put(':id')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     @ApiOperation({ summary: 'Update a factor' })
@@ -70,6 +71,7 @@ export class FactorsController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     @ApiOperation({ summary: 'Delete a factor' })

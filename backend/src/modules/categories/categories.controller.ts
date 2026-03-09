@@ -31,7 +31,6 @@ import {
 
 @ApiTags('Categories')
 @Controller('categories')
-@ApiBearerAuth()
 export class CategoriesController {
     constructor(private readonly service: CategoriesService) {}
 
@@ -54,6 +53,7 @@ export class CategoriesController {
     }
 
     @Post()
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     @ApiOperation({ summary: 'Create new category' })
@@ -62,6 +62,7 @@ export class CategoriesController {
     }
 
     @Put(':id/rename')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     @ApiOperation({ summary: 'Rename category (slug and/or name)' })
@@ -73,6 +74,7 @@ export class CategoriesController {
     }
 
     @Put(':id/criteria')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     @ApiOperation({
@@ -86,6 +88,7 @@ export class CategoriesController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @WithRole(Role.ADMIN)
     @ApiOperation({ summary: 'Delete category' })
