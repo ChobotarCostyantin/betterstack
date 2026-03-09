@@ -11,6 +11,7 @@ import { LoggerModule } from 'nestjs-pino';
 
 import { appConfig } from '@config/app.config';
 import { adminConfig } from '@config/admin.config';
+import { authConfig } from '@config/auth.config';
 import { jwtConfig } from '@config/jwt.config';
 import { postgresConfig } from '@config/postgres.config';
 import { envValidationSchema } from '@config/env.validation';
@@ -22,7 +23,13 @@ import { loggerConfig } from '@config/logger.config';
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: ['.env.development'],
-            load: [appConfig, adminConfig, jwtConfig, postgresConfig],
+            load: [
+                appConfig,
+                adminConfig,
+                authConfig,
+                jwtConfig,
+                postgresConfig,
+            ],
             validationSchema: envValidationSchema,
         }),
         TypeOrmModule.forRootAsync({

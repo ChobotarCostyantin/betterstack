@@ -1,31 +1,83 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+    Controller,
+    Post,
+    Get,
+    Body,
+    Res,
+    Req,
+    HttpCode,
+    HttpStatus,
+    UseGuards,
+    Inject,
+} from '@nestjs/common';
+import type { ConfigType } from '@nestjs/config';
+import type { Response } from 'express';
 import {
     ApiTags,
     ApiOperation,
     ApiCreatedResponse,
     ApiOkResponse,
+    ApiBearerAuth,
 } from '@nestjs/swagger';
 import { UsersService } from '../users.service';
 import { RegisterDto, LoginDto } from '../dto/auth.dto';
-import { AuthResponseDto } from '../dto/user.dto';
+import { AuthResponseDto, UserDto } from '../dto/user.dto';
+import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
+import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
+import { authConfig } from '@config/auth.config';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(
+        private readonly usersService: UsersService,
+        @Inject(authConfig.KEY)
+        private readonly auth: ConfigType<typeof authConfig>,
+    ) {}
 
     @Post('register')
     @ApiOperation({ summary: 'Register a new user' })
     @ApiCreatedResponse({ type: AuthResponseDto })
-    register(@Body() dto: RegisterDto): Promise<AuthResponseDto> {
-        return this.usersService.register(dto);
+    async register(
+        @Body() dto: RegisterDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<AuthResponseDto> {
+        const { token, user } = await this.usersService.register(dto);
+        res.cookie(this.auth.cookieName, token, this.auth.cookieOptions);
+        return { user };
     }
 
     @Post('login')
     @HttpCode(HttpStatus.OK)
-    @ApiOperation({ summary: 'Login and obtain a JWT token' })
+    @ApiOperation({ summary: 'Login' })
     @ApiOkResponse({ type: AuthResponseDto })
-    login(@Body() dto: LoginDto): Promise<AuthResponseDto> {
-        return this.usersService.login(dto);
+    async login(
+        @Body() dto: LoginDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<AuthResponseDto> {
+        const { token, user } = await this.usersService.login(dto);
+        res.cookie(this.auth.cookieName, token, this.auth.cookieOptions);
+        return { user };
+    }
+
+    @Post('logout')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @ApiOperation({ summary: 'Logout — clears the auth cookie' })
+    logout(@Res({ passthrough: true }) res: Response): void {
+        res.clearCookie(this.auth.cookieName, { path: '/' });
+    }
+
+    @Get('me')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Return the currently authenticated user' })
+    @ApiOkResponse({ type: UserDto })
+    me(@Req() req: AuthenticatedRequest): UserDto {
+        const { id, email, role } = req.user;
+        const dto = new UserDto();
+        dto.id = id;
+        dto.email = email;
+        dto.role = role;
+        return dto;
     }
 }

@@ -20,4 +20,7 @@ export const envValidationSchema = Joi.object({
     // Admin seed
     ADMIN_EMAIL: Joi.string().email().required(),
     ADMIN_PASSWORD: Joi.string().min(8).required(),
+
+    // CORS
+    FRONTEND_URL: Joi.string().uri().default('http://localhost:3000'),
 });
