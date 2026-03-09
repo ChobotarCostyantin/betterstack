@@ -10,7 +10,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import type { ConfigType } from '@nestjs/config';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import * as bcrypt from 'bcrypt';
 
@@ -24,7 +23,7 @@ import { User } from './entities/user.entity';
 import { SoftwareUsage } from './entities/software-usage.entity';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
 import { UserDto } from './dto/user.dto';
-import { adminConfig } from '@config/admin.config';
+import { adminConfig, type AdminConfig } from '@config/admin.config';
 import type { PaginationQueryDto } from '@common/dto/pagination-query.dto';
 
 interface AuthResult {
@@ -42,7 +41,7 @@ export class UsersService implements OnModuleInit {
         @InjectRepository(SoftwareUsage)
         private readonly usageRepo: Repository<SoftwareUsage>,
         @Inject(adminConfig.KEY)
-        private readonly admin: ConfigType<typeof adminConfig>,
+        private readonly admin: AdminConfig,
         private readonly jwtService: JwtService,
         private readonly eventEmitter: EventEmitter2,
     ) {}

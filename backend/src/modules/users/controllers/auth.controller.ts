@@ -10,7 +10,6 @@ import {
     UseGuards,
     Inject,
 } from '@nestjs/common';
-import type { ConfigType } from '@nestjs/config';
 import type { Response } from 'express';
 import {
     ApiTags,
@@ -24,7 +23,7 @@ import { RegisterDto, LoginDto, AuthResponseDto } from '../dto/auth.dto';
 import { UserDto } from '../dto/user.dto';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
-import { authConfig } from '@config/auth.config';
+import { authConfig, type AuthConfig } from '@config/auth.config';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -32,7 +31,7 @@ export class AuthController {
     constructor(
         private readonly usersService: UsersService,
         @Inject(authConfig.KEY)
-        private readonly auth: ConfigType<typeof authConfig>,
+        private readonly auth: AuthConfig,
     ) {}
 
     @Post('register')

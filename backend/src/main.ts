@@ -1,19 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from '@common/filters/http-exception.filter';
 import { TransformInterceptor } from '@common/interceptors/transform.interceptor';
-import { corsConfig } from '@config/cors.config';
-import { appConfig } from '@config/app.config';
+import { corsConfig, CorsConfig } from '@config/cors.config';
+import { appConfig, AppConfig } from '@config/app.config';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
-    const corsOptions = app.get<ConfigType<typeof corsConfig>>(corsConfig.KEY);
+    const corsOptions = app.get<CorsConfig>(corsConfig.KEY);
     app.enableCors(corsOptions);
 
     app.use(cookieParser());
@@ -38,7 +37,7 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document);
 
-    const { port } = app.get<ConfigType<typeof appConfig>>(appConfig.KEY);
+    const { port } = app.get<AppConfig>(appConfig.KEY);
     await app.listen(port);
 
     logger.log(

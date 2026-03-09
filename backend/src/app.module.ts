@@ -6,14 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from './modules/users/users.module';
-import { ConfigModule, ConfigType } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 
 import { appConfig } from '@config/app.config';
 import { adminConfig } from '@config/admin.config';
-import { authConfig } from '@config/auth.config';
+import { authConfig, AuthConfig } from '@config/auth.config';
 import { corsConfig } from '@config/cors.config';
-import { postgresConfig } from '@config/postgres.config';
+import { postgresConfig, PostgresConfig } from '@config/postgres.config';
 import { envValidationSchema } from '@config/env.validation';
 import { loggerConfig } from '@config/logger.config';
 
@@ -34,7 +34,7 @@ import { loggerConfig } from '@config/logger.config';
         }),
         TypeOrmModule.forRootAsync({
             inject: [postgresConfig.KEY],
-            useFactory: (postgres: ConfigType<typeof postgresConfig>) => ({
+            useFactory: (postgres: PostgresConfig) => ({
                 type: 'postgres',
                 host: postgres.host,
                 port: postgres.port,
@@ -52,7 +52,7 @@ import { loggerConfig } from '@config/logger.config';
         JwtModule.registerAsync({
             inject: [authConfig.KEY],
             global: true,
-            useFactory: (auth: ConfigType<typeof authConfig>) => ({
+            useFactory: (auth: AuthConfig) => ({
                 secret: auth.jwtSecret,
                 signOptions: { expiresIn: auth.expiresInSec },
             }),

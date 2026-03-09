@@ -1,4 +1,4 @@
-import { registerAs } from '@nestjs/config';
+import { registerAs, ConfigType } from '@nestjs/config';
 
 export const authConfig = registerAs('auth', () => ({
     cookieName: 'access_token',
@@ -12,3 +12,5 @@ export const authConfig = registerAs('auth', () => ({
     jwtSecret: process.env.JWT_SECRET!,
     expiresInSec: parseInt(process.env.JWT_EXPIRES_IN_SEC ?? '86400', 10),
 }));
+
+export type AuthConfig = ConfigType<typeof authConfig>;

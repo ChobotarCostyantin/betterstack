@@ -1,4 +1,4 @@
-import { registerAs } from '@nestjs/config';
+import { registerAs, ConfigType } from '@nestjs/config';
 
 export const postgresConfig = registerAs('postgres', () => ({
     host: process.env.POSTGRES_HOST!,
@@ -7,3 +7,5 @@ export const postgresConfig = registerAs('postgres', () => ({
     password: process.env.POSTGRES_PASSWORD!,
     dbName: process.env.POSTGRES_DB!,
 }));
+
+export type PostgresConfig = ConfigType<typeof postgresConfig>;
