@@ -74,6 +74,7 @@ export class SoftwareService {
         q: string | undefined,
         page: number,
         perPage: number,
+        categoryIds?: number[],
     ): Promise<PaginatedResponseDto<SoftwareListItemDto>> {
         const qb = this.repo
             .createQueryBuilder('software')
@@ -83,9 +84,18 @@ export class SoftwareService {
             .take(perPage);
 
         if (q) {
-            qb.where(
+            qb.andWhere(
                 'software.name ILIKE :q OR software.shortDescription ILIKE :q',
                 { q: `%${q}%` },
+            );
+        }
+
+        if (categoryIds && categoryIds.length > 0) {
+            qb.innerJoin(
+                'software.categories',
+                'filterCat',
+                'filterCat.id IN (:...categoryIds)',
+                { categoryIds },
             );
         }
 

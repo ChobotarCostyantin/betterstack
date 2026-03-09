@@ -18,6 +18,7 @@ import {
     ApiQuery,
 } from '@nestjs/swagger';
 import { PaginatedOf } from '@common/dto/paginated-response.dto';
+import { ParseIdsPipe } from '@common/pipes/parse-ids.pipe';
 import { SoftwareListItemDto } from './dto/software-response.dto';
 import { SoftwareComparisonDto } from './dto/software-comparison.dto';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
@@ -47,12 +48,19 @@ export class SoftwareController {
     })
     @ApiQuery({ name: 'page', required: false, example: 1 })
     @ApiQuery({ name: 'perPage', required: false, example: 10 })
+    @ApiQuery({
+        name: 'categoryIds',
+        required: false,
+        description: 'Comma-separated category IDs to filter by',
+        example: '1,2',
+    })
     findAll(
         @Query('q') q?: string,
         @Query('page', new ParseIntPipe({ optional: true })) page = 1,
         @Query('perPage', new ParseIntPipe({ optional: true })) perPage = 10,
+        @Query('categoryIds', new ParseIdsPipe()) categoryIds?: number[],
     ) {
-        return this.service.findAll(q, page, perPage);
+        return this.service.findAll(q, page, perPage, categoryIds);
     }
 
     @Get('most-used')

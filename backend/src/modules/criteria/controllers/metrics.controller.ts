@@ -9,7 +9,6 @@ import {
     Query,
     ParseIntPipe,
     UseGuards,
-    BadRequestException,
 } from '@nestjs/common';
 import {
     ApiTags,
@@ -23,6 +22,7 @@ import { RolesGuard } from '@common/guards/roles.guard';
 import { WithRole } from '@common/decorators/roles.decorator';
 import { Role } from '@common/enums/role.enum';
 import { PaginatedOf } from '@common/dto/paginated-response.dto';
+import { ParseIdsPipe } from '@common/pipes/parse-ids.pipe';
 import { MetricsService } from '../services/metrics.service';
 import { CreateMetricDto } from '../dto/create-metric.dto';
 import { UpdateMetricDto } from '../dto/update-metric.dto';
@@ -54,18 +54,10 @@ export class MetricsController {
         example: '1,2',
     })
     @ApiOkResponse({ type: [MetricDto] })
-    findByCategories(@Query('categoryIds') categoryIds: string) {
-        const ids = categoryIds
-            ? categoryIds
-                  .split(',')
-                  .map((id) => parseInt(id.trim(), 10))
-                  .filter((id) => !isNaN(id))
-            : [];
-        if (ids.length === 0) {
-            throw new BadRequestException(
-                'categoryIds must be a non-empty comma-separated list of integers',
-            );
-        }
+    findByCategories(
+        @Query('categoryIds', new ParseIdsPipe({ required: true }))
+        ids: number[],
+    ) {
         return this.service.findByCategories(ids);
     }
 
