@@ -41,6 +41,14 @@ betterstack/
 - Node.js 22+ and npm 10+
 - Docker and Docker Compose (required for the database)
 
+### Set up .env files
+
+The applications require `backend/.env.development` and `frontend/.env.development`
+to run. These files are git-ignored, so you need to create them manually.
+
+You can use the contents of `backend/.env.development.example` and
+`frontend/.env.development.example` as a starting point.
+
 ### Option A — Everything in Docker (recommended for a clean start)
 
 Starts the frontend, backend, and PostgreSQL in containers with hot reload via

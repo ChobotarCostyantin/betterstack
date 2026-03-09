@@ -14,7 +14,7 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - ./frontend/.env.local
+      - ./frontend/.env.development
     environment:
       NODE_ENV: development
       BACKEND_BASE_URL: "http://backend:3010"
@@ -33,9 +33,10 @@ services:
     ports:
       - "3010:3010"
     environment:
+      PORT: 3010
       POSTGRES_HOST: postgres
     env_file:
-      - ./backend/.env.local
+      - ./backend/.env.development
     depends_on:
       postgres:
         condition: service_healthy

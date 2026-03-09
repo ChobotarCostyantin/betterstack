@@ -21,7 +21,7 @@ import { loggerConfig } from '@config/logger.config';
         LoggerModule.forRoot(loggerConfig),
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: ['.env.local'],
+            envFilePath: ['.env.development'],
             load: [appConfig, adminConfig, jwtConfig, postgresConfig],
             validationSchema: envValidationSchema,
         }),
