@@ -9,4 +9,6 @@ export const authConfig = registerAs('auth', () => ({
         path: '/',
         maxAge: parseInt(process.env.JWT_EXPIRES_IN_SEC ?? '86400', 10) * 1000,
     },
+    jwtSecret: process.env.JWT_SECRET!,
+    expiresInSec: parseInt(process.env.JWT_EXPIRES_IN_SEC ?? '86400', 10),
 }));

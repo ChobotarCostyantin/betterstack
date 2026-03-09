@@ -3,14 +3,14 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import type { Request } from 'express';
 import type { ConfigType } from '@nestjs/config';
-import { jwtConfig } from '@config/jwt.config';
+import { authConfig } from '@config/auth.config';
 import { JwtPayload } from '@common/interfaces/jwt-payload.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(
-        @Inject(jwtConfig.KEY)
-        jwt: ConfigType<typeof jwtConfig>,
+        @Inject(authConfig.KEY)
+        auth: ConfigType<typeof authConfig>,
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromExtractors([
@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
                     null,
             ]),
             ignoreExpiration: false,
-            secretOrKey: jwt.secret,
+            secretOrKey: auth.jwtSecret,
         });
     }
 
