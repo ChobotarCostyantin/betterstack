@@ -1,12 +1,12 @@
 import { apiClient } from '../client';
 import { unwrapResponse } from '../utils';
 import {
-    AuthPayloadSchema,
     UserSchema,
+    AuthPayloadSchema,
+    type User,
     type RegisterInput,
     type LoginInput,
     type AuthResponse,
-    type User,
 } from './auth.schemas';
 
 export async function register(input: RegisterInput): Promise<AuthResponse> {

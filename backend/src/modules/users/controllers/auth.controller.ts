@@ -63,7 +63,7 @@ export class AuthController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @ApiOperation({ summary: 'Logout — clears the auth cookie' })
     logout(@Res({ passthrough: true }) res: Response): void {
-        res.clearCookie(this.auth.cookieName, { path: '/' });
+        res.clearCookie(this.auth.cookieName, this.auth.cookieOptions);
     }
 
     @Get('me')

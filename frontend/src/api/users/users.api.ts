@@ -1,7 +1,6 @@
 import { apiClient } from '../client';
 import { unwrapResponse, unwrapPaginatedResponse } from '../utils';
-import { UserSchema } from './users.schemas';
-import type { User } from '../auth/auth.schemas';
+import { type User, UserSchema } from '../auth/auth.schemas';
 import type { Paginated, PaginationQuery } from '../common.schemas';
 
 export async function listUsers(

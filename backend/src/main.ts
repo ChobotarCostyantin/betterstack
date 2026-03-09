@@ -6,8 +6,8 @@ import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from '@common/filters/http-exception.filter';
 import { TransformInterceptor } from '@common/interceptors/transform.interceptor';
-import { corsConfig, CorsConfig } from '@config/cors.config';
-import { appConfig, AppConfig } from '@config/app.config';
+import { corsConfig, type CorsConfig } from '@config/cors.config';
+import { appConfig, type AppConfig } from '@config/app.config';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, { bufferLogs: true });
