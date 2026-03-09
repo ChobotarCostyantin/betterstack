@@ -1,6 +1,5 @@
 import {
     Injectable,
-    BadRequestException,
     UnauthorizedException,
     NotFoundException,
     ConflictException,
@@ -15,14 +14,17 @@ import type { ConfigType } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
 import { Role } from '@common/enums/role.enum';
+import { PaginatedResponseDto } from '@common/dto/paginated-response.dto';
 import {
     SoftwareMarkedUsedEvent,
     SoftwareMarkedUnusedEvent,
 } from '@common/events/software-usage.events';
 import { User } from './entities/user.entity';
 import { SoftwareUsage } from './entities/software-usage.entity';
-import { AuthDto } from './dto/auth.dto';
+import { RegisterDto, LoginDto } from './dto/auth.dto';
+import { UserDto, AuthResponseDto } from './dto/user.dto';
 import { adminConfig } from '@config/admin.config';
+import type { PaginationQueryDto } from '@common/dto/pagination-query.dto';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -50,29 +52,55 @@ export class UsersService implements OnModuleInit {
         }
     }
 
-    async register(dto: AuthDto) {
-        if (await this.userRepo.findOneBy({ email: dto.email })) {
-            throw new BadRequestException('Email already exists');
+    async register(dto: RegisterDto): Promise<AuthResponseDto> {
+        const existing = await this.userRepo.findOneBy({ email: dto.email });
+        if (existing) {
+            throw new ConflictException('Email already in use');
         }
         const passwordHash = await bcrypt.hash(dto.password, 10);
         const user = await this.userRepo.save({
             email: dto.email,
             passwordHash,
         });
-        return this.generateToken(user);
+        return this.buildAuthResponse(user);
     }
 
-    async login(dto: AuthDto) {
+    async login(dto: LoginDto): Promise<AuthResponseDto> {
         const user = await this.userRepo.findOneBy({ email: dto.email });
         if (!user || !(await bcrypt.compare(dto.password, user.passwordHash))) {
             throw new UnauthorizedException('Invalid credentials');
         }
-        return this.generateToken(user);
+        return this.buildAuthResponse(user);
     }
 
-    async makeAdmin(id: number) {
-        await this.userRepo.update(id, { role: Role.ADMIN });
-        return { success: true };
+    async findAll(
+        query: PaginationQueryDto,
+    ): Promise<PaginatedResponseDto<UserDto>> {
+        const page = query.page ?? 1;
+        const perPage = query.perPage ?? 10;
+
+        const [users, total] = await this.userRepo.findAndCount({
+            order: { id: 'ASC' },
+            skip: (page - 1) * perPage,
+            take: perPage,
+        });
+
+        return new PaginatedResponseDto(
+            users.map((u) => UserDto.from(u)),
+            total,
+            page,
+            perPage,
+        );
+    }
+
+    async makeAdmin(id: number): Promise<UserDto> {
+        const user = await this.userRepo.findOneBy({ id });
+        if (!user) {
+            throw new NotFoundException(`User with ID ${id} not found`);
+        }
+        user.role = Role.ADMIN;
+        const updated = await this.userRepo.save(user);
+        return UserDto.from(updated);
     }
 
     async markSoftwareAsUsed(userId: number, softwareId: number) {
@@ -111,13 +139,14 @@ export class UsersService implements OnModuleInit {
         return { success: true };
     }
 
-    private generateToken(user: User) {
-        return {
-            access_token: this.jwtService.sign({
-                id: user.id,
-                email: user.email,
-                role: user.role,
-            }),
-        };
+    private buildAuthResponse(user: User): AuthResponseDto {
+        const response = new AuthResponseDto();
+        response.access_token = this.jwtService.sign({
+            id: user.id,
+            email: user.email,
+            role: user.role,
+        });
+        response.user = UserDto.from(user);
+        return response;
     }
 }
