@@ -20,8 +20,8 @@ import {
     ApiBearerAuth,
 } from '@nestjs/swagger';
 import { UsersService } from '../users.service';
-import { RegisterDto, LoginDto } from '../dto/auth.dto';
-import { AuthResponseDto, UserDto } from '../dto/user.dto';
+import { RegisterDto, LoginDto, AuthResponseDto } from '../dto/auth.dto';
+import { UserDto } from '../dto/user.dto';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
 import { authConfig } from '@config/auth.config';

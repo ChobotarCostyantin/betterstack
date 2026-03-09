@@ -24,9 +24,13 @@ import { User } from './entities/user.entity';
 import { SoftwareUsage } from './entities/software-usage.entity';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
 import { UserDto } from './dto/user.dto';
-import type { AuthResult } from './dto/user.dto';
 import { adminConfig } from '@config/admin.config';
 import type { PaginationQueryDto } from '@common/dto/pagination-query.dto';
+
+interface AuthResult {
+    token: string;
+    user: UserDto;
+}
 
 @Injectable()
 export class UsersService implements OnModuleInit {

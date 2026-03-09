@@ -20,15 +20,3 @@ export class UserDto {
         return dto;
     }
 }
-
-/** Returned by login/register — token is sent as an HTTP-only cookie by the controller. */
-export class AuthResponseDto {
-    @ApiProperty({ type: () => UserDto })
-    user: UserDto;
-}
-
-/** Internal result used by the controller to set the cookie. */
-export interface AuthResult {
-    token: string;
-    user: UserDto;
-}
