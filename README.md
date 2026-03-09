@@ -86,19 +86,13 @@ Useful when you want native Node.js performance and direct access to logs.
    npm install
    ```
 
-3. Apply pending migrations:
-
-   ```bash
-   npm run db:migration:run
-   ```
-
-4. (Optional) Seed the database with sample data:
+3. (Optional) Seed the database with sample data:
 
    ```bash
    npm run db:seed:dev
    ```
 
-5. Start backend and frontend concurrently with hot reload:
+4. Start backend and frontend concurrently with hot reload:
 
    ```bash
    npm run dev
@@ -111,7 +105,10 @@ Useful when you want native Node.js performance and direct access to logs.
    npm run fe:dev   # Next.js on port 3000
    ```
 
-6. Stop PostgreSQL when done:
+   > [!NOTE]
+   > Pending migrations are applied automatically when the backend starts.
+
+5. Stop PostgreSQL when done:
 
    ```bash
    npm run db:local:down
@@ -133,7 +130,6 @@ The TypeORM data-source is at `backend/database/data-source.js`.
 | Command                                                  | Description                           |
 | -------------------------------------------------------- | ------------------------------------- |
 | `npm run db:migration:gen -- database/migrations/MyName` | Generate a migration from entity diff |
-| `npm run db:migration:run`                               | Apply all pending migrations          |
 | `npm run db:migration:rev`                               | Revert the last migration             |
 
 ## Dev Seeding
@@ -147,7 +143,8 @@ npm run db:seed:dev
 ```
 
 > [!NOTE]
-> Requires the database to be running and all migrations applied first.
+> Requires the database to be running. Pending migrations are applied
+> automatically when the backend starts.
 
 ### What gets seeded
 

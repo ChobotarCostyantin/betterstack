@@ -36,6 +36,8 @@ import { loggerConfig } from '@config/logger.config';
                 database: postgres.dbName,
                 autoLoadEntities: true,
                 synchronize: false,
+                migrationsRun: true,
+                migrations: [__dirname + '/../database/migrations/*.js'],
                 retryAttempts: 5,
                 retryDelay: 3000,
             }),

@@ -19,7 +19,6 @@
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
         "test:e2e": "jest --config ./test/jest-e2e.json",
         "db:migration:gen": "DOTENV_CONFIG_PATH=.env.development npx typeorm migration:generate --outputJs -d database/data-source.js",
-        "db:migration:run": "DOTENV_CONFIG_PATH=.env.development npx typeorm migration:run -d database/data-source.js",
         "db:migration:rev": "DOTENV_CONFIG_PATH=.env.development npx typeorm migration:revert -d database/data-source.js",
         "db:seed:dev": "DOTENV_CONFIG_PATH=.env.development node database/dev-seed.js"
     },

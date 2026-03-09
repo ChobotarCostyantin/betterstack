@@ -21,7 +21,6 @@
     "db:local:up": "docker-compose up -d postgres",
     "db:local:down": "docker-compose down postgres",
     "db:migration:gen": "npm run db:migration:gen -w backend --",
-    "db:migration:run": "npm run db:migration:run -w backend",
     "db:migration:rev": "npm run db:migration:rev -w backend",
     "db:seed:dev": "npm run db:seed:dev -w backend",
     "prepare": "husky || true"
