@@ -1,7 +1,7 @@
 import SearchBar from '@/src/app/home/_components/SearchBar';
 import { createServerClient } from '@/src/lib/api/server.client';
 import { getMostUsedSoftware } from '@/src/api/software/software.api';
-import FeaturedCard from '@/src/app/home/_components/FeaturedCard';
+import SoftwareCard from '@/src/components/SoftwareCard';
 
 export default async function Home() {
     const client = await createServerClient();
@@ -30,7 +30,7 @@ export default async function Home() {
                 </h2>
                 <div className="flex flex-wrap justify-center gap-4">
                     {featuredSoftware.map((item) => (
-                        <FeaturedCard key={item.id} item={item} />
+                        <SoftwareCard key={item.id} item={item} />
                     ))}
                 </div>
             </div>
