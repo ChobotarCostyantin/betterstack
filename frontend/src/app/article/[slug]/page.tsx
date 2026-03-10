@@ -1,4 +1,6 @@
-import { getSoftwareBySlugAction } from '@/src/lib/api';
+import { createServerClient } from '@/src/lib/api/server.client';
+import { getSoftwareBySlug } from '@/src/api/software/software.api';
+import { HTTPError } from 'ky';
 import Image from 'next/image';
 import Link from 'next/link';
 import CategoryTags from '@/src/components/CategoryTags';
@@ -13,11 +15,17 @@ export default async function SoftwareArticlePage({
     params: Promise<{ slug: string }>;
 }) {
     const slugObject = await params;
-    const software = await getSoftwareBySlugAction(slugObject.slug);
+    const client = await createServerClient();
 
-    if (!software) notFound();
+    let software;
+    try {
+        software = await getSoftwareBySlug(client, slugObject.slug);
+    } catch (err) {
+        if (err instanceof HTTPError && err.response.status === 404) notFound();
+        throw err;
+    }
 
-    const sortedCategories = software.categoryIds.sort((a, b) => a - b);
+    const categoryNames = software.categories.map((c) => c.name);
 
     return (
         <article className="max-w-4xl mx-auto p-6">
@@ -44,9 +52,9 @@ export default async function SoftwareArticlePage({
                 </div>
 
                 <div className="flex gap-5 mt-4">
-                    {software.githubUrl && (
+                    {software.gitRepoUrl && (
                         <Link
-                            href={software.githubUrl}
+                            href={software.gitRepoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="shrink-0"
@@ -82,13 +90,10 @@ export default async function SoftwareArticlePage({
                     Categories
                 </h3>
                 <div>
-                    {software.categoryIds.length === 0 && (
+                    {categoryNames.length === 0 && (
                         <p className="text-lg font-medium">No categories</p>
                     )}
-                    <CategoryTags
-                        categoryIds={sortedCategories}
-                        showAll={true}
-                    />
+                    <CategoryTags categories={categoryNames} showAll={true} />
                 </div>
             </section>
 
@@ -120,9 +125,9 @@ export default async function SoftwareArticlePage({
                 )}
             </section>
 
-            <ScreenshotGallery screenshots={software.screenshots} />
+            <ScreenshotGallery screenshots={software.screenshotUrls} />
 
-            {software.features && Object.keys(software.features).length > 0 && (
+            {software.factors.positive.length > 0 && (
                 <section className="mb-12">
                     <div className="flex items-center gap-4 mb-6">
                         <h2 className="text-2xl font-bold text-zinc-100">
@@ -132,23 +137,21 @@ export default async function SoftwareArticlePage({
                     </div>
 
                     <dl className="flex flex-col gap-3">
-                        {Object.entries(software.features).map(
-                            ([key, value]) => (
-                                <div
-                                    key={key}
-                                    className="group flex flex-row items-center gap-4 p-4 rounded-xl bg-zinc-800/30 border border-zinc-700/50 hover:bg-zinc-800/80 hover:border-zinc-500 transition-all duration-300"
-                                >
-                                    <dt className="text-sm font-medium text-zinc-400">
-                                        <div className="w-8 h-8 shrink-0 rounded-lg bg-zinc-800/80 flex items-center justify-center border border-zinc-700 group-hover:border-zinc-500/50 group-hover:bg-zinc-500/10 transition-colors">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-gray-600/80 group-hover:bg-gray-400 transition-colors" />
-                                        </div>
-                                    </dt>
-                                    <dd className="text-base font-semibold text-zinc-200">
-                                        {String(value)}
-                                    </dd>
-                                </div>
-                            ),
-                        )}
+                        {software.factors.positive.map((factor) => (
+                            <div
+                                key={factor.factorId}
+                                className="group flex flex-row items-center gap-4 p-4 rounded-xl bg-zinc-800/30 border border-zinc-700/50 hover:bg-zinc-800/80 hover:border-zinc-500 transition-all duration-300"
+                            >
+                                <dt className="text-sm font-medium text-zinc-400">
+                                    <div className="w-8 h-8 shrink-0 rounded-lg bg-zinc-800/80 flex items-center justify-center border border-zinc-700 group-hover:border-zinc-500/50 group-hover:bg-zinc-500/10 transition-colors">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-gray-600/80 group-hover:bg-gray-400 transition-colors" />
+                                    </div>
+                                </dt>
+                                <dd className="text-base font-semibold text-zinc-200">
+                                    {factor.factorName}
+                                </dd>
+                            </div>
+                        ))}
                     </dl>
                 </section>
             )}

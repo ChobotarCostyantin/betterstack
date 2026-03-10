@@ -1,24 +1,20 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { Software } from '@/src/lib/types';
+import Image from 'next/image';
+import type { SoftwareListItem } from '@/src/api/software/software.schemas';
 import CategoryTags from '@/src/components/CategoryTags';
 
 interface FeaturedCardProps {
-    item: Software;
+    item: SoftwareListItem;
 }
 
 export default function FeaturedCard({ item }: FeaturedCardProps) {
     const [isImageLoading, setIsImageLoading] = useState(true);
     const [imageError, setImageError] = useState(false);
-    const imgRef = useRef<HTMLImageElement>(null);
 
     const hasLogo = item.logoUrl && item.logoUrl.trim() !== '';
-
-    useEffect(() => {
-        if (imgRef.current?.complete) setIsImageLoading(false);
-    }, [item.logoUrl]);
 
     return (
         <div className="relative w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-11px)] min-h-45">
@@ -40,11 +36,12 @@ export default function FeaturedCard({ item }: FeaturedCardProps) {
                                         </span>
                                     </div>
                                 ) : (
-                                    <img
-                                        ref={imgRef}
-                                        src={item.logoUrl}
+                                    <Image
+                                        unoptimized
+                                        src={item.logoUrl!}
                                         alt={item.name}
-                                        className={`w-full h-full object-cover transition-opacity duration-500 ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
+                                        fill
+                                        className={`object-cover transition-opacity duration-500 ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
                                         onLoad={() => setIsImageLoading(false)}
                                         onError={() => {
                                             setImageError(true);
@@ -70,9 +67,7 @@ export default function FeaturedCard({ item }: FeaturedCardProps) {
                     {item.shortDescription}
                 </p>
 
-                <CategoryTags
-                    categoryIds={item.categoryIds}
-                />
+                <CategoryTags categories={item.categories} />
             </Link>
         </div>
     );

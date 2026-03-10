@@ -1,26 +1,22 @@
 'use client';
 
-import { Software } from '@/src/lib/types';
+import type { SoftwareListItem } from '@/src/api/software/software.schemas';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import { useState } from 'react';
 import CategoryTags from '@/src/components/CategoryTags';
 
 export default function SearchResultItem({
     result,
     onClose,
 }: {
-    result: Software;
+    result: SoftwareListItem;
     onClose: () => void;
 }) {
     const [isImageLoading, setIsImageLoading] = useState(true);
     const [imageError, setImageError] = useState(false);
-    const imgRef = useRef<HTMLImageElement>(null);
 
     const hasLogo = result.logoUrl && result.logoUrl.trim() !== '';
-
-    useEffect(() => {
-        if (imgRef.current?.complete) setIsImageLoading(false);
-    }, [result.logoUrl]);
 
     return (
         <Link
@@ -41,11 +37,12 @@ export default function SearchResultItem({
                                 </span>
                             </div>
                         ) : (
-                            <img
-                                ref={imgRef}
-                                src={result.logoUrl}
+                            <Image
+                                unoptimized
+                                src={result.logoUrl!}
                                 alt={result.name}
-                                className={`w-full h-full object-cover transition-opacity duration-500 ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
+                                fill
+                                className={`object-cover transition-opacity duration-500 ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
                                 onLoad={() => setIsImageLoading(false)}
                                 onError={() => {
                                     setImageError(true);
@@ -68,9 +65,7 @@ export default function SearchResultItem({
                 </div>
             </div>
 
-            <CategoryTags
-                categoryIds={result.categoryIds}
-            />
+            <CategoryTags categories={result.categories} />
         </Link>
     );
 }

@@ -1,5 +1,8 @@
-import { apiClient } from '../client';
-import { unwrapResponse, unwrapPaginatedResponse } from '../utils';
+import type { KyInstance } from 'ky';
+import {
+    unwrapResponse,
+    unwrapPaginatedResponse,
+} from '../common/common.utils';
 import {
     CategoryListItemSchema,
     CategoryDetailSchema,
@@ -9,9 +12,10 @@ import {
     type RenameCategoryInput,
     type UpdateCategoryCriteriaInput,
 } from './categories.schemas';
-import type { Paginated, PaginationQuery } from '../common.schemas';
+import type { Paginated, PaginationQuery } from '../common/common.types';
 
 export async function listCategories(
+    client: KyInstance,
     query?: PaginationQuery,
 ): Promise<Paginated<CategoryListItem>> {
     const searchParams = new URLSearchParams();
@@ -19,40 +23,49 @@ export async function listCategories(
     if (query?.perPage !== undefined)
         searchParams.set('perPage', String(query.perPage));
 
-    const raw = await apiClient.get('categories', { searchParams }).json();
+    const raw = await client.get('categories', { searchParams }).json();
     return unwrapPaginatedResponse(CategoryListItemSchema, raw);
 }
 
-export async function getCategoryById(id: number): Promise<CategoryDetail> {
-    const raw = await apiClient.get(`categories/${id}`).json();
+export async function getCategoryById(
+    client: KyInstance,
+    id: number,
+): Promise<CategoryDetail> {
+    const raw = await client.get(`categories/${id}`).json();
     return unwrapResponse(CategoryDetailSchema, raw);
 }
 
 export async function createCategory(
+    client: KyInstance,
     input: CreateCategoryInput,
 ): Promise<CategoryListItem> {
-    const raw = await apiClient.post('categories', { json: input }).json();
+    const raw = await client.post('categories', { json: input }).json();
     return unwrapResponse(CategoryListItemSchema, raw);
 }
 
 export async function renameCategory(
+    client: KyInstance,
     id: number,
     input: RenameCategoryInput,
 ): Promise<CategoryListItem> {
-    const raw = await apiClient.put(`categories/${id}`, { json: input }).json();
+    const raw = await client.put(`categories/${id}`, { json: input }).json();
     return unwrapResponse(CategoryListItemSchema, raw);
 }
 
 export async function updateCategoryCriteria(
+    client: KyInstance,
     id: number,
     input: UpdateCategoryCriteriaInput,
 ): Promise<CategoryDetail> {
-    const raw = await apiClient
+    const raw = await client
         .put(`categories/${id}/criteria`, { json: input })
         .json();
     return unwrapResponse(CategoryDetailSchema, raw);
 }
 
-export async function deleteCategory(id: number): Promise<void> {
-    await apiClient.delete(`categories/${id}`);
+export async function deleteCategory(
+    client: KyInstance,
+    id: number,
+): Promise<void> {
+    await client.delete(`categories/${id}`);
 }

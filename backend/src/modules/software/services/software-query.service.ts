@@ -155,7 +155,7 @@ export class SoftwareQueryService {
                 metricId: sm.metricId,
                 metricName: sm.metricName,
                 higherIsBetter: sm.metric?.higherIsBetter ?? false,
-                value: sm.value,
+                value: Number(sm.value),
             }),
         );
 

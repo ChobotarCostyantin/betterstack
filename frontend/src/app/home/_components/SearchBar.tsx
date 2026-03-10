@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { searchAction, getCategoryByIdAction } from '@/src/lib/api';
-import { Software } from '@/src/lib/types';
+import { browserClient } from '@/src/lib/api/browser.client';
+import { listSoftware } from '@/src/api/software/software.api';
+import type { SoftwareListItem } from '@/src/api/software/software.schemas';
 import SearchResultItem from './SearchResultItem';
 
 export default function LiveSearchBar() {
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState<Software[]>([]);
+    const [results, setResults] = useState<SoftwareListItem[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -39,10 +40,10 @@ export default function LiveSearchBar() {
             setIsOpen(true);
 
             try {
-                const data = await searchAction(query);
-                setResults(data);
-            } catch (error) {
-                console.error('Search error:', error);
+                const data = await listSoftware(browserClient, { q: query });
+                setResults(data.data);
+            } catch {
+                setResults([]);
             } finally {
                 setIsLoading(false);
             }
@@ -53,7 +54,10 @@ export default function LiveSearchBar() {
     }, [query]);
 
     return (
-        <div ref={wrapperRef} className="relative w-full max-w-2xl mx-auto z-50">
+        <div
+            ref={wrapperRef}
+            className="relative w-full max-w-2xl mx-auto z-50"
+        >
             <div className="relative group">
                 <input
                     type="text"
@@ -74,15 +78,15 @@ export default function LiveSearchBar() {
                 <div className="absolute top-full left-0 right-0 mt-2 bg-[#111114] border border-zinc-800 rounded-2xl shadow-2xl flex flex-col max-h-100">
                     {results.length === 0 && !isLoading ? (
                         <div className="p-6 text-center text-zinc-500">
-                            No results found for "{query}"
+                            No results found for &quot;{query}&quot;
                         </div>
                     ) : (
                         <div className="overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent">
                             {results.map((result) => (
-                                <SearchResultItem 
-                                    key={result.id} 
-                                    result={result} 
-                                    onClose={() => setIsOpen(false)} 
+                                <SearchResultItem
+                                    key={result.id}
+                                    result={result}
+                                    onClose={() => setIsOpen(false)}
                                 />
                             ))}
                         </div>

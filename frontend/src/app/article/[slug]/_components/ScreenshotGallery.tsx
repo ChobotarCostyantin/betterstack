@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import { createPortal } from 'react-dom';
 
@@ -8,17 +8,22 @@ interface ScreenshotGalleryProps {
     screenshots?: string[];
 }
 
+function subscribe() {
+    return () => {};
+}
+
 export default function ScreenshotGallery({
     screenshots,
 }: ScreenshotGalleryProps) {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
-    const [mounted, setMounted] = useState(false);
+
+    const mounted = useSyncExternalStore(
+        subscribe,
+        () => true,
+        () => false,
+    );
 
     const carouselRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -68,7 +73,7 @@ export default function ScreenshotGallery({
                     </svg>
                 </button>
 
-                <div 
+                <div
                     ref={carouselRef}
                     className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden items-center"
                 >
@@ -76,12 +81,15 @@ export default function ScreenshotGallery({
                         <div
                             key={index}
                             onClick={() => setSelectedImage(url)}
-                            className="relative h-48 sm:h-56 md:h-64 flex-none cursor-pointer snap-center group/item"
+                            className="flex-none cursor-pointer snap-center group/item"
                         >
-                            <img
+                            <Image
+                                unoptimized
                                 src={url}
                                 alt={`Screenshot ${index + 1}`}
-                                className="h-full w-auto"
+                                width={0}
+                                height={0}
+                                className="h-48 sm:h-56 md:h-64 w-auto"
                             />
                         </div>
                     ))}
