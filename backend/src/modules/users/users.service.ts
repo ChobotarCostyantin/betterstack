@@ -10,7 +10,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import type { ConfigType } from '@nestjs/config';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import * as bcrypt from 'bcrypt';
 
@@ -23,9 +22,14 @@ import {
 import { User } from './entities/user.entity';
 import { SoftwareUsage } from './entities/software-usage.entity';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
-import { UserDto, AuthResponseDto } from './dto/user.dto';
-import { adminConfig } from '@config/admin.config';
+import { UserDto } from './dto/user.dto';
+import { adminConfig, type AdminConfig } from '@config/admin.config';
 import type { PaginationQueryDto } from '@common/dto/pagination-query.dto';
+
+interface AuthResult {
+    token: string;
+    user: UserDto;
+}
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -37,7 +41,7 @@ export class UsersService implements OnModuleInit {
         @InjectRepository(SoftwareUsage)
         private readonly usageRepo: Repository<SoftwareUsage>,
         @Inject(adminConfig.KEY)
-        private readonly admin: ConfigType<typeof adminConfig>,
+        private readonly admin: AdminConfig,
         private readonly jwtService: JwtService,
         private readonly eventEmitter: EventEmitter2,
     ) {}
@@ -55,7 +59,7 @@ export class UsersService implements OnModuleInit {
         }
     }
 
-    async register(dto: RegisterDto): Promise<AuthResponseDto> {
+    async register(dto: RegisterDto): Promise<AuthResult> {
         const existing = await this.userRepo.findOneBy({ email: dto.email });
         if (existing) {
             throw new ConflictException('Email already in use');
@@ -65,15 +69,15 @@ export class UsersService implements OnModuleInit {
             email: dto.email,
             passwordHash,
         });
-        return this.buildAuthResponse(user);
+        return this.buildAuthResult(user);
     }
 
-    async login(dto: LoginDto): Promise<AuthResponseDto> {
+    async login(dto: LoginDto): Promise<AuthResult> {
         const user = await this.userRepo.findOneBy({ email: dto.email });
         if (!user || !(await bcrypt.compare(dto.password, user.passwordHash))) {
             throw new UnauthorizedException('Invalid credentials');
         }
-        return this.buildAuthResponse(user);
+        return this.buildAuthResult(user);
     }
 
     async findAll(
@@ -142,14 +146,12 @@ export class UsersService implements OnModuleInit {
         return { success: true };
     }
 
-    private buildAuthResponse(user: User): AuthResponseDto {
-        const response = new AuthResponseDto();
-        response.access_token = this.jwtService.sign({
+    private buildAuthResult(user: User): AuthResult {
+        const token = this.jwtService.sign({
             id: user.id,
             email: user.email,
             role: user.role,
         });
-        response.user = UserDto.from(user);
-        return response;
+        return { token, user: UserDto.from(user) };
     }
 }

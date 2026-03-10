@@ -8,20 +8,12 @@ import {
     Param,
     Query,
     ParseIntPipe,
-    UseGuards,
 } from '@nestjs/common';
-import {
-    ApiTags,
-    ApiOperation,
-    ApiOkResponse,
-    ApiBearerAuth,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
 import { PaginatedOf } from '@common/dto/paginated-response.dto';
 import { CategoryListItemDto } from './dto/category-response.dto';
-import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
-import { RolesGuard } from '@common/guards/roles.guard';
-import { WithRole } from '@common/decorators/roles.decorator';
 import { Role } from '@common/enums/role.enum';
+import { Authenticated } from '@common/decorators/authenticated.decorator';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import {
@@ -53,18 +45,14 @@ export class CategoriesController {
     }
 
     @Post()
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.ADMIN)
+    @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Create new category' })
     create(@Body() dto: CreateCategoryDto) {
         return this.service.create(dto);
     }
 
     @Put(':id')
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.ADMIN)
+    @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Update category (slug and/or name)' })
     rename(
         @Param('id', ParseIntPipe) id: number,
@@ -74,9 +62,7 @@ export class CategoriesController {
     }
 
     @Put(':id/criteria')
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.ADMIN)
+    @Authenticated(Role.ADMIN)
     @ApiOperation({
         summary: 'Replace the full factors and metrics list for a category',
     })
@@ -88,9 +74,7 @@ export class CategoriesController {
     }
 
     @Delete(':id')
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.ADMIN)
+    @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Delete category' })
     remove(@Param('id', ParseIntPipe) id: number) {
         return this.service.remove(id);

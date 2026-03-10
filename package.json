@@ -11,7 +11,8 @@
   "scripts": {
     "be:dev": "npm run start:dev -w backend",
     "fe:dev": "npm run dev -w frontend",
-    "dev": "concurrently --names backend,frontend -c auto 'npm run be:dev' 'npm run fe:dev'",
+    "fe:typecheck": "tsc --watch --project frontend/tsconfig.json",
+    "dev": "concurrently --names backend,frontend,tsc -c auto 'npm run be:dev' 'npm run fe:dev' 'npm run fe:typecheck'",
     "build": "npm run build -w backend && npm run build -w frontend",
     "lint": "npm run lint -w backend && npm run lint -w frontend",
     "format": "npm run format -w backend && npm run format -w frontend",

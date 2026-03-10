@@ -6,13 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from './modules/users/users.module';
-import { ConfigModule, ConfigType } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 
 import { appConfig } from '@config/app.config';
 import { adminConfig } from '@config/admin.config';
-import { jwtConfig } from '@config/jwt.config';
-import { postgresConfig } from '@config/postgres.config';
+import { authConfig, AuthConfig } from '@config/auth.config';
+import { corsConfig } from '@config/cors.config';
+import { postgresConfig, PostgresConfig } from '@config/postgres.config';
 import { envValidationSchema } from '@config/env.validation';
 import { loggerConfig } from '@config/logger.config';
 
@@ -22,12 +23,18 @@ import { loggerConfig } from '@config/logger.config';
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: ['.env.development'],
-            load: [appConfig, adminConfig, jwtConfig, postgresConfig],
+            load: [
+                appConfig,
+                adminConfig,
+                authConfig,
+                corsConfig,
+                postgresConfig,
+            ],
             validationSchema: envValidationSchema,
         }),
         TypeOrmModule.forRootAsync({
             inject: [postgresConfig.KEY],
-            useFactory: (postgres: ConfigType<typeof postgresConfig>) => ({
+            useFactory: (postgres: PostgresConfig) => ({
                 type: 'postgres',
                 host: postgres.host,
                 port: postgres.port,
@@ -43,11 +50,11 @@ import { loggerConfig } from '@config/logger.config';
             }),
         }),
         JwtModule.registerAsync({
-            inject: [jwtConfig.KEY],
+            inject: [authConfig.KEY],
             global: true,
-            useFactory: (jwt: ConfigType<typeof jwtConfig>) => ({
-                secret: jwt.secret,
-                signOptions: { expiresIn: jwt.expiresInSec },
+            useFactory: (auth: AuthConfig) => ({
+                secret: auth.jwtSecret,
+                signOptions: { expiresIn: auth.expiresInSec },
             }),
         }),
         EventEmitterModule.forRoot(),

@@ -8,19 +8,15 @@ import {
     Param,
     Query,
     ParseIntPipe,
-    UseGuards,
 } from '@nestjs/common';
 import {
     ApiTags,
     ApiOperation,
-    ApiBearerAuth,
     ApiQuery,
     ApiOkResponse,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
-import { RolesGuard } from '@common/guards/roles.guard';
-import { WithRole } from '@common/decorators/roles.decorator';
 import { Role } from '@common/enums/role.enum';
+import { Authenticated } from '@common/decorators/authenticated.decorator';
 import { PaginatedOf } from '@common/dto/paginated-response.dto';
 import { ParseIdsPipe } from '@common/pipes/parse-ids.pipe';
 import { FactorsService } from '../services/factors.service';
@@ -62,18 +58,14 @@ export class FactorsController {
     }
 
     @Post()
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.ADMIN)
+    @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Create a new factor' })
     create(@Body() dto: CreateFactorDto) {
         return this.service.create(dto);
     }
 
     @Put(':id')
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.ADMIN)
+    @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Update a factor' })
     update(
         @Param('id', ParseIntPipe) id: number,
@@ -83,9 +75,7 @@ export class FactorsController {
     }
 
     @Delete(':id')
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @WithRole(Role.ADMIN)
+    @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Delete a factor' })
     remove(@Param('id', ParseIntPipe) id: number) {
         return this.service.remove(id);

@@ -2,12 +2,21 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from '@common/filters/http-exception.filter';
 import { TransformInterceptor } from '@common/interceptors/transform.interceptor';
+import { corsConfig, type CorsConfig } from '@config/cors.config';
+import { appConfig, type AppConfig } from '@config/app.config';
+import { authConfig, type AuthConfig } from '@config/auth.config';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, { bufferLogs: true });
+
+    const corsOptions = app.get<CorsConfig>(corsConfig.KEY);
+    app.enableCors(corsOptions);
+
+    app.use(cookieParser());
 
     const logger = app.get(Logger);
     app.useLogger(logger);
@@ -18,10 +27,12 @@ async function bootstrap() {
     app.useGlobalFilters(new HttpExceptionFilter(logger));
     app.useGlobalInterceptors(new TransformInterceptor());
 
+    const { cookieName } = app.get<AuthConfig>(authConfig.KEY);
+
     const config = new DocumentBuilder()
         .setTitle('Betterstack API')
         .setVersion('1.0')
-        .addBearerAuth()
+        .addCookieAuth(cookieName)
         .build();
 
     app.setGlobalPrefix('api/v1');
@@ -29,7 +40,7 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document);
 
-    const port = process.env.PORT ?? 3000;
+    const { port } = app.get<AppConfig>(appConfig.KEY);
     await app.listen(port);
 
     logger.log(

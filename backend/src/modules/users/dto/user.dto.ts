@@ -20,11 +20,3 @@ export class UserDto {
         return dto;
     }
 }
-
-export class AuthResponseDto {
-    @ApiProperty({ example: 'eyJhbGc...' })
-    access_token: string;
-
-    @ApiProperty({ type: () => UserDto })
-    user: UserDto;
-}
