@@ -8,10 +8,8 @@ function responseOf<T extends z.ZodTypeAny>(schema: T) {
 
 function paginatedResponseOf<T extends z.ZodTypeAny>(itemSchema: T) {
     return z.object({
-        data: z.object({
-            data: z.array(itemSchema),
-            meta: PaginatedMetaSchema,
-        }),
+        data: z.array(itemSchema),
+        meta: PaginatedMetaSchema,
     });
 }
 
@@ -26,5 +24,5 @@ export function unwrapPaginatedResponse<T extends z.ZodTypeAny>(
     schema: T,
     raw: unknown,
 ): Paginated<z.infer<T>> {
-    return paginatedResponseOf(schema).parse(raw).data as Paginated<z.infer<T>>;
+    return paginatedResponseOf(schema).parse(raw) as Paginated<z.infer<T>>;
 }
