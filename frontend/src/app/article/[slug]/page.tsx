@@ -5,7 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import CategoryTags from '@/src/components/CategoryTags';
 import ScreenshotGallery from './_components/ScreenshotGallery';
-import ReactMarkdown from 'react-markdown';
+import Markdown from './_components/Markdown';
+
 import { notFound } from 'next/navigation';
 import { GlobeIcon } from 'lucide-react';
 
@@ -109,9 +110,7 @@ export default async function SoftwareArticlePage({
                         <hr className="my-4 border-zinc-800" />{' '}
                         {software.fullDescription && (
                             <div className="max-w-none prose prose-zinc prose-invert">
-                                <ReactMarkdown>
-                                    {software.fullDescription}
-                                </ReactMarkdown>
+                                <Markdown content={software.fullDescription} />
                             </div>
                         )}
                     </>
