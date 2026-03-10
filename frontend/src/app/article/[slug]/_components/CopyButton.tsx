@@ -24,7 +24,7 @@ export const CopyButton = ({ text }: { text: string }) => {
             title="Copy code"
         >
             {copied ? (
-                <Check className="text-emerald-400" size={16} />
+                <Check className="text-zinc-400" size={16} />
             ) : (
                 <Copy size={16} />
             )}
