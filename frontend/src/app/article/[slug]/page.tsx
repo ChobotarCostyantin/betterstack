@@ -1,5 +1,6 @@
 import { createServerClient } from '@/src/lib/api/server.client';
 import { getSoftwareBySlug } from '@/src/api/software/software.api';
+import { HTTPError } from 'ky';
 import Image from 'next/image';
 import Link from 'next/link';
 import CategoryTags from '@/src/components/CategoryTags';
@@ -19,8 +20,9 @@ export default async function SoftwareArticlePage({
     let software;
     try {
         software = await getSoftwareBySlug(client, slugObject.slug);
-    } catch {
-        notFound();
+    } catch (err) {
+        if (err instanceof HTTPError && err.response.status === 404) notFound();
+        throw err;
     }
 
     const categoryNames = software.categories.map((c) => c.name);
