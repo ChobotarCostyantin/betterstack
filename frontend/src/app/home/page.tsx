@@ -1,9 +1,11 @@
 import SearchBar from '@/src/app/home/_components/SearchBar';
-import { getFeaturedAction } from '@/src/lib/api';
+import { createServerClient } from '@/src/lib/api/server.client';
+import { getMostUsedSoftware } from '@/src/api/software/software.api';
 import FeaturedCard from '@/src/app/home/_components/FeaturedCard';
 
 export default async function Home() {
-    const featuredSoftware = await getFeaturedAction();
+    const client = await createServerClient();
+    const featuredSoftware = await getMostUsedSoftware(client, 3);
 
     return (
         <div className="flex flex-col items-center min-h-[70vh] px-4 pt-32 pb-16">
