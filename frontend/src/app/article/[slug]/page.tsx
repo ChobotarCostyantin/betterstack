@@ -148,7 +148,7 @@ export default async function SoftwareArticlePage({
 
                     <div className="flex flex-col md:flex-row justify-center gap-4 sm:gap-6">
                         {software.factors.positive?.length > 0 && (
-                            <div className="w-full md:flex-1 flex flex-col gap-4 p-4 sm:p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800">
+                            <div className="w-full md:w-[calc(50%-12px)] flex flex-col gap-4 p-4 sm:p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800">
                                 <h3 className="text-base sm:text-lg font-semibold text-zinc-200 flex items-center justify-center gap-2">
                                     <ThumbsUpIcon className="text-zinc-500 shrink-0 w-5 h-5" />
                                     Pros of {software.name}
@@ -175,7 +175,7 @@ export default async function SoftwareArticlePage({
                         )}
 
                         {software.factors.negative?.length > 0 && (
-                            <div className="w-full md:flex-1 flex flex-col gap-4 p-4 sm:p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800">
+                            <div className="w-full md:w-[calc(50%-12px)] flex flex-col gap-4 p-4 sm:p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800">
                                 <h3 className="text-base sm:text-lg font-semibold text-zinc-200 flex items-center justify-center gap-2">
                                     <ThumbsDownIcon className="text-zinc-500 shrink-0 w-5 h-5" />
                                     Cons of {software.name}

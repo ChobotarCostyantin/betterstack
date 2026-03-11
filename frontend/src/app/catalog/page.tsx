@@ -11,16 +11,17 @@ import Pagination from './_components/Pagination';
 import CategoryList from './_components/CategoryList';
 import CatalogSearchBar from './_components/CatalogSearchBar';
 import { CategoryListItem } from '@/src/api/categories/categories.schemas';
+import { Metadata } from 'next';
 
-export const metadata = {
-    title: 'Catalog | BetterStack',
+export const metadata: Metadata = {
+    title: 'Catalog | betterstack',
     description: 'View and choose the best software.',
 };
 
 export default async function Catalog({
     searchParams,
 }: {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
     const resolvedParams = await searchParams;
     const currentCategorySlug =
@@ -60,7 +61,7 @@ export default async function Catalog({
                 if (activeCategory) {
                     categoryIds = [activeCategory.id];
                 }
-            } catch (e) {
+            } catch {
                 categoryNotFound = true;
             }
         }
