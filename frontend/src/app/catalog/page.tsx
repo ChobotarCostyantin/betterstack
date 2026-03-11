@@ -3,9 +3,12 @@ import SoftwareCard from '@/src/components/SoftwareCard';
 import { createServerClient } from '@/src/lib/api/server.client';
 import type { SoftwareListItem } from '@/src/api/software/software.schemas';
 import { listSoftware } from '@/src/api/software/software.api';
-import { listCategories } from '@/src/api/categories/categories.api';
-import CategoryFilter from './_components/CategoryFilter';
+import {
+    listCategories,
+    getCategoryBySlug,
+} from '@/src/api/categories/categories.api';
 import Pagination from './_components/Pagination';
+import CategoryList from './_components/CategoryList';
 import { CategoryListItem } from '@/src/api/categories/categories.schemas';
 
 export const metadata = {
@@ -19,7 +22,7 @@ export default async function Catalog({
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
     const resolvedParams = await searchParams;
-    const currentCategory =
+    const currentCategorySlug =
         typeof resolvedParams.category === 'string'
             ? resolvedParams.category
             : undefined;
@@ -31,34 +34,46 @@ export default async function Catalog({
     const serverClient = await createServerClient();
 
     let software: SoftwareListItem[] = [];
-    let categories: CategoryListItem[] = [];
+    let initialCategories: CategoryListItem[] = [];
+    let initialCategoriesTotalPages = 1;
     let totalPages = 1;
+    let categoryIds: number[] | undefined = undefined;
+    let categoryNotFound = false;
 
     try {
-        const categoriesRes = await listCategories(serverClient);
-        categories = categoriesRes.data ?? [];
+        const categoriesRes = await listCategories(serverClient, {
+            page: 1,
+            perPage: 5,
+        });
+        initialCategories = categoriesRes.data ?? [];
+        initialCategoriesTotalPages = categoriesRes.meta?.totalPages || 1;
 
-        let categoryIds: number[] | undefined = undefined;
-        if (currentCategory) {
-            const activeCategory = categories.find(
-                (c) => c.slug === currentCategory,
-            );
-            if (activeCategory) {
-                categoryIds = [activeCategory.id];
+        if (currentCategorySlug) {
+            try {
+                const activeCategory = await getCategoryBySlug(
+                    serverClient,
+                    currentCategorySlug,
+                );
+                if (activeCategory) {
+                    categoryIds = [activeCategory.id];
+                }
+            } catch (e) {
+                categoryNotFound = true;
             }
         }
 
-        const softwareRes = await listSoftware(serverClient, {
-            ...(categoryIds ? { categoryIds } : {}),
-            page: currentPage,
-            perPage: 6,
-        });
-
-        software = softwareRes.data ?? [];
-        totalPages =
-            softwareRes.meta?.totalPages ||
-            Math.ceil((softwareRes.meta?.total || software.length) / 6) ||
-            1;
+        if (!categoryNotFound) {
+            const softwareRes = await listSoftware(serverClient, {
+                ...(categoryIds ? { categoryIds } : {}),
+                page: currentPage,
+                perPage: 6,
+            });
+            software = softwareRes.data ?? [];
+            totalPages =
+                softwareRes.meta?.totalPages ||
+                Math.ceil((softwareRes.meta?.total || software.length) / 6) ||
+                1;
+        }
     } catch (error) {
         console.error(error);
     }
@@ -80,15 +95,16 @@ export default async function Catalog({
                         <h2 className="text-xl font-semibold text-white mb-4">
                             Categories
                         </h2>
-                        <CategoryFilter
-                            categories={categories}
-                            currentCategory={currentCategory}
+                        <CategoryList
+                            initialCategories={initialCategories}
+                            currentCategorySlug={currentCategorySlug}
+                            totalPages={initialCategoriesTotalPages}
                         />
                     </div>
                 </aside>
 
                 <main className="flex-1 min-w-0">
-                    {software.length > 0 ? (
+                    {software.length > 0 && !categoryNotFound ? (
                         <>
                             <div className="flex flex-wrap gap-y-6 gap-x-4 md:gap-x-6 lg:gap-x-[16.5px]">
                                 {software.map((item) => (
@@ -125,7 +141,7 @@ export default async function Catalog({
                                 No software found for the selected category or
                                 page.
                             </p>
-                            {(currentCategory || currentPage > 1) && (
+                            {(currentCategorySlug || currentPage > 1) && (
                                 <Link
                                     href="/catalog"
                                     className="mt-6 px-6 py-2.5 bg-zinc-100 text-zinc-900 font-medium rounded-xl hover:bg-white transition-colors shadow-lg"
