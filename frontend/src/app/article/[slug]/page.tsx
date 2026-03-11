@@ -6,9 +6,14 @@ import Link from 'next/link';
 import CategoryTags from '@/src/components/CategoryTags';
 import ScreenshotGallery from './_components/ScreenshotGallery';
 import Markdown from './_components/Markdown';
-
 import { notFound } from 'next/navigation';
-import { GlobeIcon } from 'lucide-react';
+import {
+    CheckIcon,
+    GlobeIcon,
+    MinusIcon,
+    ThumbsUpIcon,
+    ThumbsDownIcon,
+} from 'lucide-react';
 
 export default async function SoftwareArticlePage({
     params,
@@ -43,7 +48,9 @@ export default async function SoftwareArticlePage({
                         </div>
                     )}
                     <div>
-                        <h1 className="text-4xl font-bold">{software.name}</h1>
+                        <h1 className="text-2xl sm:text-4xl font-bold">
+                            {software.name}
+                        </h1>
                         {software.developer && (
                             <p className="text-lg text-zinc-400">
                                 Developer: {software.developer}
@@ -52,7 +59,7 @@ export default async function SoftwareArticlePage({
                     </div>
                 </div>
 
-                <div className="flex gap-5 mt-4">
+                <div className="flex flex-col-reverse sm:flex-row gap-5 mt-4">
                     {software.gitRepoUrl && (
                         <Link
                             href={software.gitRepoUrl}
@@ -107,7 +114,6 @@ export default async function SoftwareArticlePage({
                         <p className="text-lg font-medium mb-4">
                             {software.shortDescription}
                         </p>
-                        <hr className="my-4 border-zinc-800" />{' '}
                         {software.fullDescription && (
                             <div className="max-w-none prose prose-zinc prose-invert">
                                 <Markdown content={software.fullDescription} />
@@ -126,32 +132,77 @@ export default async function SoftwareArticlePage({
 
             <ScreenshotGallery screenshots={software.screenshotUrls} />
 
-            {software.factors.positive.length > 0 && (
+            {(software.factors?.positive?.length > 0 ||
+                software.factors?.negative?.length > 0) && (
                 <section className="mb-12">
                     <div className="flex items-center gap-4 mb-6">
                         <h2 className="text-2xl font-bold text-zinc-100">
-                            Features
+                            Pros & Cons
                         </h2>
                         <div className="h-px bg-zinc-800 flex-1"></div>
                     </div>
 
-                    <dl className="flex flex-col gap-3">
-                        {software.factors.positive.map((factor) => (
-                            <div
-                                key={factor.factorId}
-                                className="group flex flex-row items-center gap-4 p-4 rounded-xl bg-zinc-800/30 border border-zinc-700/50 hover:bg-zinc-800/80 hover:border-zinc-500 transition-all duration-300"
-                            >
-                                <dt className="text-sm font-medium text-zinc-400">
-                                    <div className="w-8 h-8 shrink-0 rounded-lg bg-zinc-800/80 flex items-center justify-center border border-zinc-700 group-hover:border-zinc-500/50 group-hover:bg-zinc-500/10 transition-colors">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-gray-600/80 group-hover:bg-gray-400 transition-colors" />
-                                    </div>
-                                </dt>
-                                <dd className="text-base font-semibold text-zinc-200">
-                                    {factor.factorName}
-                                </dd>
+                    <div className="flex flex-col md:flex-row justify-center gap-6">
+                        {software.factors.positive?.length > 0 && (
+                            <div className="w-full md:w-[calc(50%-12px)] flex flex-col gap-4 p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800">
+                                <h3 className="text-lg font-semibold text-zinc-200 flex justify-center items-center gap-2">
+                                    <ThumbsUpIcon
+                                        className="text-zinc-500 shrink-0"
+                                        size={20}
+                                    />
+                                    Pros of {software.name}
+                                </h3>
+                                <ul className="flex flex-col gap-3">
+                                    {software.factors.positive.map((factor) => (
+                                        <li
+                                            key={factor.factorId}
+                                            className="flex items-start gap-3"
+                                        >
+                                            <span className="mt-0.5 shrink-0 text-zinc-500/80">
+                                                <CheckIcon
+                                                    size={18}
+                                                    strokeWidth={3}
+                                                />
+                                            </span>
+                                            <span className="text-base text-zinc-300">
+                                                {factor.factorName}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
-                        ))}
-                    </dl>
+                        )}
+
+                        {software.factors.negative?.length > 0 && (
+                            <div className="w-full md:w-[calc(50%-12px)] flex flex-col gap-4 p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800">
+                                <h3 className="text-lg font-semibold text-zinc-200 flex justify-center items-center gap-2">
+                                    <ThumbsDownIcon
+                                        className="text-zinc-500 shrink-0"
+                                        size={20}
+                                    />
+                                    Cons of {software.name}
+                                </h3>
+                                <ul className="flex flex-col gap-3">
+                                    {software.factors.negative.map((factor) => (
+                                        <li
+                                            key={factor.factorId}
+                                            className="flex items-start gap-3"
+                                        >
+                                            <span className="mt-0.5 shrink-0 text-zinc-500/80">
+                                                <MinusIcon
+                                                    size={18}
+                                                    strokeWidth={3}
+                                                />
+                                            </span>
+                                            <span className="text-base text-zinc-300">
+                                                {factor.factorName}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
                 </section>
             )}
         </article>

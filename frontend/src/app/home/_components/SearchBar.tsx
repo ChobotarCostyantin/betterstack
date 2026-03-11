@@ -64,7 +64,7 @@ export default function LiveSearchBar() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => query.trim().length >= 2 && setIsOpen(true)}
-                    placeholder="Search software, frameworks, or categories..."
+                    placeholder="Search software or frameworks..."
                     className="w-full px-6 py-4 bg-[#111114]/80 border border-zinc-800 rounded-2xl text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-all backdrop-blur-md shadow-lg"
                 />
                 {isLoading && (
