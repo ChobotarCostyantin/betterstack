@@ -1,3 +1,5 @@
+import Link from 'next/link';
+import { ChevronDown } from 'lucide-react';
 import SearchBar from '@/src/app/home/_components/SearchBar';
 import { createServerClient } from '@/src/lib/api/server.client';
 import { getMostUsedSoftware } from '@/src/api/software/software.api';
@@ -28,10 +30,25 @@ export default async function Home() {
                 <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-6 text-center">
                     Popular software
                 </h2>
+
                 <div className="flex flex-wrap justify-center gap-4">
                     {featuredSoftware.map((item) => (
                         <SoftwareCard key={item.id} item={item} />
                     ))}
+                </div>
+
+                <div className="mt-12 flex justify-center">
+                    <div className="relative group cursor-pointer">
+                        <div className="absolute -inset-0.5 bg-linear-to-r from-zinc-400 to-zinc-600 rounded-full blur-md opacity-25 group-hover:opacity-50 transition duration-500"></div>
+
+                        <Link
+                            href="/catalog"
+                            className="relative flex items-center gap-x-2 px-6 py-3 bg-zinc-900 text-zinc-300 hover:text-white rounded-full border border-zinc-800 transition-all duration-300"
+                        >
+                            <span>View all software</span>
+                            <ChevronDown className="w-5 h-5  transition-transform duration-300" />
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>
