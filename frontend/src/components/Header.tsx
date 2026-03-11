@@ -8,17 +8,20 @@ export default function Header() {
                 <div className="shrink-0">
                     <Link
                         href="/home"
-                        title='betterstack'
+                        title="betterstack"
                         className="text-2xl font-bold tracking-wide hover:text-gray-400 transition-colors"
                     >
                         <div className="flex items-center gap-x-4 betterstack-logo">
                             <Logo />
-                            <span className='hidden md:block bg-linear-to-r from-zinc-400 to-zinc-600 bg-clip-text text-transparent'>betterstack</span>
+                            <span className="hidden md:block bg-linear-to-r from-zinc-400 to-zinc-600 bg-clip-text text-transparent">
+                                betterstack
+                            </span>
                         </div>
                     </Link>
                 </div>
 
                 <div className="flex items-center gap-x-8">
+                    <NavLink href="/catalog">Catalog</NavLink>
                     <NavLink href="/comparison">Comparison</NavLink>
                     <NavLink href="">Login</NavLink>
                 </div>
