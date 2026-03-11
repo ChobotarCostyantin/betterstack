@@ -35,6 +35,14 @@ export async function getCategoryById(
     return unwrapResponse(CategoryDetailSchema, raw);
 }
 
+export async function getCategoryBySlug(
+    client: KyInstance,
+    slug: string,
+): Promise<CategoryDetail> {
+    const raw = await client.get(`categories/slug/${slug}`).json();
+    return unwrapResponse(CategoryDetailSchema, raw);
+}
+
 export async function createCategory(
     client: KyInstance,
     input: CreateCategoryInput,

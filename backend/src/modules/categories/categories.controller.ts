@@ -44,6 +44,14 @@ export class CategoriesController {
         return this.service.findOneWithCriteria(id);
     }
 
+    @Get('/slug/:slug')
+    @ApiOperation({
+        summary: 'Get category by Slug with its factors and metrics',
+    })
+    findOneBySlug(@Param('slug') slug: string) {
+        return this.service.findOneWithSlug(slug);
+    }
+
     @Post()
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Create new category' })

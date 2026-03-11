@@ -76,6 +76,31 @@ export class CategoriesService {
         };
     }
 
+    async findOneWithSlug(slug: string): Promise<CategoryDetailDto> {
+        const category = await this.categoryRepo.findOne({
+            where: { slug },
+            relations: ['factors', 'metrics'],
+        });
+        if (!category)
+            throw new NotFoundException(`Category with slug ${slug} not found`);
+
+        return {
+            id: category.id,
+            slug: category.slug,
+            name: category.name,
+            factors: (category.factors ?? []).map((f) => ({
+                id: f.id,
+                positiveVariant: f.positiveVariant,
+                negativeVariant: f.negativeVariant,
+            })),
+            metrics: (category.metrics ?? []).map((m) => ({
+                id: m.id,
+                name: m.name,
+                higherIsBetter: m.higherIsBetter,
+            })),
+        };
+    }
+
     async create(dto: CreateCategoryDto) {
         const category = this.categoryRepo.create({
             slug: dto.slug,
