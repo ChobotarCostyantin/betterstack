@@ -105,8 +105,8 @@ Useful when you want native Node.js performance and direct access to logs.
    npm run fe:dev   # Next.js on port 3000
    ```
 
-   > [!NOTE]
-   > Pending migrations are applied automatically when the backend starts.
+> [!NOTE]
+> Pending migrations are applied automatically when the backend starts.
 
 5. Stop PostgreSQL when done:
 
@@ -145,16 +145,3 @@ npm run db:seed:dev
 > [!NOTE]
 > Requires the database to be running. Pending migrations are applied
 > automatically when the backend starts.
-
-### What gets seeded
-
-| Entity     | Records                                                                 |
-| ---------- | ----------------------------------------------------------------------- |
-| Factors    | 5 (fast startup, low memory, good IntelliSense, rich plugins, free/OSS) |
-| Metrics    | 4 (indexing time, memory footprint, GitHub stars, extensions count)     |
-| Categories | 3 (IDEs & Editors, Database Clients, Programming Languages)             |
-| Software   | 2 (JetBrains Rider, Visual Studio Code)                                 |
-
-The _IDEs & Editors_ category is wired up with all factors and metrics. Both
-software items are linked to that category with realistic factor and metric
-values.
