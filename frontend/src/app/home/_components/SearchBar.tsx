@@ -90,7 +90,7 @@ export default function LiveSearchBar() {
                                 <SearchResultItem
                                     key={result.id}
                                     result={result}
-                                    onClose={() => setIsOpen(false)}
+                                    onCloseAction={() => setIsOpen(false)}
                                 />
                             ))}
                         </div>

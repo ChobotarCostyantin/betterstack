@@ -1,12 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Logo from './Logo';
-import { Menu, X, Home, BookOpen, ArrowLeftRight, User } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import {
+    Menu,
+    X,
+    Home,
+    BookOpen,
+    ArrowLeftRight,
+    User,
+    LogOut,
+} from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { me, logout } from '@/src/api/auth/auth.api';
+import { browserClient } from '@/src/lib/api/browser.client';
+
 export default function Header() {
+    const router = useRouter();
+    const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (isMenuOpen) {
@@ -18,6 +34,33 @@ export default function Header() {
             document.body.style.overflow = 'unset';
         };
     }, [isMenuOpen]);
+
+    useEffect(() => {
+        async function checkAuth() {
+            try {
+                await me(browserClient);
+                setIsLoggedIn(true);
+            } catch {
+                setIsLoggedIn(false);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        checkAuth();
+    }, [pathname]);
+
+    const handleLogout = async () => {
+        try {
+            await logout(browserClient);
+            setIsLoggedIn(false);
+            setIsMenuOpen(false);
+            router.push('/home');
+            router.refresh();
+        } catch (err) {
+            console.error('Logout failed:', err);
+        }
+    };
 
     return (
         <>
@@ -41,7 +84,22 @@ export default function Header() {
                     <div className="hidden md:flex items-center gap-x-8">
                         <NavLink href="/catalog">Catalog</NavLink>
                         <NavLink href="/comparison">Comparison</NavLink>
-                        <NavLink href="">Login</NavLink>
+
+                        {!isLoading &&
+                            (isLoggedIn ? (
+                                <button
+                                    onClick={handleLogout}
+                                    className="text-base font-medium transition-colors duration-300 hover:text-gray-400 relative group cursor-pointer"
+                                >
+                                    Logout
+                                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gray-400 transition-all duration-300 group-hover:w-full"></span>
+                                </button>
+                            ) : (
+                                <>
+                                    <NavLink href="/login">Login</NavLink>
+                                    <NavLink href="/register">Sign up</NavLink>
+                                </>
+                            ))}
                     </div>
 
                     <button
@@ -103,10 +161,33 @@ export default function Header() {
                         <span>Comparison</span>
                     </MobileNavLink>
 
-                    <MobileNavLink href="" onClick={() => setIsMenuOpen(false)}>
-                        <User size={22} className="text-zinc-400" />
-                        <span>Login</span>
-                    </MobileNavLink>
+                    {!isLoading &&
+                        (isLoggedIn ? (
+                            <button
+                                onClick={handleLogout}
+                                className="flex items-center gap-x-3 text-lg font-medium transition-colors px-3 py-3 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800/50 w-full text-left cursor-pointer"
+                            >
+                                <LogOut size={22} className="text-zinc-400" />
+                                <span>Logout</span>
+                            </button>
+                        ) : (
+                            <>
+                                <MobileNavLink
+                                    href="/login"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <User size={22} className="text-zinc-400" />
+                                    <span>Login</span>
+                                </MobileNavLink>
+                                <MobileNavLink
+                                    href="/register"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <User size={22} className="text-zinc-400" />
+                                    <span>Sign up</span>
+                                </MobileNavLink>
+                            </>
+                        ))}
                 </div>
             </div>
         </>

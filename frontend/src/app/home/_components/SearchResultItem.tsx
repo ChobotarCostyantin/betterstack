@@ -8,10 +8,10 @@ import CategoryTags from '@/src/components/CategoryTags';
 
 export default function SearchResultItem({
     result,
-    onClose,
+    onCloseAction,
 }: {
     result: SoftwareListItem;
-    onClose: () => void;
+    onCloseAction: () => void;
 }) {
     const [isImageLoading, setIsImageLoading] = useState(true);
     const [imageError, setImageError] = useState(false);
@@ -21,7 +21,7 @@ export default function SearchResultItem({
     return (
         <Link
             href={`/article/${result.slug}`}
-            onClick={onClose}
+            onClick={onCloseAction}
             className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-zinc-800/50 transition-colors group rounded-xl"
         >
             <div className="flex items-center gap-3 flex-1 min-w-0">
