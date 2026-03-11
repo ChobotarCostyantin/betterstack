@@ -55,13 +55,10 @@ export default function LiveSearchBar() {
     }, [query]);
 
     return (
-        <div
-            ref={wrapperRef}
-            className="relative w-full max-w-2xl mx-auto z-50"
-        >
+        <div ref={wrapperRef} className="relative w-full max-w-2xl mx-auto z-5">
             <div className="relative group">
                 <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-                    <Search className="z-50 w-5 h-5 text-zinc-500 group-focus-within:text-zinc-300 transition-colors" />
+                    <Search className="z-5 w-5 h-5 text-zinc-500 group-focus-within:text-zinc-300 transition-colors" />
                 </div>
                 <input
                     type="text"
