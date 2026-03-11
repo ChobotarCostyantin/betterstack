@@ -9,6 +9,7 @@ import {
 } from '@/src/api/categories/categories.api';
 import Pagination from './_components/Pagination';
 import CategoryList from './_components/CategoryList';
+import CatalogSearchBar from './_components/CatalogSearchBar';
 import { CategoryListItem } from '@/src/api/categories/categories.schemas';
 
 export const metadata = {
@@ -30,6 +31,8 @@ export default async function Catalog({
         typeof resolvedParams.page === 'string'
             ? parseInt(resolvedParams.page, 10) || 1
             : 1;
+    const searchQuery =
+        typeof resolvedParams.q === 'string' ? resolvedParams.q : undefined;
 
     const serverClient = await createServerClient();
 
@@ -43,7 +46,7 @@ export default async function Catalog({
     try {
         const categoriesRes = await listCategories(serverClient, {
             page: 1,
-            perPage: 5,
+            perPage: 3,
         });
         initialCategories = categoriesRes.data ?? [];
         initialCategoriesTotalPages = categoriesRes.meta?.totalPages || 1;
@@ -65,6 +68,7 @@ export default async function Catalog({
         if (!categoryNotFound) {
             const softwareRes = await listSoftware(serverClient, {
                 ...(categoryIds ? { categoryIds } : {}),
+                ...(searchQuery ? { q: searchQuery } : {}),
                 page: currentPage,
                 perPage: 6,
             });
@@ -104,6 +108,10 @@ export default async function Catalog({
                 </aside>
 
                 <main className="flex-1 min-w-0">
+                    <div className="mb-8">
+                        <CatalogSearchBar initialQuery={searchQuery} />
+                    </div>
+
                     {software.length > 0 && !categoryNotFound ? (
                         <>
                             <div className="flex flex-wrap gap-y-6 gap-x-4 md:gap-x-6 lg:gap-x-[16.5px]">
@@ -138,10 +146,13 @@ export default async function Catalog({
                                 Nothing found.
                             </h3>
                             <p className="text-zinc-400 max-w-md">
-                                No software found for the selected category or
-                                page.
+                                {searchQuery
+                                    ? `No software found for "${searchQuery}".`
+                                    : 'No software found for the selected category or page.'}
                             </p>
-                            {(currentCategorySlug || currentPage > 1) && (
+                            {(currentCategorySlug ||
+                                currentPage > 1 ||
+                                searchQuery) && (
                                 <Link
                                     href="/catalog"
                                     className="mt-6 px-6 py-2.5 bg-zinc-100 text-zinc-900 font-medium rounded-xl hover:bg-white transition-colors shadow-lg"
