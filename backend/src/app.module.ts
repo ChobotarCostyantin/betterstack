@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from './modules/users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
+import { HealthModule } from './modules/health/health.module';
 
 import { appConfig } from '@config/app.config';
 import { adminConfig } from '@config/admin.config';
@@ -19,6 +20,7 @@ import { loggerConfig } from '@config/logger.config';
 
 @Module({
     imports: [
+        HealthModule,
         LoggerModule.forRoot(loggerConfig),
         ConfigModule.forRoot({
             isGlobal: true,
