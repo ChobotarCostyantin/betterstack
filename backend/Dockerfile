@@ -46,7 +46,6 @@ FROM base AS production
 ENV NODE_ENV=production
 
 COPY --from=prod-deps /usr/src/app/node_modules ./node_modules
-COPY --from=prod-deps /usr/src/app/backend/node_modules ./backend/node_modules
 COPY --from=build /usr/src/app/backend/dist ./backend/dist
 
 USER node
