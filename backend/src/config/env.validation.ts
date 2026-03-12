@@ -23,5 +23,5 @@ export const envValidationSchema = Joi.object({
     ADMIN_PASSWORD: Joi.string().min(8).required(),
 
     // CORS
-    FRONTEND_URL: Joi.string().uri().default('http://localhost:3000'),
+    FRONTEND_URLS: Joi.string().uri().default('http://localhost:3000'),
 });
