@@ -7,6 +7,7 @@ import CategoryTags from '@/src/components/CategoryTags';
 import ScreenshotGallery from './_components/ScreenshotGallery';
 import Markdown from './_components/Markdown';
 import ProsAndCons from './_components/ProsAndCons';
+import SoftwareAlternatives from './_components/SoftwareAlternatives';
 import { notFound } from 'next/navigation';
 import { GlobeIcon } from 'lucide-react';
 import { Metadata } from 'next';
@@ -167,6 +168,11 @@ export default async function SoftwareArticlePage({
             <ProsAndCons
                 softwareName={software.name}
                 factors={software.factors}
+            />
+
+            <SoftwareAlternatives
+                slug={software.slug}
+                softwareName={software.name}
             />
         </article>
     );

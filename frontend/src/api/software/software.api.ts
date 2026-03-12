@@ -66,7 +66,7 @@ export async function getSoftwareBySlug(
 export async function getSoftwareAlternatives(
     client: KyInstance,
     slug: string,
-    query?: { q: string; page?: number; perPage?: number },
+    query?: { q?: string; page?: number; perPage?: number },
 ): Promise<Paginated<SoftwareListItem>> {
     const searchParams = new URLSearchParams();
     if (query?.q) searchParams.set('q', query.q);
