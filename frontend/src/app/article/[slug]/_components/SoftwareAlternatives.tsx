@@ -31,7 +31,7 @@ export default async function SoftwareAlternatives({
     }
 
     return (
-        <section className="mb-8 sm:mb-12 mt-12 pt-8 border-t border-zinc-800/80">
+        <section className="mb-8 sm:mb-12 mt-12 pt-8 border-zinc-800/80">
             <div className="flex items-center gap-4 mb-6">
                 <h2 className="text-xl sm:text-2xl font-bold text-zinc-100 whitespace-nowrap">
                     Alternatives to {softwareName}
