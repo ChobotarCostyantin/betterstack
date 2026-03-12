@@ -1,5 +1,7 @@
 import { createServerClient } from '@/src/lib/api/server.client';
 import { getSoftwareBySlug } from '@/src/api/software/software.api';
+import { me } from '@/src/api/auth/auth.api';
+import { hasUserUsedSoftware } from '@/src/api/users/users.api';
 import { HTTPError } from 'ky';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,6 +10,7 @@ import ScreenshotGallery from './_components/ScreenshotGallery';
 import Markdown from './_components/Markdown';
 import ProsAndCons from './_components/ProsAndCons';
 import SoftwareAlternatives from './_components/SoftwareAlternatives';
+import UseSoftwareButton from './_components/UseSoftwareButton';
 import { notFound } from 'next/navigation';
 import { GlobeIcon } from 'lucide-react';
 import { Metadata } from 'next';
@@ -60,6 +63,27 @@ export default async function SoftwareArticlePage({
         throw err;
     }
 
+    let isAuthenticated = false;
+    let isUsedByCurrentUser = false;
+
+    try {
+        await me(client);
+        isAuthenticated = true;
+    } catch {
+        isAuthenticated = false;
+    }
+
+    if (isAuthenticated) {
+        try {
+            isUsedByCurrentUser = await hasUserUsedSoftware(
+                client,
+                software.id,
+            );
+        } catch {
+            isUsedByCurrentUser = false;
+        }
+    }
+
     const categoryNames = software.categories.map((c) => c.name);
 
     return (
@@ -88,8 +112,8 @@ export default async function SoftwareArticlePage({
                     </div>
                 </div>
 
-                {/* Icons */}
-                <div className="flex items-center gap-3 sm:gap-4 mt-2 sm:mt-0">
+                {/* Icons & Actions*/}
+                <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-2 sm:mt-0">
                     {software.gitRepoUrl && (
                         <Link
                             href={software.gitRepoUrl}
@@ -118,6 +142,13 @@ export default async function SoftwareArticlePage({
                                 strokeWidth={1.5}
                             />
                         </Link>
+                    )}
+
+                    {isAuthenticated && (
+                        <UseSoftwareButton
+                            softwareId={software.id}
+                            initialIsUsed={isUsedByCurrentUser}
+                        />
                     )}
                 </div>
             </header>

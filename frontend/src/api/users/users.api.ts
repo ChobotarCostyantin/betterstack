@@ -5,6 +5,7 @@ import {
 } from '../common/common.utils';
 import { type User, UserSchema } from '../auth/auth.schemas';
 import type { Paginated, PaginationQuery } from '../common/common.types';
+import z, { boolean } from 'zod';
 
 export async function listUsers(
     client: KyInstance,
@@ -39,4 +40,12 @@ export async function markSoftwareAsUnused(
     softwareId: number,
 ): Promise<void> {
     await client.delete(`users/software/${softwareId}/use`);
+}
+
+export async function hasUserUsedSoftware(
+    client: KyInstance,
+    softwareId: number,
+): Promise<boolean> {
+    const raw = await client.get(`users/software/hasUsed/${softwareId}`).json();
+    return unwrapResponse(z.boolean(), raw);
 }
