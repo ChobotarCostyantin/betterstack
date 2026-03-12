@@ -6,7 +6,7 @@ import {
     IsArray,
     IsNumber,
     IsUrl,
-} from 'class-validator'; // <-- ДОДАНО ІМПОРТ
+} from 'class-validator';
 
 export class CreateSoftwareDto {
     @ApiProperty({

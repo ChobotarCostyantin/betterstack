@@ -94,11 +94,6 @@ export class SoftwareManagementService {
                     'Provided category ID does not exist',
                 );
             }
-            if (dbError.code === '23505') {
-                throw new BadRequestException(
-                    'Software with this slug or name already exists',
-                );
-            }
         }
 
         throw new InternalServerErrorException('Database operation failed');
