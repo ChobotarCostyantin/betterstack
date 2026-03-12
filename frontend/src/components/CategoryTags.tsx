@@ -19,8 +19,6 @@ export default function CategoryTags({
         ? categories
         : categories.slice(0, maxDisplay);
 
-    if (!categoryIds || categoryIds.length === 0) return null;
-
     return (
         <div className="flex flex-wrap gap-1.5 items-center shrink-0">
             {displayCategories.map((name) => (
