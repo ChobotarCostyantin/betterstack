@@ -72,8 +72,8 @@ export default function SoftwareCard({ item }: FeaturedCardProps) {
                     {item.shortDescription}
                 </p>
 
-                <div className="relative z-10 mt-auto flex items-end justify-between gap-4">
-                    <div className="flex-1 min-w-0">
+                <div className="relative z-10 mt-auto flex align-middle items-center justify-between gap-2">
+                    <div className="min-w-0">
                         <CategoryTags categories={item.categories} />
                     </div>
 

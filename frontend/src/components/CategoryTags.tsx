@@ -20,7 +20,7 @@ export default function CategoryTags({
         : categories.slice(0, maxDisplay);
 
     return (
-        <div className="flex flex-wrap gap-1.5 items-center shrink-0">
+        <div className="flex gap-1.5 items-center shrink-0">
             {displayCategories.map((name) => (
                 <span
                     key={name}
