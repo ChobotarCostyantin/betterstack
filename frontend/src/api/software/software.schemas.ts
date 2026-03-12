@@ -82,10 +82,21 @@ export const MetricComparisonEntrySchema = z.object({
 });
 export type MetricComparisonEntry = z.infer<typeof MetricComparisonEntrySchema>;
 
+export const FactorComparisonEntrySchema = z.object({
+    factorId: z.number(),
+    factorName: z.string(),
+    isPositive: z.boolean(),
+    hasA: z.boolean(),
+    hasB: z.boolean(),
+    winner: z.enum(['a', 'b']).nullable(),
+});
+export type FactorComparisonEntry = z.infer<typeof FactorComparisonEntrySchema>;
+
 export const SoftwareComparisonSchema = z.object({
     softwareA: SoftwareComparisonSideSchema,
     softwareB: SoftwareComparisonSideSchema,
     metricsComparison: z.array(MetricComparisonEntrySchema),
+    factorsComparison: z.array(FactorComparisonEntrySchema),
     comparisonNote: z.string().nullable(),
 });
 export type SoftwareComparison = z.infer<typeof SoftwareComparisonSchema>;
