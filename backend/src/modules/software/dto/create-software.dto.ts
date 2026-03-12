@@ -38,4 +38,10 @@ export class CreateSoftwareDto {
         ],
     })
     screenshotUrls?: string[];
+
+    @ApiPropertyOptional({
+        example: [1, 2, 3],
+        description: 'List of category IDs to associate with this software',
+    })
+    categoryIds?: number[];
 }

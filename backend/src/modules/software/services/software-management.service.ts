@@ -2,9 +2,10 @@ import {
     Injectable,
     NotFoundException,
     BadRequestException,
+    InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
@@ -26,6 +27,7 @@ import {
 } from '@common/events/software-usage.events';
 import { FactorsService } from '@modules/criteria/services/factors.service';
 import { MetricsService } from '@modules/criteria/services/metrics.service';
+import { Category } from '@modules/categories/entities/category.entity';
 
 @Injectable()
 export class SoftwareManagementService {
@@ -43,11 +45,54 @@ export class SoftwareManagementService {
     ) {}
 
     async create(dto: CreateSoftwareDto): Promise<Software> {
-        return this.repo.save(dto as DeepPartial<Software>);
+        const { categoryIds, ...softwareData } = dto;
+
+        const software = this.repo.create({
+            ...softwareData,
+            categories:
+                categoryIds?.map((id) => ({ id }) as unknown as Category) || [],
+        });
+
+        try {
+            return await this.repo.save(software);
+        } catch (error) {
+            this.handleDbError(error as { code: string });
+        }
     }
 
-    async update(id: number, dto: UpdateSoftwareDto) {
-        return this.repo.update(id, dto as DeepPartial<Software>);
+    async update(id: number, dto: UpdateSoftwareDto): Promise<Software> {
+        const { categoryIds, ...softwareData } = dto;
+
+        const software = await this.repo.preload({
+            id,
+            ...softwareData,
+        });
+
+        if (!software) {
+            throw new NotFoundException(`Software with ID ${id} not found`);
+        }
+
+        if (categoryIds !== undefined) {
+            software.categories = categoryIds.map(
+                (catId) => ({ id: catId }) as unknown as Category,
+            );
+        }
+
+        try {
+            return await this.repo.save(software);
+        } catch (error) {
+            this.handleDbError(error as { code: string });
+        }
+    }
+
+    private handleDbError(error: { code: string }): never {
+        if (error.code === '23503') {
+            // Foreign key violation
+            throw new BadRequestException(
+                'Provided category ID does not exist',
+            );
+        }
+        throw new InternalServerErrorException('Database operation failed');
     }
 
     async remove(id: number): Promise<{ success: true }> {
