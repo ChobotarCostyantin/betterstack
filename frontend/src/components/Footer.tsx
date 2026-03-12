@@ -24,7 +24,7 @@ const footerLinks = [
 export default function Footer() {
     return (
         <footer className="w-full text-zinc-400 bg-linear-[180deg,#111114,#09090b] border-t border-zinc-800 overflow-hidden relative">
-            <div className="max-w-5xl mx-auto px-4 sm:px-8 pb-30 sm:pb-48 pt-10 sm:pt-16 relative z-10">
+            <div className="max-w-5xl mx-auto px-4 sm:px-8 pb-30 sm:pb-48 pt-10 sm:pt-16 relative z-5">
                 <ul className="space-y-4 max-w-3xl mx-auto">
                     {footerLinks.map((item, index) => (
                         <li

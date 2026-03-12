@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { listSoftware } from '@/src/api/software/software.api';
 import type {
@@ -8,6 +8,8 @@ import type {
     SoftwareDetail,
 } from '@/src/api/software/software.schemas';
 import { browserClient } from '@/src/lib/api/browser.client';
+import { Search, X } from 'lucide-react';
+import SelectorResultItem from './SelectorResultItem';
 
 interface SoftwareSelectorProps {
     title: string;
@@ -27,23 +29,43 @@ export default function SoftwareSelector({
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState<SoftwareListItem[]>([]);
     const [isSearching, setIsSearching] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+
+    const wrapperRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (
+                wrapperRef.current &&
+                !wrapperRef.current.contains(event.target as Node)
+            ) {
+                setIsOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () =>
+            document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     useEffect(() => {
         if (searchQuery.trim().length < 2) {
             setSearchResults([]);
+            setIsOpen(false);
             return;
         }
 
         const fetchResults = async () => {
             setIsSearching(true);
+            setIsOpen(true);
             try {
                 const response = await listSoftware(browserClient, {
                     q: searchQuery,
                 });
                 const items = response.data ?? [];
-                setSearchResults(items);
+                setSearchResults(Array.isArray(items) ? items : []);
             } catch (error) {
                 console.error('Search error:', error);
+                setSearchResults([]);
             } finally {
                 setIsSearching(false);
             }
@@ -54,95 +76,101 @@ export default function SoftwareSelector({
     }, [searchQuery]);
 
     return (
-        <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 shadow-xl">
+        <div className="flex flex-col">
             <h3 className="text-lg font-medium mb-4 text-white">{title}</h3>
             {selectedSoftware ? (
-                <div className="flex items-center justify-between bg-zinc-800 rounded-lg p-4">
-                    <div className="flex items-center space-x-3">
+                <div className="flex items-center justify-between px-6 py-4 bg-[#111114]/80 border border-zinc-800 rounded-2xl shadow-lg backdrop-blur-md">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
                         {selectedSoftware.logoUrl && (
-                            <Image
-                                src={selectedSoftware.logoUrl}
-                                alt={`${selectedSoftware.name} logo`}
-                                width={40}
-                                height={40}
-                                className="rounded object-contain"
-                            />
+                            <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-zinc-900 flex items-center justify-center">
+                                <Image
+                                    unoptimized
+                                    src={selectedSoftware.logoUrl}
+                                    alt={`${selectedSoftware.name} logo`}
+                                    fill
+                                    className="object-cover"
+                                />
+                            </div>
                         )}
-                        <div>
+                        <div className="flex flex-col flex-1 min-w-0">
                             {selectedSoftware.websiteUrl ? (
                                 <a
                                     href={selectedSoftware.websiteUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="font-medium text-white hover:text-zinc-300 transition-colors"
+                                    className="font-medium text-lg text-white hover:text-zinc-300 transition-colors truncate"
                                 >
                                     {selectedSoftware.name}
                                 </a>
                             ) : (
-                                <div className="font-medium text-white">
+                                <div className="font-medium text-lg text-white truncate">
                                     {selectedSoftware.name}
                                 </div>
                             )}
-                            <div className="text-sm text-zinc-400">
+                            <div className="text-sm text-zinc-400 truncate">
                                 {selectedSoftware.shortDescription}
                             </div>
                         </div>
                     </div>
                     <button
                         onClick={onClear}
-                        className="text-zinc-400 hover:text-zinc-200 transition-colors"
+                        className="ml-4 p-2 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800 rounded-lg transition-all"
+                        aria-label="Clear selection"
                     >
-                        ✕
+                        <X className="w-5 h-5" />
                     </button>
                 </div>
             ) : (
-                <div className="relative">
-                    <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search for software..."
-                        className="w-full p-3 border border-zinc-700 rounded-lg bg-zinc-900 text-white placeholder-zinc-400 focus:ring-2 focus:ring-zinc-600 focus:border-zinc-600 transition-colors"
-                    />
-                    {isSearching && (
-                        <div className="absolute right-3 top-3">
-                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-zinc-400"></div>
+                <div ref={wrapperRef} className="relative w-full z-10">
+                    <div className="relative group">
+                        <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+                            <Search className="z-10 w-5 h-5 text-zinc-500 group-focus-within:text-zinc-300 transition-colors" />
                         </div>
-                    )}
-                    {searchResults.length > 0 && (
-                        <div className="absolute z-10 w-full bg-zinc-900 border border-zinc-700 rounded-lg mt-1 max-h-60 overflow-y-auto shadow-2xl">
-                            {searchResults
-                                .filter(
-                                    (software) =>
-                                        software.slug !== otherSelectedSlug,
-                                )
-                                .map((software) => (
-                                    <div
-                                        key={software.id}
-                                        onClick={() => onSelect(software.slug)}
-                                        className="p-3 hover:bg-zinc-800 cursor-pointer border-b border-zinc-800 last:border-b-0 transition-colors"
-                                    >
-                                        <div className="flex items-center space-x-3">
-                                            {software.logoUrl && (
-                                                <Image
-                                                    src={software.logoUrl}
-                                                    alt={`${software.name} logo`}
-                                                    width={32}
-                                                    height={32}
-                                                    className="rounded object-contain"
-                                                />
-                                            )}
-                                            <div>
-                                                <div className="font-medium text-white">
-                                                    {software.name}
-                                                </div>
-                                                <div className="text-sm text-zinc-400">
-                                                    {software.shortDescription}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onFocus={() =>
+                                searchQuery.trim().length >= 2 &&
+                                setIsOpen(true)
+                            }
+                            placeholder="Search software..."
+                            className="w-full pl-12 pr-6 py-4 bg-[#111114]/80 border border-zinc-800 rounded-2xl text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-all backdrop-blur-md shadow-lg"
+                        />
+                        {isSearching && (
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
+                                <div className="w-5 h-5 border-2 border-zinc-500 border-t-zinc-200 rounded-full animate-spin"></div>
+                            </div>
+                        )}
+                    </div>
+
+                    {isOpen && searchQuery.length >= 2 && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-[#111114] border border-zinc-800 rounded-2xl shadow-2xl flex flex-col max-h-80 z-10">
+                            {searchResults.length === 0 && !isSearching ? (
+                                <div className="p-6 text-center text-zinc-500">
+                                    No results found for &quot;{searchQuery}
+                                    &quot;
+                                </div>
+                            ) : (
+                                <div className="overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent">
+                                    {searchResults
+                                        .filter(
+                                            (software) =>
+                                                software.slug !==
+                                                otherSelectedSlug,
+                                        )
+                                        .map((software) => (
+                                            <SelectorResultItem
+                                                key={software.id}
+                                                software={software}
+                                                onSelect={onSelect}
+                                                onCloseAction={() =>
+                                                    setIsOpen(false)
+                                                }
+                                            />
+                                        ))}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
