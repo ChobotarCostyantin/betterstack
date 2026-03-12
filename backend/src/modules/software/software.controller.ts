@@ -73,10 +73,7 @@ export class SoftwareController {
     }
 
     @Get('compare')
-    @Authenticated()
-    @ApiOperation({
-        summary: 'Compare two software items by slug (USER+ role required)',
-    })
+    @ApiOperation({ summary: 'Compare two software items by slug' })
     @ApiOkResponse({ type: SoftwareComparisonDto })
     @ApiQuery({ name: 'a', required: true, description: 'Slug of software A' })
     @ApiQuery({ name: 'b', required: true, description: 'Slug of software B' })
