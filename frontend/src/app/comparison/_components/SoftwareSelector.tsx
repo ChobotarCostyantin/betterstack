@@ -15,6 +15,7 @@ interface SoftwareSelectorProps {
     onClear: () => void;
 }
 
+
 export default function SoftwareSelector({
     title,
     selectedSoftware,

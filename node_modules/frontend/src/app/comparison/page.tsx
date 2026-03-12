@@ -154,4 +154,5 @@ export default function ComparisonPage() {
             )}
         </div>
     );
+    
 }
