@@ -104,7 +104,7 @@ export default async function Comparison({
                         // @ts-expect-error Types differ slightly but have required fields
                         selectedSoftware={software1}
                         // @ts-expect-error Types differ slightly but have required fields
-                        childSoftware={software2}
+                        softwareToCompare={software2}
                         otherSelectedSlug={secondSoft ?? null}
                         onSelect={selectSoftware1}
                         onClear={clearSoftware1}
@@ -115,7 +115,7 @@ export default async function Comparison({
                         // @ts-expect-error Types differ slightly but have required fields
                         selectedSoftware={software2}
                         // @ts-expect-error Types differ slightly but have required fields
-                        childSoftware={software1}
+                        softwareToCompare={software1}
                         otherSelectedSlug={firstSoft ?? null}
                         onSelect={selectSoftware2}
                         onClear={clearSoftware2}

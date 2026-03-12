@@ -18,7 +18,7 @@ import Link from 'next/link';
 interface SoftwareSelectorProps {
     title: string;
     selectedSoftware: SoftwareDetail | null;
-    childSoftware: SoftwareDetail | null;
+    softwareToCompare: SoftwareDetail | null;
     otherSelectedSlug: string | null;
     onSelect: (slug: string) => void;
     onClear: () => void;
@@ -27,7 +27,7 @@ interface SoftwareSelectorProps {
 export default function SoftwareSelector({
     title,
     selectedSoftware,
-    childSoftware,
+    softwareToCompare,
     otherSelectedSlug,
     onSelect,
     onClear,
@@ -65,11 +65,11 @@ export default function SoftwareSelector({
             setIsOpen(true);
             try {
                 let response;
-                if (childSoftware)
+                if (softwareToCompare)
                     // Search among alternatives
                     response = await getSoftwareAlternatives(
                         browserClient,
-                        childSoftware.slug,
+                        softwareToCompare.slug,
                         {
                             q: searchQuery,
                         },
