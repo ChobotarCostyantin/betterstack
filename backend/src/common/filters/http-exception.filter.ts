@@ -66,6 +66,7 @@ function statusToCode(status: number): string {
         404: 'NOT_FOUND',
         409: 'CONFLICT',
         422: 'UNPROCESSABLE_ENTITY',
+        429: 'TOO_MANY_REQUESTS',
         500: 'INTERNAL_SERVER_ERROR',
     };
     return map[status] ?? `HTTP_${status}`;

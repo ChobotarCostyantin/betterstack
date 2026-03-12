@@ -1,37 +1,13 @@
-# Node/npm
-node_modules/
-npm-debug.log
-yarn-debug.log
-yarn-error.log
-pnpm-debug.log
-.npmrc
-.yarnrc
-
-# Build outputs
-dist/
-build/
-*.tsbuildinfo
-
-# Next.js build cache (rebuilt inside container)
-.next/
-
-# Coverage
-coverage/
-.nyc_output/
-
-# Environment files
-# NOTE: .env.development is intentionally NOT excluded because the backend
-# service reads it via env_file in docker-compose.yml.
-.env
-.env.local
-.env.*.local
+# -------------------------
+# Global ignores
+# -------------------------
 
 # VCS
 .git
 .gitignore
 .gitattributes
 
-# CI/CD
+# CI
 .github/
 .gitlab-ci.yml
 .travis.yml
@@ -39,19 +15,59 @@ coverage/
 # IDE
 .vscode/
 .idea/
+.DS_Store
 *.sublime-project
 *.sublime-workspace
-.DS_Store
 
-# Documentation
+# Docs
 *.md
 docs/
 
-# Docker files themselves (not needed inside the image)
-Dockerfile
-docker-compose*.yml
-
-# Temporary files
+# Temp
 .tmp/
 .temp/
 tmp/
+
+# Docker configs not needed inside image
+docker-compose*.yml
+
+# -------------------------
+# Node / build artifacts
+# -------------------------
+
+**/node_modules
+**/npm-debug.log
+**/yarn-debug.log
+**/yarn-error.log
+**/pnpm-debug.log
+
+# TypeScript
+**/*.tsbuildinfo
+
+# Backend build output
+backend/dist/
+
+# Next.js build output
+frontend/.next/
+
+# Coverage
+**/coverage/
+**/.nyc_output/
+
+# -------------------------
+# Environment files
+# -------------------------
+**/.env*
+
+# -------------------------
+# Backend-specific
+# -------------------------
+
+backend/database/dev-seed.js
+backend/.vimrc
+
+# -------------------------
+# Frontend-specific
+# -------------------------
+
+frontend/.vimrc

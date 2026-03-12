@@ -4,7 +4,7 @@ export const envValidationSchema = Joi.object({
     NODE_ENV: Joi.string()
         .valid('development', 'production', 'test')
         .default('development'),
-    PORT: Joi.number().port().default(3000),
+    API_PORT: Joi.number().port().default(3000),
 
     // Postgres
     POSTGRES_HOST: Joi.string().required(),
@@ -12,6 +12,7 @@ export const envValidationSchema = Joi.object({
     POSTGRES_USER: Joi.string().required(),
     POSTGRES_PASSWORD: Joi.string().required(),
     POSTGRES_DB: Joi.string().required(),
+    POSTGRES_CA_CERT: Joi.string(),
 
     // JWT
     JWT_SECRET: Joi.string().min(10).required(),
@@ -22,5 +23,5 @@ export const envValidationSchema = Joi.object({
     ADMIN_PASSWORD: Joi.string().min(8).required(),
 
     // CORS
-    FRONTEND_URL: Joi.string().uri().default('http://localhost:3000'),
+    FRONTEND_URLS: Joi.string().uri().default('http://localhost:3000'),
 });
