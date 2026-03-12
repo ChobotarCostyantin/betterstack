@@ -21,6 +21,7 @@ import {
     SoftwareComparisonDto,
     SoftwareComparisonSideDto,
     MetricComparisonItemDto,
+    FactorComparisonItemDto,
 } from '../dto/software-comparison.dto';
 
 @Injectable()
@@ -274,10 +275,52 @@ export class SoftwareQueryService {
             });
         }
 
+        const aFactors = new Map(
+            (swA.softwareFactors ?? []).map((sf) => [sf.factorId, sf]),
+        );
+        const bFactors = new Map(
+            (swB.softwareFactors ?? []).map((sf) => [sf.factorId, sf]),
+        );
+
+        const allFactorIds = new Set([...aFactors.keys(), ...bFactors.keys()]);
+        const factorsComparison: FactorComparisonItemDto[] = [];
+
+        for (const factorId of allFactorIds) {
+            const aSf = aFactors.get(factorId);
+            const bSf = bFactors.get(factorId);
+
+            const factorRef = (aSf ?? bSf)!;
+            const factorName = factorRef.factorName;
+            const isPositive = factorRef.isPositive;
+
+            const hasA = aSf !== undefined;
+            const hasB = bSf !== undefined;
+
+            let winner: 'a' | 'b' | null = null;
+
+            if (hasA !== hasB) {
+                if (isPositive) {
+                    winner = hasA ? 'a' : 'b';
+                } else {
+                    winner = hasA ? 'b' : 'a';
+                }
+            }
+
+            factorsComparison.push({
+                factorId,
+                factorName,
+                isPositive,
+                hasA,
+                hasB,
+                winner,
+            });
+        }
+
         return {
             softwareA: this.toComparisonSide(swA),
             softwareB: this.toComparisonSide(swB),
             metricsComparison,
+            factorsComparison,
             comparisonNote: note?.note ?? null,
         };
     }

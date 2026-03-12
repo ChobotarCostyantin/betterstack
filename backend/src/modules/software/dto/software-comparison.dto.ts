@@ -65,6 +65,32 @@ export class MetricComparisonItemDto {
     winner: 'a' | 'b' | null;
 }
 
+export class FactorComparisonItemDto {
+    @ApiProperty()
+    factorId: number;
+
+    @ApiProperty()
+    factorName: string;
+
+    @ApiProperty({
+        description: 'Is this factor generally considered positive?',
+    })
+    isPositive: boolean;
+
+    @ApiProperty({ description: 'Does Software A have this factor?' })
+    hasA: boolean;
+
+    @ApiProperty({ description: 'Does Software B have this factor?' })
+    hasB: boolean;
+
+    @ApiProperty({
+        nullable: true,
+        description:
+            'Which software wins based on this factor? (a, b, or null if tie)',
+    })
+    winner: 'a' | 'b' | null;
+}
+
 export class SoftwareComparisonDto {
     @ApiProperty({ type: () => SoftwareComparisonSideDto })
     softwareA: SoftwareComparisonSideDto;
@@ -74,6 +100,9 @@ export class SoftwareComparisonDto {
 
     @ApiProperty({ type: [MetricComparisonItemDto] })
     metricsComparison: MetricComparisonItemDto[];
+
+    @ApiProperty({ type: [FactorComparisonItemDto] })
+    factorsComparison: FactorComparisonItemDto[];
 
     @ApiPropertyOptional({ nullable: true, type: String })
     comparisonNote: string | null;
