@@ -7,6 +7,8 @@ services:
       context: .
       dockerfile: ./frontend/Dockerfile
       target: development
+      args:
+        NEXT_PUBLIC_BACKEND_BASE_URL: "http://localhost:3010/api/v1"
     volumes:
       - ./frontend:/usr/src/app/frontend
       - /usr/src/app/frontend/node_modules
@@ -18,7 +20,6 @@ services:
     environment:
       NODE_ENV: development
       BACKEND_BASE_URL: "http://backend:3010/api/v1"
-      NEXT_PUBLIC_BACKEND_BASE_URL: "http://localhost:3010/api/v1"
     depends_on:
       - backend
 
