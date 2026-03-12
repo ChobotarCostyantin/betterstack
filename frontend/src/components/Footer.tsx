@@ -16,7 +16,7 @@ const footerLinks = [
             { name: 'Skoreiko', href: 'https://github.com/TeseySTD' },
             { name: 'Chobotar', href: 'https://github.com/ChobotarCostyantin' },
             { name: 'Ratushniak', href: 'https://github.com/staleread' },
-            { name: 'Nikolaichuk', href: 'https://github.com/C0ldarm' },
+            { name: 'Nykolaichuk', href: 'https://github.com/C0ldarm' },
         ],
     },
 ];
