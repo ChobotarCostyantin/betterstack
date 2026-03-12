@@ -14,10 +14,17 @@ export default function Admin() {
     const router = useRouter();
     const status = useAdminAuth();
     const [activeTab, setActiveTab] = useState<Tab>('software');
-    const { data, isLoading, refetch } = useAdminData(
-        activeTab,
-        status === 'authorized',
-    );
+
+    const {
+        data,
+        setData,
+        isLoading,
+        isRefetching,
+        refetch,
+        isFetchingNextPage,
+        hasMore,
+        loadMore,
+    } = useAdminData(activeTab, status === 'authorized');
 
     if (status === 'forbidden') {
         forbidden();
@@ -64,9 +71,14 @@ export default function Admin() {
                                     data={data.filter(
                                         (item) => item.type === 'Metric',
                                     )}
+                                    setData={setData}
                                     isLoading={isLoading}
+                                    isRefetching={isRefetching}
                                     activeTab={activeTab}
                                     onRefetch={refetch}
+                                    isFetchingNextPage={isFetchingNextPage}
+                                    hasMore={hasMore}
+                                    onLoadMore={loadMore}
                                 />
                             </div>
 
@@ -89,9 +101,14 @@ export default function Admin() {
                                     data={data.filter(
                                         (item) => item.type === 'Factor',
                                     )}
+                                    setData={setData}
                                     isLoading={isLoading}
+                                    isRefetching={isRefetching}
                                     activeTab={activeTab}
                                     onRefetch={refetch}
+                                    isFetchingNextPage={isFetchingNextPage}
+                                    hasMore={hasMore}
+                                    onLoadMore={loadMore}
                                 />
                             </div>
                         </div>
@@ -109,9 +126,14 @@ export default function Admin() {
 
                             <DataTable
                                 data={data}
+                                setData={setData}
                                 isLoading={isLoading}
+                                isRefetching={isRefetching}
                                 activeTab={activeTab}
                                 onRefetch={refetch}
+                                isFetchingNextPage={isFetchingNextPage}
+                                hasMore={hasMore}
+                                onLoadMore={loadMore}
                             />
                         </>
                     )}

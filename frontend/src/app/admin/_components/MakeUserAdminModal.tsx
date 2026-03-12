@@ -1,17 +1,46 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
+import type { TableRecord } from '../types';
+import { makeAdmin } from '@/src/api/users/users.api';
+import { browserClient } from '@/src/lib/api/browser.client';
 
 interface MakeUserAdminModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: () => void;
+    pickedItem: TableRecord | null;
+    setData?: Dispatch<SetStateAction<TableRecord[]>>;
 }
 
 export function MakeUserAdminModal({
     isOpen,
     onClose,
-    onConfirm,
+    pickedItem,
+    setData,
 }: MakeUserAdminModalProps) {
     if (!isOpen) return null;
+
+    const handleMakeUserAdmin = async () => {
+        if (!pickedItem || !pickedItem.id) return;
+
+        try {
+            const id = Number(pickedItem.id);
+            await makeAdmin(browserClient, id);
+
+            if (setData) {
+                setData((prev) =>
+                    prev.map((item) => {
+                        if (String(item.id) === String(pickedItem.id)) {
+                            return { ...item, role: 'admin' };
+                        }
+                        return item;
+                    }),
+                );
+            }
+        } catch (error) {
+            console.error('Failed to make user admin:', error);
+        } finally {
+            onClose();
+        }
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
@@ -31,10 +60,10 @@ export function MakeUserAdminModal({
                         Cancel
                     </button>
                     <button
-                        onClick={onConfirm}
+                        onClick={handleMakeUserAdmin}
                         className="px-4 py-2 rounded-lg text-sm font-medium bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-zinc-100 transition-colors"
                     >
-                        Confirm Delete
+                        Make Admin
                     </button>
                 </div>
             </div>

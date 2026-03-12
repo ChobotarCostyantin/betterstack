@@ -1,38 +1,53 @@
-import { Edit, Trash2, BadgeInfoIcon, UserPlus } from 'lucide-react';
+import { Edit, Trash2, BadgeInfoIcon, UserPlus, Loader2 } from 'lucide-react';
 import type { TableRecord, Tab } from '../types';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { deleteSoftware } from '@/src/api/software/software.api';
-import { browserClient } from '@/src/lib/api/browser.client';
-import { deleteCategory } from '@/src/api/categories/categories.api';
-import { makeAdmin } from '@/src/api/users/users.api';
+import { useState, UIEvent, Dispatch, SetStateAction } from 'react';
 import { DeleteConfirmModal } from './DeleteConfirmModal';
 import { MakeUserAdminModal } from '@/src/app/admin/_components/MakeUserAdminModal';
-import { deleteFactor, deleteMetric } from '@/src/api/criteria/criteria.api';
 
 interface DataTableProps {
     data: TableRecord[];
+    setData?: Dispatch<SetStateAction<TableRecord[]>>;
     isLoading: boolean;
+    isRefetching?: boolean;
     activeTab: Tab;
     onRefetch: () => void;
+    isFetchingNextPage?: boolean;
+    hasMore?: boolean;
+    onLoadMore?: () => void;
 }
 
 export function DataTable({
     data,
+    setData,
     isLoading,
+    isRefetching,
     activeTab,
-    onRefetch,
+    isFetchingNextPage,
+    hasMore,
+    onLoadMore,
 }: DataTableProps) {
     const router = useRouter();
     const [pickedItem, setPickedItem] = useState<TableRecord | null>(null);
 
-    if (isLoading) {
+    const handleScroll = (e: UIEvent<HTMLDivElement>) => {
+        const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
+        if (scrollHeight - scrollTop <= clientHeight + 50) {
+            if (hasMore && !isFetchingNextPage && onLoadMore) {
+                onLoadMore();
+            }
+        }
+    };
+
+    if (isLoading && (!data || data.length === 0)) {
         return (
-            <div className="text-zinc-500 animate-pulse">Loading data...</div>
+            <div className="text-zinc-500 animate-pulse p-8 text-center">
+                Loading data...
+            </div>
         );
     }
 
-    if (!data || data.length === 0) {
+    if (!isLoading && (!data || data.length === 0)) {
         return (
             <div className="flex flex-col items-center justify-center p-8 border border-zinc-800 border-dashed rounded-xl bg-[#09090b]/50">
                 <div className="text-zinc-500 mb-4">No data found</div>
@@ -44,7 +59,6 @@ export function DataTable({
     data.forEach((row) => {
         Object.keys(row).forEach((key) => {
             if (key === 'type') return;
-
             const val = row[key];
             if (typeof val !== 'object' || val === null || Array.isArray(val)) {
                 allKeys.add(key);
@@ -56,7 +70,6 @@ export function DataTable({
     const renderCellValue = (val: unknown) => {
         if (val === null || val === undefined)
             return <span className="text-zinc-600">-</span>;
-
         if (Array.isArray(val)) {
             if (val.length === 0)
                 return <span className="text-zinc-600">-</span>;
@@ -69,57 +82,20 @@ export function DataTable({
             }
             return val.join(', ');
         }
-
         if (typeof val === 'boolean') return val ? 'Yes' : 'No';
         return String(val);
-    };
-
-    const handleConfirmDelete = async () => {
-        if (!pickedItem || !pickedItem.id) return;
-
-        try {
-            const id = Number(pickedItem.id);
-
-            if (activeTab === 'software') {
-                await deleteSoftware(browserClient, id);
-            } else if (activeTab === 'category') {
-                await deleteCategory(browserClient, id);
-            } else if (activeTab === 'criteria') {
-                if (pickedItem.type === 'Metric') {
-                    await deleteMetric(browserClient, id);
-                } else if (pickedItem.type === 'Factor') {
-                    await deleteFactor(browserClient, id);
-                }
-            }
-
-            onRefetch();
-        } catch (error) {
-            console.error('Failed to delete item:', error);
-        } finally {
-            setPickedItem(null);
-        }
-    };
-
-    const handleMakeUserAdmin = async () => {
-        if (!pickedItem) return;
-
-        try {
-            await makeAdmin(browserClient, Number(pickedItem.id));
-            onRefetch();
-        } catch (error) {
-            console.error('Failed to make user admin:', error);
-        } finally {
-            setPickedItem(null);
-        }
     };
 
     const entityName = pickedItem?.type ? String(pickedItem.type) : activeTab;
 
     return (
-        <div className="overflow-x-auto border border-zinc-800/80 rounded-xl bg-[#09090b]/50">
+        <div
+            className={`overflow-auto max-h-[60vh] border border-zinc-800/80 rounded-xl bg-[#09090b]/50 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent relative transition-opacity duration-300 ${isRefetching ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}
+            onScroll={handleScroll}
+        >
             <table className="w-full text-left border-collapse whitespace-nowrap">
-                <thead>
-                    <tr className="border-b border-zinc-800 bg-zinc-900/50 text-zinc-400 text-sm">
+                <thead className="sticky top-0 z-10">
+                    <tr className="border-b border-zinc-800 bg-[#111114] text-zinc-400 text-sm">
                         {columns.map((col) => (
                             <th
                                 key={col}
@@ -161,12 +137,7 @@ export function DataTable({
                                 {activeTab !== 'user' ? (
                                     <>
                                         <button
-                                            onClick={() =>
-                                                console.log(
-                                                    'Edit item:',
-                                                    row.slug || row.id,
-                                                )
-                                            }
+                                            onClick={() => console.log('ass')}
                                             className="p-1.5 text-zinc-400 hover:text-zinc-300 hover:bg-zinc-400/10 rounded-md transition-colors"
                                             title="Edit"
                                         >
@@ -174,7 +145,7 @@ export function DataTable({
                                         </button>
                                         <button
                                             onClick={() => setPickedItem(row)}
-                                            className="p-1.5 text-zinc-400 hover:text-zinc-300 hover:bg-zinc-400/10 rounded-md transition-colors"
+                                            className="p-1.5 text-zinc-400 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-colors"
                                             title="Delete"
                                         >
                                             <Trash2 size={16} />
@@ -197,17 +168,27 @@ export function DataTable({
                 </tbody>
             </table>
 
+            {isFetchingNextPage && (
+                <div className="flex items-center justify-center p-4 text-zinc-500 gap-x-2 border-t border-zinc-800/50">
+                    <Loader2 className="animate-spin" size={16} />
+                    <span className="text-sm">Loading more...</span>
+                </div>
+            )}
+
             <DeleteConfirmModal
-                isOpen={!!pickedItem}
+                isOpen={!!pickedItem && activeTab !== 'user'}
                 entityName={entityName}
                 onClose={() => setPickedItem(null)}
-                onConfirm={handleConfirmDelete}
+                pickedItem={pickedItem}
+                activeTab={activeTab}
+                setData={setData}
             />
 
             <MakeUserAdminModal
-                isOpen={!!pickedItem}
+                isOpen={!!pickedItem && activeTab === 'user'}
                 onClose={() => setPickedItem(null)}
-                onConfirm={handleMakeUserAdmin}
+                pickedItem={pickedItem}
+                setData={setData}
             />
         </div>
     );
