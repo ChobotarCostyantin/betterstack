@@ -1,9 +1,43 @@
 'use client';
 
-import type { SoftwareComparison } from '@/src/api/software/software.schemas';
+import Image from 'next/image';
+import type {
+    SoftwareComparison,
+    SoftwareComparisonSide,
+} from '@/src/api/software/software.schemas';
 
 interface ComparisonDetailsProps {
     comparison: SoftwareComparison;
+}
+
+function SoftwareColumnHeader({
+    software,
+}: {
+    software: SoftwareComparisonSide;
+}) {
+    return (
+        <div className="flex flex-row items-center justify-center gap-2.5 w-full px-2">
+            {software.logoUrl ? (
+                <div className="relative w-6 h-6 md:w-7 md:h-7 shrink-0">
+                    <Image
+                        unoptimized
+                        src={software.logoUrl}
+                        alt={`${software.name} logo`}
+                        fill
+                        className="object-contain"
+                    />
+                </div>
+            ) : (
+                <></>
+            )}
+            <span
+                className="font-medium text-zinc-200 text-sm md:text-base truncate"
+                title={software.name}
+            >
+                {software.name}
+            </span>
+        </div>
+    );
 }
 
 export default function ComparisonDetails({
@@ -13,22 +47,33 @@ export default function ComparisonDetails({
         comparison;
 
     return (
-        <div className="mt-8 bg-zinc-900 border border-zinc-700 rounded-2xl p-6 shadow-xl">
-            <h3 className="text-2xl font-bold mb-6 text-white text-center">
-                {softwareA.name} <span className="text-zinc-500 mx-2">vs</span>{' '}
-                {softwareB.name}
-            </h3>
+        <div className="mt-8 bg-[#111114] border border-zinc-800 rounded-3xl shadow-2xl overflow-hidden">
+            <div className="bg-zinc-900/40 p-6 md:p-8 border-b border-zinc-800">
+                <h3 className="text-2xl font-bold text-white text-center">
+                    Comparison Details
+                </h3>
 
-            {comparisonNote && (
-                <div className="mb-8 p-4 bg-zinc-800/80 border border-zinc-700 rounded-lg text-zinc-300 text-center italic">
-                    {comparisonNote}
+                {comparisonNote && (
+                    <div className="mt-6 p-4 bg-zinc-800/40 border border-zinc-700/50 rounded-xl text-zinc-300 text-center text-sm leading-relaxed max-w-3xl mx-auto backdrop-blur-sm">
+                        {comparisonNote}
+                    </div>
+                )}
+            </div>
+
+            <div className="p-6 md:p-8 space-y-6">
+                <div className="flex items-end justify-between px-2 md:px-4 mb-2 md:mb-4">
+                    <div className="hidden md:block w-1/3 pb-1 text-xs font-bold text-zinc-500 uppercase tracking-widest">
+                        Metrics
+                    </div>
+                    <div className="flex w-full md:w-2/3 justify-between gap-3 md:gap-6">
+                        <div className="flex-1 min-w-0">
+                            <SoftwareColumnHeader software={softwareA} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <SoftwareColumnHeader software={softwareB} />
+                        </div>
+                    </div>
                 </div>
-            )}
-
-            <div className="space-y-6">
-                <h4 className="text-lg font-semibold text-white mb-4">
-                    Metrics Comparison
-                </h4>
 
                 <div className="space-y-3">
                     {metricsComparison.map((metric) => {
@@ -36,46 +81,53 @@ export default function ComparisonDetails({
                         const isBWinner = metric.winner === 'b';
                         const isTie = metric.winner === null;
 
+                        const getMetricClasses = (
+                            isWinner: boolean,
+                            isTie: boolean,
+                        ) => {
+                            if (isWinner) {
+                                return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[inset_0_0_12px_rgba(16,185,129,0.05)]';
+                            }
+                            if (isTie) {
+                                return 'bg-zinc-800/30 text-zinc-300 border-zinc-700/50';
+                            }
+                            return 'bg-red-500/5 text-red-400/80 border-red-500/10';
+                        };
+
                         return (
                             <div
                                 key={metric.metricId}
-                                className="flex flex-col md:flex-row items-center justify-between p-4 bg-zinc-800/50 rounded-lg border border-zinc-800"
+                                className="flex flex-col md:flex-row items-center justify-between p-3 md:p-5 bg-zinc-900/40 hover:bg-zinc-800/60 transition-colors rounded-2xl border border-zinc-800/80 group"
                             >
-                                <div className="w-full md:w-1/3 text-zinc-300 font-medium text-center md:text-left mb-3 md:mb-0">
+                                <div className="w-full md:w-1/3 text-zinc-300/80 font-medium text-center md:text-left mb-3 md:mb-0 group-hover:text-white transition-colors text-sm md:text-base truncate">
                                     {metric.metricName}
                                 </div>
 
-                                <div className="flex w-full md:w-2/3 justify-between items-center gap-4">
+                                <div className="flex w-full md:w-2/3 justify-between items-stretch gap-3 md:gap-6">
                                     <div
-                                        className={`flex-1 text-center p-3 rounded-lg transition-colors ${
-                                            isAWinner
-                                                ? 'bg-emerald-900/30 text-emerald-300 font-bold border border-emerald-800/50'
-                                                : isTie
-                                                  ? 'bg-yellow-900/20 text-yellow-300 font-bold border border-yellow-800/30'
-                                                  : 'bg-zinc-900/80 text-zinc-400'
-                                        }`}
+                                        className={`flex-1 flex flex-col items-center justify-center py-2 md:py-3 px-2 rounded-xl border transition-all ${getMetricClasses(
+                                            isAWinner,
+                                            isTie,
+                                        )}`}
                                     >
-                                        {metric.aValue !== null
-                                            ? metric.aValue
-                                            : 'N/A'}
-                                    </div>
-
-                                    <div className="text-zinc-600 font-medium text-sm">
-                                        VS
+                                        <span className="text-base md:text-lg font-semibold leading-none">
+                                            {metric.aValue !== null
+                                                ? metric.aValue
+                                                : '-'}
+                                        </span>
                                     </div>
 
                                     <div
-                                        className={`flex-1 text-center p-3 rounded-lg transition-colors ${
-                                            isBWinner
-                                                ? 'bg-emerald-900/30 text-emerald-300 font-bold border border-emerald-800/50'
-                                                : isTie
-                                                  ? 'bg-yellow-900/20 text-yellow-300 font-bold border border-yellow-800/30'
-                                                  : 'bg-zinc-900/80 text-zinc-400'
-                                        }`}
+                                        className={`flex-1 flex flex-col items-center justify-center py-2 md:py-3 px-2 rounded-xl border transition-all ${getMetricClasses(
+                                            isBWinner,
+                                            isTie,
+                                        )}`}
                                     >
-                                        {metric.bValue !== null
-                                            ? metric.bValue
-                                            : 'N/A'}
+                                        <span className="text-base md:text-lg font-semibold leading-none">
+                                            {metric.bValue !== null
+                                                ? metric.bValue
+                                                : '-'}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
