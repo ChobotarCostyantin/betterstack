@@ -114,15 +114,17 @@ export default function Admin() {
                         </div>
                     ) : (
                         <>
-                            <div>
-                                <button
-                                    onClick={() => router.push('/')}
-                                    className="flex items-center gap-x-2 bg-zinc-100 hover:bg-zinc-300 text-zinc-900 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                                >
-                                    <Plus size={16} />
-                                    Add {activeTab}
-                                </button>
-                            </div>
+                            {activeTab !== 'user' && (
+                                <div>
+                                    <button
+                                        onClick={() => router.push('/')}
+                                        className="flex items-center gap-x-2 bg-zinc-100 hover:bg-zinc-300 text-zinc-900 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                                    >
+                                        <Plus size={16} />
+                                        Add {activeTab}
+                                    </button>
+                                </div>
+                            )}
 
                             <DataTable
                                 data={data}
