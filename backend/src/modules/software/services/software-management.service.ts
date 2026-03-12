@@ -85,13 +85,22 @@ export class SoftwareManagementService {
         }
     }
 
-    private handleDbError(error: { code: string }): never {
-        if (error.code === '23503') {
-            // Foreign key violation
-            throw new BadRequestException(
-                'Provided category ID does not exist',
-            );
+    private handleDbError(error: unknown): never {
+        if (typeof error === 'object' && error !== null && 'code' in error) {
+            const dbError = error as { code: string };
+
+            if (dbError.code === '23503') {
+                throw new BadRequestException(
+                    'Provided category ID does not exist',
+                );
+            }
+            if (dbError.code === '23505') {
+                throw new BadRequestException(
+                    'Software with this slug or name already exists',
+                );
+            }
         }
+
         throw new InternalServerErrorException('Database operation failed');
     }
 
