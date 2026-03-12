@@ -2,7 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { listSoftware } from '@/src/api/software/software.api';
+import {
+    getSoftwareAlternatives,
+    listSoftware,
+} from '@/src/api/software/software.api';
 import type {
     SoftwareListItem,
     SoftwareDetail,
@@ -15,6 +18,7 @@ import Link from 'next/link';
 interface SoftwareSelectorProps {
     title: string;
     selectedSoftware: SoftwareDetail | null;
+    childSoftware: SoftwareDetail | null;
     otherSelectedSlug: string | null;
     onSelect: (slug: string) => void;
     onClear: () => void;
@@ -23,6 +27,7 @@ interface SoftwareSelectorProps {
 export default function SoftwareSelector({
     title,
     selectedSoftware,
+    childSoftware,
     otherSelectedSlug,
     onSelect,
     onClear,
@@ -59,9 +64,22 @@ export default function SoftwareSelector({
             setIsSearching(true);
             setIsOpen(true);
             try {
-                const response = await listSoftware(browserClient, {
-                    q: searchQuery,
-                });
+                let response;
+                if (childSoftware)
+                    // Search among alternatives
+                    response = await getSoftwareAlternatives(
+                        browserClient,
+                        childSoftware.slug,
+                        {
+                            q: searchQuery,
+                        },
+                    );
+                else {
+                    response = await listSoftware(browserClient, {
+                        q: searchQuery,
+                    });
+                }
+
                 const items = response.data ?? [];
                 setSearchResults(Array.isArray(items) ? items : []);
             } catch (error) {

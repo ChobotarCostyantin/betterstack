@@ -6,6 +6,7 @@ import {
 import { createServerClient } from '@/src/lib/api/server.client';
 import SoftwareSelector from './_components/SoftwareSelector';
 import ComparisonDetails from './_components/ComparisonDetails';
+import ComparisonError from './_components/ComparisonError';
 
 function getComparisonUrl(first?: string, second?: string) {
     const params = new URLSearchParams();
@@ -38,16 +39,23 @@ export default async function Comparison({
     let comparison = null;
     let software1 = null;
     let software2 = null;
+    let hasComparisonError = false;
 
     if (firstSoft && secondSoft) {
-        comparison = await compareSoftware(
-            serverClient,
-            firstSoft,
-            secondSoft,
-        ).catch(() => null);
-        if (comparison) {
+        try {
+            comparison = await compareSoftware(
+                serverClient,
+                firstSoft,
+                secondSoft,
+            );
             software1 = comparison.softwareA;
             software2 = comparison.softwareB;
+        } catch (error) {
+            hasComparisonError = true;
+            [software1, software2] = await Promise.all([
+                getSoftwareBySlug(serverClient, firstSoft).catch(() => null),
+                getSoftwareBySlug(serverClient, secondSoft).catch(() => null),
+            ]);
         }
     } else {
         [software1, software2] = await Promise.all([
@@ -81,20 +89,22 @@ export default async function Comparison({
     };
 
     return (
-        <div className="max-w-7xl mx-auto p-6">
-            <h1 className="text-3xl font-bold mb-6 text-white">
+        <div className="max-w-7xl mx-auto p-4 md:p-6">
+            <h1 className="text-2xl md:text-3xl font-bold mb-6 text-white">
                 Software Comparison
             </h1>
 
             <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-4 text-white">
+                <h2 className="text-lg md:text-xl font-semibold mb-4 text-white">
                     Select Two Software to Compare
                 </h2>
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid md:grid-cols-2 gap-4 md:gap-6">
                     <SoftwareSelector
                         title="First Software"
                         // @ts-expect-error Types differ slightly but have required fields
                         selectedSoftware={software1}
+                        // @ts-expect-error Types differ slightly but have required fields
+                        childSoftware={software2}
                         otherSelectedSlug={secondSoft ?? null}
                         onSelect={selectSoftware1}
                         onClear={clearSoftware1}
@@ -104,6 +114,8 @@ export default async function Comparison({
                         title="Second Software"
                         // @ts-expect-error Types differ slightly but have required fields
                         selectedSoftware={software2}
+                        // @ts-expect-error Types differ slightly but have required fields
+                        childSoftware={software1}
                         otherSelectedSlug={firstSoft ?? null}
                         onSelect={selectSoftware2}
                         onClear={clearSoftware2}
@@ -115,6 +127,8 @@ export default async function Comparison({
                 <div className="text-center text-zinc-500 mt-8">
                     Select both software to see the comparison
                 </div>
+            ) : hasComparisonError ? (
+                <ComparisonError />
             ) : comparison ? (
                 <ComparisonDetails comparison={comparison} />
             ) : null}
