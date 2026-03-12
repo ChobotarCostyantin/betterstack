@@ -1,4 +1,10 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Page not found | betterstack',
+    description: '404 - Not Found',
+};
 
 export default function NotFound() {
     return (

@@ -1,4 +1,10 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Forbidden | betterstack',
+    description: '403 - Forbidden',
+};
 
 export default function Forbidden() {
     return (
