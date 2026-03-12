@@ -1,8 +1,0 @@
-node_modules
-npm-debug.log
-dist
-.env*
-*.md
-.gitignore
-Dockerfile
-database/dev-seed.js
