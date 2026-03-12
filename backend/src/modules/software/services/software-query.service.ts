@@ -283,6 +283,7 @@ export class SoftwareQueryService {
     }
 
     async findAlternatives(
+        q: string | undefined,
         slug: string,
         page: number,
         perPage: number,
@@ -316,6 +317,13 @@ export class SoftwareQueryService {
             .orderBy('software.usageCount', 'DESC')
             .skip((page - 1) * perPage)
             .take(perPage);
+
+        if (q) {
+            qb.andWhere(
+                'software.name ILIKE :q OR software.shortDescription ILIKE :q',
+                { q: `%${q}%` },
+            );
+        }
 
         const [items, total] = await qb.getManyAndCount();
         return new PaginatedResponseDto(

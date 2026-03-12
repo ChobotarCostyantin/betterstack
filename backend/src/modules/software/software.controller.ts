@@ -90,10 +90,11 @@ export class SoftwareController {
     @ApiQuery({ name: 'perPage', required: false, example: 10 })
     findAlternatives(
         @Param('slug') slug: string,
+        @Query('q') q?: string,
         @Query('page', new ParseIntPipe({ optional: true })) page = 1,
         @Query('perPage', new ParseIntPipe({ optional: true })) perPage = 10,
     ) {
-        return this.queryService.findAlternatives(slug, page, perPage);
+        return this.queryService.findAlternatives(q, slug, page, perPage);
     }
 
     @Get(':slug')
