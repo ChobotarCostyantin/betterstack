@@ -47,6 +47,7 @@ import { loggerConfig } from '@config/logger.config';
                 migrations: [__dirname + '/../database/migrations/*.js'],
                 retryAttempts: 5,
                 retryDelay: 3000,
+                ssl: postgres.sslOptions,
             }),
         }),
         JwtModule.registerAsync({
