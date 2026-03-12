@@ -10,6 +10,7 @@ import type {
 import { browserClient } from '@/src/lib/api/browser.client';
 import { Search, X } from 'lucide-react';
 import SelectorResultItem from './SelectorResultItem';
+import Link from 'next/link';
 
 interface SoftwareSelectorProps {
     title: string;
@@ -95,20 +96,15 @@ export default function SoftwareSelector({
                             </div>
                         )}
                         <div className="flex flex-col flex-1 min-w-0">
-                            {selectedSoftware.websiteUrl ? (
-                                <a
-                                    href={selectedSoftware.websiteUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="font-medium text-base md:text-lg text-white hover:text-zinc-300 transition-colors truncate"
-                                >
-                                    {selectedSoftware.name}
-                                </a>
-                            ) : (
-                                <div className="font-medium text-base md:text-lg text-white truncate">
-                                    {selectedSoftware.name}
-                                </div>
-                            )}
+                            <Link
+                                href={`/article/${selectedSoftware.slug}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-medium text-base md:text-lg text-white hover:text-zinc-300 transition-colors truncate"
+                            >
+                                {selectedSoftware.name}
+                            </Link>
+
                             <div className="text-xs md:text-sm text-zinc-400 truncate">
                                 {selectedSoftware.shortDescription}
                             </div>
