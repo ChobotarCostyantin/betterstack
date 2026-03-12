@@ -11,6 +11,7 @@ import {
     ArrowLeftRight,
     User,
     LogOut,
+    Shield,
 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { me, logout } from '@/src/api/auth/auth.api';
@@ -22,6 +23,7 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -38,10 +40,12 @@ export default function Header() {
     useEffect(() => {
         async function checkAuth() {
             try {
-                await me(browserClient);
+                const user = await me(browserClient);
                 setIsLoggedIn(true);
+                setIsAdmin(user.role === 'admin');
             } catch {
                 setIsLoggedIn(false);
+                setIsAdmin(false);
             } finally {
                 setIsLoading(false);
             }
@@ -54,6 +58,7 @@ export default function Header() {
         try {
             await logout(browserClient);
             setIsLoggedIn(false);
+            setIsAdmin(false);
             setIsMenuOpen(false);
             router.push('/home');
             router.refresh();
@@ -84,6 +89,8 @@ export default function Header() {
                     <div className="hidden md:flex items-center gap-x-8">
                         <NavLink href="/catalog">Catalog</NavLink>
                         <NavLink href="/comparison">Comparison</NavLink>
+
+                        {isAdmin && <NavLink href="/admin">Admin</NavLink>}
 
                         {!isLoading &&
                             (isLoggedIn ? (
@@ -160,6 +167,16 @@ export default function Header() {
                         <ArrowLeftRight size={22} className="text-zinc-400" />
                         <span>Comparison</span>
                     </MobileNavLink>
+
+                    {isAdmin && (
+                        <MobileNavLink
+                            href="/admin"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            <Shield size={22} className="text-zinc-400" />
+                            <span>Admin</span>
+                        </MobileNavLink>
+                    )}
 
                     {!isLoading &&
                         (isLoggedIn ? (
