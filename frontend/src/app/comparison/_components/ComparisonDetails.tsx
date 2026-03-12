@@ -1,95 +1,88 @@
 'use client';
 
-import { Software, Criterion } from '@/src/lib/types';
+import type { SoftwareComparison } from '@/src/api/software/software.schemas';
 
 interface ComparisonDetailsProps {
-    software: Software;
-    otherSoftware: Software;
-    criteria: Criterion[];
+    comparison: SoftwareComparison;
 }
 
 export default function ComparisonDetails({
-    software,
-    otherSoftware,
-    criteria
+    comparison,
 }: ComparisonDetailsProps) {
-    const getWinner = (criterion: Criterion, softwareA: Software, softwareB: Software) => {
-        const valueA = softwareA.features[criterion.id];
-        const valueB = softwareB.features[criterion.id];
-
-        if (valueA === undefined || valueA === null || valueB === undefined || valueB === null) return null;
-
-        switch (criterion.type) {
-            case 'rating':
-                // Higher rating is better
-                if (typeof valueA === 'number' && typeof valueB === 'number') {
-                    if (valueA > valueB) return 0; // softwareA wins
-                    if (valueA < valueB) return 1; // softwareB wins
-                    return 2; // tie
-                }
-                break;
-            case 'boolean':
-                // True is better
-                if (valueA === true && valueB !== true) return 0;
-                if (valueB === true && valueA !== true) return 1;
-                if (valueA === valueB) return 2; // both true or both false
-                break;
-            case 'currency':
-                // Lower cost is better
-                if (typeof valueA === 'number' && typeof valueB === 'number') {
-                    if (valueA < valueB) return 0; // softwareA wins (lower cost)
-                    if (valueA > valueB) return 1; // softwareB wins (lower cost)
-                    return 2; // same cost
-                }
-                break;
-        }
-        return null; // No comparison possible
-    };
-
-    const getFeatureValue = (software: Software, criterionId: number) => {
-        const value = software.features[criterionId];
-        if (value === undefined || value === null) return 'N/A';
-
-        const criterion = criteria.find(c => c.id === criterionId);
-        if (!criterion) return value;
-
-        switch (criterion.type) {
-            case 'boolean':
-                return value ? 'Yes' : 'No';
-            case 'rating':
-                return typeof value === 'number' ? `${value}/5` : value;
-            case 'currency':
-                return typeof value === 'number' ? `$${value}` : value;
-            default:
-                return value;
-        }
-    };
+    const { softwareA, softwareB, metricsComparison, comparisonNote } =
+        comparison;
 
     return (
-        <div className="space-y-2">
-            <h4 className="text-sm font-medium text-zinc-300 mb-3">Comparison Details:</h4>
-            {criteria.map((criterion) => {
-                const winner = getWinner(criterion, software, otherSoftware);
-                const isWinner = winner === 0;
-                const isLoser = winner === 1;
+        <div className="mt-8 bg-zinc-900 border border-zinc-700 rounded-2xl p-6 shadow-xl">
+            <h3 className="text-2xl font-bold mb-6 text-white text-center">
+                {softwareA.name} <span className="text-zinc-500 mx-2">vs</span>{' '}
+                {softwareB.name}
+            </h3>
 
-                return (
-                    <div key={criterion.id} className={`flex justify-between items-center py-2 px-3 rounded transition-colors ${
-                        isWinner
-                            ? 'bg-emerald-900/30 text-emerald-200 font-bold' // Winner: whole row green background, bold text
-                            : isLoser
-                            ? 'bg-red-900/20 text-red-200' // Loser: slight red background
-                            : winner === 2
-                            ? 'bg-yellow-900/20 text-yellow-200 font-bold' // Tie: light yellow background, bold text
-                            : 'bg-zinc-800/50 text-zinc-300' // No comparison
-                    }`}>
-                        <span className="text-sm">{criterion.name}</span>
-                        <span className="text-sm">
-                            {getFeatureValue(software, criterion.id)}
-                        </span>
-                    </div>
-                );
-            })}
+            {comparisonNote && (
+                <div className="mb-8 p-4 bg-zinc-800/80 border border-zinc-700 rounded-lg text-zinc-300 text-center italic">
+                    {comparisonNote}
+                </div>
+            )}
+
+            <div className="space-y-6">
+                <h4 className="text-lg font-semibold text-white mb-4">
+                    Metrics Comparison
+                </h4>
+
+                <div className="space-y-3">
+                    {metricsComparison.map((metric) => {
+                        const isAWinner = metric.winner === 'a';
+                        const isBWinner = metric.winner === 'b';
+                        const isTie = metric.winner === null;
+
+                        return (
+                            <div
+                                key={metric.metricId}
+                                className="flex flex-col md:flex-row items-center justify-between p-4 bg-zinc-800/50 rounded-lg border border-zinc-800"
+                            >
+                                <div className="w-full md:w-1/3 text-zinc-300 font-medium text-center md:text-left mb-3 md:mb-0">
+                                    {metric.metricName}
+                                </div>
+
+                                <div className="flex w-full md:w-2/3 justify-between items-center gap-4">
+                                    <div
+                                        className={`flex-1 text-center p-3 rounded-lg transition-colors ${
+                                            isAWinner
+                                                ? 'bg-emerald-900/30 text-emerald-300 font-bold border border-emerald-800/50'
+                                                : isTie
+                                                  ? 'bg-yellow-900/20 text-yellow-300 font-bold border border-yellow-800/30'
+                                                  : 'bg-zinc-900/80 text-zinc-400'
+                                        }`}
+                                    >
+                                        {metric.aValue !== null
+                                            ? metric.aValue
+                                            : 'N/A'}
+                                    </div>
+
+                                    <div className="text-zinc-600 font-medium text-sm">
+                                        VS
+                                    </div>
+
+                                    <div
+                                        className={`flex-1 text-center p-3 rounded-lg transition-colors ${
+                                            isBWinner
+                                                ? 'bg-emerald-900/30 text-emerald-300 font-bold border border-emerald-800/50'
+                                                : isTie
+                                                  ? 'bg-yellow-900/20 text-yellow-300 font-bold border border-yellow-800/30'
+                                                  : 'bg-zinc-900/80 text-zinc-400'
+                                        }`}
+                                    >
+                                        {metric.bValue !== null
+                                            ? metric.bValue
+                                            : 'N/A'}
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
         </div>
     );
 }

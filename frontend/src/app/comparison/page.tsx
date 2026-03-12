@@ -2,110 +2,109 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Software, Criterion } from '@/src/lib/types';
-import { getCriteriaAction, getSoftwareBySlug } from '@/src/lib/api';
+import {
+    getSoftwareBySlug,
+    compareSoftware,
+} from '@/src/api/software/software.api';
+import type {
+    SoftwareDetail,
+    SoftwareComparison,
+} from '@/src/api/software/software.schemas';
+import { browserClient } from '@/src/lib/api/browser.client';
 import SoftwareSelector from './_components/SoftwareSelector';
+import ComparisonDetails from './_components/ComparisonDetails';
 
 export default function ComparisonPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [software1, setSoftware1] = useState<Software | null>(null);
-    const [software2, setSoftware2] = useState<Software | null>(null);
-    const [criteria, setCriteria] = useState<Criterion[]>([]);
+
+    const [software1, setSoftware1] = useState<SoftwareDetail | null>(null);
+    const [software2, setSoftware2] = useState<SoftwareDetail | null>(null);
+    const [comparison, setComparison] = useState<SoftwareComparison | null>(
+        null,
+    );
     const [isLoadingFromUrl, setIsLoadingFromUrl] = useState(false);
 
+    const firstSoft = searchParams.get('firstSoft');
+    const secondSoft = searchParams.get('secondSoft');
+
     useEffect(() => {
-        const fetchCriteria = async () => {
+        if (firstSoft && secondSoft && firstSoft === secondSoft) {
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete('secondSoft');
+            router.replace(`/comparison?${params.toString()}`, {
+                scroll: false,
+            });
+            return;
+        }
+
+        const loadData = async () => {
+            setIsLoadingFromUrl(true);
             try {
-                const data = await getCriteriaAction();
-                setCriteria(data);
+                if (firstSoft && (!software1 || software1.slug !== firstSoft)) {
+                    const s1 = await getSoftwareBySlug(
+                        browserClient,
+                        firstSoft,
+                    );
+                    setSoftware1(s1);
+                } else if (!firstSoft) {
+                    setSoftware1(null);
+                }
+
+                if (
+                    secondSoft &&
+                    (!software2 || software2.slug !== secondSoft)
+                ) {
+                    const s2 = await getSoftwareBySlug(
+                        browserClient,
+                        secondSoft,
+                    );
+                    setSoftware2(s2);
+                } else if (!secondSoft) {
+                    setSoftware2(null);
+                }
+
+                if (firstSoft && secondSoft) {
+                    const comp = await compareSoftware(
+                        browserClient,
+                        firstSoft,
+                        secondSoft,
+                    );
+                    setComparison(comp);
+                } else {
+                    setComparison(null);
+                }
             } catch (error) {
-                console.error('Failed to fetch criteria:', error);
+                console.error('Failed to load comparison data:', error);
+            } finally {
+                setIsLoadingFromUrl(false);
             }
         };
-        fetchCriteria();
-    }, []);
 
-    // Handle URL parameters for auto-population
-    useEffect(() => {
-        const firstSoft = searchParams.get('firstSoft');
-        const secondSoft = searchParams.get('secondSoft');
+        loadData();
+    }, [firstSoft, secondSoft, searchParams, router]);
 
-        // If both parameters are the same, clear URL and show empty comparison
-        if (firstSoft && secondSoft && firstSoft === secondSoft) {
-            router.replace('/comparison', { scroll: false });
-            setSoftware1(null);
-            setSoftware2(null);
-            return;
-        }
-
-        if (firstSoft || secondSoft) {
-            setIsLoadingFromUrl(true);
-            const loadSoftwareFromUrl = async () => {
-                try {
-                    if (firstSoft) {
-                        const software = await getSoftwareBySlug(firstSoft);
-                        if (software) {
-                            setSoftware1(software);
-                        }
-                    }
-                    if (secondSoft) {
-                        const software = await getSoftwareBySlug(secondSoft);
-                        if (software) {
-                            setSoftware2(software);
-                        }
-                    }
-                } catch (error) {
-                    console.error('Failed to load software from URL:', error);
-                } finally {
-                    setIsLoadingFromUrl(false);
-                }
-            };
-            loadSoftwareFromUrl();
-        }
-    }, [searchParams, router]);
-
-    const selectSoftware1 = (software: Software) => {
-        // Prevent selecting the same software twice
-        if (software2 && software.slug === software2.slug) {
-            return;
-        }
-        
-        setSoftware1(software);
-        
-        // Update URL parameters
+    const selectSoftware1 = (slug: string) => {
+        if (secondSoft === slug) return;
         const params = new URLSearchParams(searchParams.toString());
-        params.set('firstSoft', software.slug);
+        params.set('firstSoft', slug);
         router.replace(`/comparison?${params.toString()}`, { scroll: false });
     };
 
-    const selectSoftware2 = (software: Software) => {
-        // Prevent selecting the same software twice
-        if (software1 && software.slug === software1.slug) {
-            return;
-        }
-        
-        setSoftware2(software);
-        
-        // Update URL parameters
+    const selectSoftware2 = (slug: string) => {
+        if (firstSoft === slug) return;
         const params = new URLSearchParams(searchParams.toString());
-        params.set('secondSoft', software.slug);
+        params.set('secondSoft', slug);
         router.replace(`/comparison?${params.toString()}`, { scroll: false });
     };
 
     const clearSoftware1 = () => {
-        setSoftware1(null);
-        
-        // Update URL parameters
         const params = new URLSearchParams(searchParams.toString());
         params.delete('firstSoft');
         router.replace(`/comparison?${params.toString()}`, { scroll: false });
     };
 
     const clearSoftware2 = () => {
-        setSoftware2(null);
-        
-        // Update URL parameters
         const params = new URLSearchParams(searchParams.toString());
         params.delete('secondSoft');
         router.replace(`/comparison?${params.toString()}`, { scroll: false });
@@ -113,46 +112,46 @@ export default function ComparisonPage() {
 
     return (
         <div className="max-w-7xl mx-auto p-6">
-            <h1 className="text-3xl font-bold mb-6 text-white">Software Comparison</h1>
-            
+            <h1 className="text-3xl font-bold mb-6 text-white">
+                Software Comparison
+            </h1>
+
             {isLoadingFromUrl && (
                 <div className="mb-4 text-center text-zinc-400">
-                    Loading comparison from URL...
+                    Loading comparison data...
                 </div>
             )}
-            
-            {/* Software selection section */}
+
             <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-4 text-white">Select Two Software to Compare</h2>
+                <h2 className="text-xl font-semibold mb-4 text-white">
+                    Select Two Software to Compare
+                </h2>
                 <div className="grid md:grid-cols-2 gap-6">
-                    {/* Software 1 Selection */}
                     <SoftwareSelector
                         title="First Software"
                         selectedSoftware={software1}
-                        otherSelectedSoftware={software2}
-                        criteria={criteria}
+                        otherSelectedSlug={secondSoft}
                         onSelect={selectSoftware1}
                         onClear={clearSoftware1}
                     />
 
-                    {/* Software 2 Selection */}
                     <SoftwareSelector
                         title="Second Software"
                         selectedSoftware={software2}
-                        otherSelectedSoftware={software1}
-                        criteria={criteria}
+                        otherSelectedSlug={firstSoft}
                         onSelect={selectSoftware2}
                         onClear={clearSoftware2}
                     />
                 </div>
             </div>
 
-            {(!software1 || !software2) && (
+            {!firstSoft || !secondSoft ? (
                 <div className="text-center text-zinc-500 mt-8">
-                    Select both software to start comparing
+                    Select both software to see the comparison
                 </div>
-            )}
+            ) : comparison ? (
+                <ComparisonDetails comparison={comparison} />
+            ) : null}
         </div>
     );
-    
 }
