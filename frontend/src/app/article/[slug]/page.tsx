@@ -6,14 +6,9 @@ import Link from 'next/link';
 import CategoryTags from '@/src/components/CategoryTags';
 import ScreenshotGallery from './_components/ScreenshotGallery';
 import Markdown from './_components/Markdown';
+import ProsAndCons from './_components/ProsAndCons';
 import { notFound } from 'next/navigation';
-import {
-    CheckIcon,
-    GlobeIcon,
-    MinusIcon,
-    ThumbsUpIcon,
-    ThumbsDownIcon,
-} from 'lucide-react';
+import { GlobeIcon } from 'lucide-react';
 import { Metadata } from 'next';
 
 export async function generateMetadata({
@@ -169,73 +164,10 @@ export default async function SoftwareArticlePage({
                 <ScreenshotGallery screenshots={software.screenshotUrls} />
             </div>
 
-            {(software.factors?.positive?.length > 0 ||
-                software.factors?.negative?.length > 0) && (
-                <section className="mb-8 sm:mb-12">
-                    <div className="flex items-center gap-4 mb-6">
-                        <h2 className="text-xl sm:text-2xl font-bold text-zinc-100 whitespace-nowrap">
-                            Pros & Cons
-                        </h2>
-                        <div className="h-px bg-zinc-800 flex-1"></div>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row justify-center gap-4 sm:gap-6">
-                        {software.factors.positive?.length > 0 && (
-                            <div className="w-full md:w-[calc(50%-12px)] flex flex-col gap-4 p-4 sm:p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800">
-                                <h3 className="text-base sm:text-lg font-semibold text-zinc-200 flex items-center justify-center gap-2">
-                                    <ThumbsUpIcon className="text-zinc-500 shrink-0 w-5 h-5" />
-                                    Pros of {software.name}
-                                </h3>
-                                <ul className="flex flex-col gap-3">
-                                    {software.factors.positive.map((factor) => (
-                                        <li
-                                            key={factor.factorId}
-                                            className="flex items-start gap-3"
-                                        >
-                                            <span className="mt-0.5 shrink-0 text-zinc-500/80">
-                                                <CheckIcon
-                                                    className="w-4.5 h-4.5"
-                                                    strokeWidth={3}
-                                                />
-                                            </span>
-                                            <span className="text-sm sm:text-base text-zinc-300">
-                                                {factor.factorName}
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-
-                        {software.factors.negative?.length > 0 && (
-                            <div className="w-full md:w-[calc(50%-12px)] flex flex-col gap-4 p-4 sm:p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800">
-                                <h3 className="text-base sm:text-lg font-semibold text-zinc-200 flex items-center justify-center gap-2">
-                                    <ThumbsDownIcon className="text-zinc-500 shrink-0 w-5 h-5" />
-                                    Cons of {software.name}
-                                </h3>
-                                <ul className="flex flex-col gap-3">
-                                    {software.factors.negative.map((factor) => (
-                                        <li
-                                            key={factor.factorId}
-                                            className="flex items-start gap-3"
-                                        >
-                                            <span className="mt-0.5 shrink-0 text-zinc-500/80">
-                                                <MinusIcon
-                                                    className="w-4.5 h-4.5"
-                                                    strokeWidth={3}
-                                                />
-                                            </span>
-                                            <span className="text-sm sm:text-base text-zinc-300">
-                                                {factor.factorName}
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-                </section>
-            )}
+            <ProsAndCons
+                softwareName={software.name}
+                factors={software.factors}
+            />
         </article>
     );
 }
