@@ -7,6 +7,7 @@ import {
     markSoftwareAsUnused,
 } from '@/src/api/users/users.api';
 import { CheckIcon, PlusIcon, Loader2Icon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface UseSoftwareButtonProps {
     softwareId: number;
@@ -19,6 +20,7 @@ export default function UseSoftwareButton({
 }: UseSoftwareButtonProps) {
     const [isUsed, setIsUsed] = useState(initialIsUsed);
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
     const toggleUsed = async () => {
         if (isLoading) return;
@@ -32,6 +34,7 @@ export default function UseSoftwareButton({
                 await markSoftwareAsUsed(browserClient, softwareId);
                 setIsUsed(true);
             }
+            router.refresh();
         } catch (error) {
             console.error('Failed to toggle software usage status', error);
         } finally {

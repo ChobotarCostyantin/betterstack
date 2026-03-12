@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { SoftwareListItem } from '@/src/api/software/software.schemas';
 import CategoryTags from '@/src/components/CategoryTags';
+import { Users } from 'lucide-react';
 
 interface FeaturedCardProps {
     item: SoftwareListItem;
@@ -20,7 +21,7 @@ export default function SoftwareCard({ item }: FeaturedCardProps) {
         <div className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-11px)] min-h-45">
             <Link
                 href={`/article/${item.slug}`}
-                className="relative block h-full p-8 rounded-2xl bg-[#111114] border border-zinc-800 hover:border-zinc-600 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-zinc-900/50 transition-all duration-300 group flex-col overflow-hidden z-0"
+                className="relative flex flex-col h-full p-8 rounded-2xl bg-[#111114] border border-zinc-800 hover:border-zinc-600 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-zinc-900/50 transition-all duration-300 group overflow-hidden z-0"
             >
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-zinc-500/5 rounded-full blur-3xl group-hover:bg-zinc-400/10 transition-all duration-500 group-hover:scale-150 pointer-events-none -z-10" />
 
@@ -71,8 +72,21 @@ export default function SoftwareCard({ item }: FeaturedCardProps) {
                     {item.shortDescription}
                 </p>
 
-                <div className="relative z-10">
-                    <CategoryTags categories={item.categories} />
+                <div className="relative z-10 mt-auto flex items-end justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                        <CategoryTags categories={item.categories} />
+                    </div>
+
+                    {/* Usage Count Badge */}
+                    <div
+                        className="flex items-center gap-1.5 shrink-0 bg-zinc-900/80 px-2.5 py-1.5 rounded-lg border border-zinc-800 text-zinc-400 group-hover:text-zinc-400 group-hover:border-zinc-500/30 group-hover:bg-zinc-500/10 transition-colors duration-300"
+                        title={`${item.usageCount} users use this`}
+                    >
+                        <Users className="w-3.5 h-3.5" />
+                        <span className="text-xs font-semibold truncate">
+                            {item.usageCount}
+                        </span>
+                    </div>
                 </div>
             </Link>
         </div>

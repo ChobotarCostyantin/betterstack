@@ -12,7 +12,7 @@ import ProsAndCons from './_components/ProsAndCons';
 import SoftwareAlternatives from './_components/SoftwareAlternatives';
 import UseSoftwareButton from './_components/UseSoftwareButton';
 import { notFound } from 'next/navigation';
-import { GlobeIcon } from 'lucide-react';
+import { GlobeIcon, Users } from 'lucide-react';
 import { Metadata } from 'next';
 
 export async function generateMetadata({
@@ -101,14 +101,39 @@ export default async function SoftwareArticlePage({
                         </div>
                     )}
                     <div>
-                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
-                            {software.name}
-                        </h1>
-                        {software.developer && (
-                            <p className="text-sm sm:text-lg text-zinc-400 mt-1">
-                                Developer: {software.developer}
-                            </p>
-                        )}
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
+                                {software.name}
+                            </h1>
+                            {/* Usage Count Badge */}
+                            <div
+                                className="hidden sm:flex items-center gap-1.5 shrink-0 bg-zinc-900 px-2.5 py-1 rounded-lg border border-zinc-800 text-zinc-400"
+                                title={`${software.usageCount} users use this`}
+                            >
+                                <Users className="w-4 h-4" />
+                                <span className="text-sm font-semibold">
+                                    {software.usageCount}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center flex-wrap gap-x-4 gap-y-2 mt-1">
+                            {software.developer && (
+                                <p className="text-sm sm:text-lg text-zinc-400">
+                                    Developer: {software.developer}
+                                </p>
+                            )}
+                            {/* Usage Count Badge for Mobile (appears below name on small screens) */}
+                            <div
+                                className="flex sm:hidden items-center gap-1.5 shrink-0 bg-zinc-900 px-2 py-0.5 rounded-md border border-zinc-800 text-zinc-400"
+                                title={`${software.usageCount} users use this`}
+                            >
+                                <Users className="w-3.5 h-3.5" />
+                                <span className="text-xs font-semibold">
+                                    {software.usageCount}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
