@@ -22,6 +22,9 @@ RUN npm ci --workspace=frontend
 # Build
 # ------------------------------
 FROM deps AS build
+ARG NEXT_PUBLIC_BACKEND_URL
+ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+
 COPY . .
 RUN npm run build -w frontend
 
