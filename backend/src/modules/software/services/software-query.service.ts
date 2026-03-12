@@ -220,6 +220,17 @@ export class SoftwareQueryService {
             );
         }
 
+        const swACategoryIds = new Set(swA.categories.map((c) => c.id));
+        const haveCommonCategory = swB.categories.some((c) =>
+            swACategoryIds.has(c.id),
+        );
+
+        if (!haveCommonCategory) {
+            throw new BadRequestException(
+                'Software are not comparable. At least one category must be in common',
+            );
+        }
+
         const note = await this.comparisonNoteRepo.findOne({
             where: [
                 { softwareAId: swA.id, softwareBId: swB.id },
