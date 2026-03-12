@@ -14,6 +14,39 @@ import {
     ThumbsUpIcon,
     ThumbsDownIcon,
 } from 'lucide-react';
+import { Metadata } from 'next';
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+    const slugObject = await params;
+    const client = await createServerClient();
+
+    try {
+        const software = await getSoftwareBySlug(client, slugObject.slug);
+
+        return {
+            title: `${software.name} | betterstack`,
+            description:
+                software.shortDescription ||
+                `View details and features of ${software.name}.`,
+            openGraph: {
+                title: `${software.name} | betterstack`,
+                description:
+                    software.shortDescription ||
+                    `View details and features of ${software.name}.`,
+                images: software.logoUrl ? [software.logoUrl] : [],
+            },
+        };
+    } catch {
+        return {
+            title: 'Software Not Found | betterstack',
+            description: 'The requested software could not be found.',
+        };
+    }
+}
 
 export default async function SoftwareArticlePage({
     params,

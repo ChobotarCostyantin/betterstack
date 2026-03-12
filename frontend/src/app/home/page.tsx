@@ -4,6 +4,12 @@ import SearchBar from '@/src/app/home/_components/SearchBar';
 import { createServerClient } from '@/src/lib/api/server.client';
 import { getMostUsedSoftware } from '@/src/api/software/software.api';
 import SoftwareCard from '@/src/components/SoftwareCard';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Home | betterstack',
+    description: 'View and choose the best software.',
+};
 
 export default async function Home() {
     const client = await createServerClient();

@@ -7,6 +7,7 @@ import { createServerClient } from '@/src/lib/api/server.client';
 import SoftwareSelector from './_components/SoftwareSelector';
 import ComparisonDetails from './_components/ComparisonDetails';
 import ComparisonError from './_components/ComparisonError';
+import { Metadata } from 'next';
 
 function getComparisonUrl(first?: string, second?: string) {
     const params = new URLSearchParams();
@@ -14,6 +15,71 @@ function getComparisonUrl(first?: string, second?: string) {
     if (second) params.set('secondSoft', second);
     const query = params.toString();
     return query ? `/comparison?${query}` : '/comparison';
+}
+
+export async function generateMetadata({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}): Promise<Metadata> {
+    const resolvedParams = await searchParams;
+    const firstSoft =
+        typeof resolvedParams?.firstSoft === 'string'
+            ? resolvedParams.firstSoft
+            : undefined;
+    const secondSoft =
+        typeof resolvedParams?.secondSoft === 'string'
+            ? resolvedParams.secondSoft
+            : undefined;
+
+    if (!firstSoft && !secondSoft) {
+        return {
+            title: 'Software Comparison | betterstack',
+            description: 'Compare software tools side-by-side in BetterStack.',
+        };
+    }
+
+    const serverClient = await createServerClient();
+
+    try {
+        if (firstSoft && secondSoft) {
+            const [soft1, soft2] = await Promise.all([
+                getSoftwareBySlug(serverClient, firstSoft).catch(() => null),
+                getSoftwareBySlug(serverClient, secondSoft).catch(() => null),
+            ]);
+
+            if (soft1 && soft2) {
+                return {
+                    title: `${soft1.name} vs ${soft2.name} | betterstack`,
+                    description: `Detailed comparison between ${soft1.name} and ${soft2.name}. Compare pros, cons, and metrics.`,
+                };
+            }
+        }
+
+        const activeSlug = firstSoft || secondSoft;
+        if (activeSlug) {
+            const soft = await getSoftwareBySlug(
+                serverClient,
+                activeSlug,
+            ).catch(() => null);
+            if (soft) {
+                return {
+                    title: `Compare ${soft.name} | betterstack`,
+                    description: `Find alternatives and compare ${soft.name} with other software.`,
+                };
+            }
+        }
+    } catch {
+        return {
+            title: 'Comparison | betterstack',
+            description: 'Compare software in BetterStack',
+        };
+    }
+
+    return {
+        title: 'Comparison | betterstack',
+        description: 'Compare software in BetterStack',
+    };
 }
 
 export default async function Comparison({
