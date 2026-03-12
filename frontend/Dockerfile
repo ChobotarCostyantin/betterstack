@@ -39,15 +39,11 @@ CMD ["npm", "run", "dev", "-w", "frontend"]
 
 # ------------------------------
 # Production runner
-#
-# The Next.js standalone output is entirely self-contained:
-# it includes its own trimmed node_modules and a server.js
-# entrypoint, so no npm install is needed here.
 # ------------------------------
 FROM base AS production
 ENV NODE_ENV=production
 
-COPY --from=build /usr/src/app/frontend/.next/standalone ./frontend
+COPY --from=build /usr/src/app/frontend/.next/standalone .
 COPY --from=build /usr/src/app/frontend/.next/static ./frontend/.next/static
 COPY --from=build /usr/src/app/frontend/public ./frontend/public
 
