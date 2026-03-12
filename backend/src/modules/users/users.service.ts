@@ -146,6 +146,10 @@ export class UsersService implements OnModuleInit {
         return { success: true };
     }
 
+    async hasUserUsedSoftware(userId: number, softwareId: number) {
+        return this.usageRepo.existsBy({ userId, softwareId });
+    }
+
     private buildAuthResult(user: User): AuthResult {
         const token = this.jwtService.sign({
             id: user.id,

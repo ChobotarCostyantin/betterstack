@@ -39,6 +39,19 @@ export class UsersController {
         return this.usersService.makeAdmin(id);
     }
 
+    @Get('software/hasUsed/:softwareId')
+    @Authenticated()
+    @ApiOperation({
+        summary:
+            'Get whether a software is used by the authenticated user or not',
+    })
+    hasUsed(
+        @Req() req: AuthenticatedRequest,
+        @Param('softwareId', ParseIntPipe) softwareId: number,
+    ) {
+        return this.usersService.hasUserUsedSoftware(req.user.id, softwareId);
+    }
+
     @Post('software/:softwareId/use')
     @Authenticated()
     @ApiOperation({
