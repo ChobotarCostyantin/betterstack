@@ -2,6 +2,7 @@ import type { KyInstance } from 'ky';
 import {
     unwrapResponse,
     unwrapPaginatedResponse,
+    unwrapSuccessResponse,
 } from '../common/common.utils';
 import {
     SoftwareListItemSchema,
@@ -92,36 +93,37 @@ export async function updateSoftware(
     client: KyInstance,
     id: number,
     input: UpdateSoftwareInput,
-): Promise<SoftwareDetail> {
+): Promise<void> {
     const raw = await client.put(`software/${id}`, { json: input }).json();
-    return unwrapResponse(SoftwareDetailSchema, raw);
+    unwrapSuccessResponse(raw);
 }
 
 export async function updateSoftwareFactors(
     client: KyInstance,
     id: number,
     input: UpdateSoftwareFactorsInput,
-): Promise<SoftwareDetail> {
+): Promise<void> {
     const raw = await client
         .put(`software/${id}/factors`, { json: input })
         .json();
-    return unwrapResponse(SoftwareDetailSchema, raw);
+    unwrapSuccessResponse(raw);
 }
 
 export async function updateSoftwareMetrics(
     client: KyInstance,
     id: number,
     input: UpdateSoftwareMetricsInput,
-): Promise<SoftwareDetail> {
+): Promise<void> {
     const raw = await client
         .put(`software/${id}/metrics`, { json: input })
         .json();
-    return unwrapResponse(SoftwareDetailSchema, raw);
+    unwrapSuccessResponse(raw);
 }
 
 export async function deleteSoftware(
     client: KyInstance,
     id: number,
 ): Promise<void> {
-    await client.delete(`software/${id}`);
+    const raw = await client.delete(`software/${id}`).json();
+    unwrapSuccessResponse(raw);
 }

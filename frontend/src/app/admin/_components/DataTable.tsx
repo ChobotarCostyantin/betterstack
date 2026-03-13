@@ -15,6 +15,10 @@ interface DataTableProps {
     isFetchingNextPage?: boolean;
     hasMore?: boolean;
     onLoadMore?: () => void;
+    onEditSoftware?: (item: TableRecord) => void;
+    onEditCategory?: (item: TableRecord) => void;
+    onEditMetric?: (item: TableRecord) => void;
+    onEditFactor?: (item: TableRecord) => void;
 }
 
 export function DataTable({
@@ -26,6 +30,10 @@ export function DataTable({
     isFetchingNextPage,
     hasMore,
     onLoadMore,
+    onEditSoftware,
+    onEditCategory,
+    onEditMetric,
+    onEditFactor,
 }: DataTableProps) {
     const router = useRouter();
     const [pickedItem, setPickedItem] = useState<TableRecord | null>(null);
@@ -137,7 +145,33 @@ export function DataTable({
                                 {activeTab !== 'user' ? (
                                     <>
                                         <button
-                                            onClick={() => console.log('ass')}
+                                            onClick={() => {
+                                                if (
+                                                    activeTab === 'software' &&
+                                                    onEditSoftware
+                                                ) {
+                                                    onEditSoftware(row);
+                                                } else if (
+                                                    activeTab === 'category' &&
+                                                    onEditCategory
+                                                ) {
+                                                    onEditCategory(row);
+                                                } else if (
+                                                    activeTab === 'criteria'
+                                                ) {
+                                                    if (
+                                                        row.type === 'Metric' &&
+                                                        onEditMetric
+                                                    ) {
+                                                        onEditMetric(row);
+                                                    } else if (
+                                                        row.type === 'Factor' &&
+                                                        onEditFactor
+                                                    ) {
+                                                        onEditFactor(row);
+                                                    }
+                                                }
+                                            }}
                                             className="p-1.5 text-zinc-400 hover:text-zinc-300 hover:bg-zinc-400/10 rounded-md transition-colors"
                                             title="Edit"
                                         >

@@ -15,6 +15,7 @@ import {
     ApiOperation,
     ApiCreatedResponse,
     ApiOkResponse,
+    ApiNoContentResponse,
 } from '@nestjs/swagger';
 import { UsersService } from '../users.service';
 import { RegisterDto, LoginDto, AuthResponseDto } from '../dto/auth.dto';
@@ -22,6 +23,7 @@ import { UserDto } from '../dto/user.dto';
 import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
 import { Authenticated } from '@common/decorators/authenticated.decorator';
 import { authConfig, type AuthConfig } from '@config/auth.config';
+import { DataOf } from '@common/dto/response.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -34,7 +36,7 @@ export class AuthController {
 
     @Post('register')
     @ApiOperation({ summary: 'Register a new user' })
-    @ApiCreatedResponse({ type: AuthResponseDto })
+    @ApiCreatedResponse({ type: DataOf(AuthResponseDto) })
     async register(
         @Body() dto: RegisterDto,
         @Res({ passthrough: true }) res: Response,
@@ -47,7 +49,7 @@ export class AuthController {
     @Post('login')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Login' })
-    @ApiOkResponse({ type: AuthResponseDto })
+    @ApiOkResponse({ type: DataOf(AuthResponseDto) })
     async login(
         @Body() dto: LoginDto,
         @Res({ passthrough: true }) res: Response,
@@ -60,6 +62,7 @@ export class AuthController {
     @Post('logout')
     @HttpCode(HttpStatus.NO_CONTENT)
     @ApiOperation({ summary: 'Logout — clears the auth cookie' })
+    @ApiNoContentResponse({ description: 'Cookie cleared' })
     logout(@Res({ passthrough: true }) res: Response): void {
         res.clearCookie(this.auth.cookieName, this.auth.cookieOptions);
     }
@@ -67,7 +70,7 @@ export class AuthController {
     @Get('me')
     @Authenticated()
     @ApiOperation({ summary: 'Return the currently authenticated user' })
-    @ApiOkResponse({ type: UserDto })
+    @ApiOkResponse({ type: DataOf(UserDto) })
     me(@Req() req: AuthenticatedRequest): UserDto {
         const { id, email, role } = req.user;
         const dto = new UserDto();

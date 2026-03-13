@@ -18,6 +18,7 @@ import {
     UpdateSoftwareFactorsDto,
     UpdateSoftwareMetricsDto,
 } from '../dto/update-software.dto';
+import { SoftwareDetailDto } from '../dto/software-response.dto';
 import { CategoryDeletedEvent } from '@common/events/category.events';
 import { FactorUpdatedEvent } from '@common/events/factor.events';
 import { MetricUpdatedEvent } from '@common/events/metric.events';
@@ -28,6 +29,7 @@ import {
 import { FactorsService } from '@modules/criteria/services/factors.service';
 import { MetricsService } from '@modules/criteria/services/metrics.service';
 import { Category } from '@modules/categories/entities/category.entity';
+import { SoftwareQueryService } from './software-query.service';
 
 @Injectable()
 export class SoftwareManagementService {
@@ -42,9 +44,10 @@ export class SoftwareManagementService {
         private readonly softwareMetricRepo: Repository<SoftwareMetric>,
         private readonly factorsService: FactorsService,
         private readonly metricsService: MetricsService,
+        private readonly queryService: SoftwareQueryService,
     ) {}
 
-    async create(dto: CreateSoftwareDto): Promise<Software> {
+    async create(dto: CreateSoftwareDto): Promise<SoftwareDetailDto> {
         const { categoryIds, ...softwareData } = dto;
 
         const software = this.repo.create({
@@ -54,13 +57,17 @@ export class SoftwareManagementService {
         });
 
         try {
-            return await this.repo.save(software);
+            const saved = await this.repo.save(software);
+            return this.queryService.findOneBySlug(saved.slug);
         } catch (error) {
             this.handleDbError(error as { code: string });
         }
     }
 
-    async update(id: number, dto: UpdateSoftwareDto): Promise<Software> {
+    async update(
+        id: number,
+        dto: UpdateSoftwareDto,
+    ): Promise<{ success: true }> {
         const { categoryIds, ...softwareData } = dto;
 
         const software = await this.repo.preload({
@@ -79,19 +86,35 @@ export class SoftwareManagementService {
         }
 
         try {
-            return await this.repo.save(software);
+            await this.repo.save(software);
         } catch (error) {
             this.handleDbError(error as { code: string });
         }
+
+        return { success: true };
     }
 
     private handleDbError(error: unknown): never {
+        this.logger.error({ err: error }, 'Database operation failed');
+
         if (typeof error === 'object' && error !== null && 'code' in error) {
-            const dbError = error as { code: string };
+            const dbError = error as { code: string; detail?: string };
 
             if (dbError.code === '23503') {
                 throw new BadRequestException(
                     'Provided category ID does not exist',
+                );
+            }
+
+            if (dbError.code === '23505') {
+                throw new BadRequestException(
+                    `Record already exists: ${dbError.detail || ''}`,
+                );
+            }
+
+            if (dbError.code === '23502') {
+                throw new BadRequestException(
+                    `Missing required field in database: ${dbError.detail || ''}`,
                 );
             }
         }

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PaginatedMetaSchema } from './common.schemas';
+import { PaginatedMetaSchema, SuccessResponseSchema } from './common.schemas';
 import type { Paginated } from './common.types';
 
 function responseOf<T extends z.ZodTypeAny>(schema: T) {
@@ -25,4 +25,8 @@ export function unwrapPaginatedResponse<T extends z.ZodTypeAny>(
     raw: unknown,
 ): Paginated<z.infer<T>> {
     return paginatedResponseOf(schema).parse(raw) as Paginated<z.infer<T>>;
+}
+
+export function unwrapSuccessResponse(raw: unknown): void {
+    z.object({ data: SuccessResponseSchema }).parse(raw);
 }

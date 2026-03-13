@@ -9,9 +9,19 @@ import {
     Query,
     ParseIntPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
+import {
+    ApiTags,
+    ApiOperation,
+    ApiOkResponse,
+    ApiCreatedResponse,
+} from '@nestjs/swagger';
 import { PaginatedOf } from '@common/dto/paginated-response.dto';
-import { CategoryListItemDto } from './dto/category-response.dto';
+import { DataOf } from '@common/dto/response.dto';
+import { SuccessResponseDto } from '@common/dto/success-response.dto';
+import {
+    CategoryListItemDto,
+    CategoryDetailDto,
+} from './dto/category-response.dto';
 import { Role } from '@common/enums/role.enum';
 import { Authenticated } from '@common/decorators/authenticated.decorator';
 import { CategoriesService } from './categories.service';
@@ -40,6 +50,7 @@ export class CategoriesController {
     @ApiOperation({
         summary: 'Get category by ID with its factors and metrics',
     })
+    @ApiOkResponse({ type: DataOf(CategoryDetailDto) })
     findOne(@Param('id', ParseIntPipe) id: number) {
         return this.service.findOneWithCriteria(id);
     }
@@ -48,6 +59,7 @@ export class CategoriesController {
     @ApiOperation({
         summary: 'Get category by Slug with its factors and metrics',
     })
+    @ApiOkResponse({ type: DataOf(CategoryDetailDto) })
     findOneBySlug(@Param('slug') slug: string) {
         return this.service.findOneWithSlug(slug);
     }
@@ -55,6 +67,7 @@ export class CategoriesController {
     @Post()
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Create new category' })
+    @ApiCreatedResponse({ type: DataOf(CategoryListItemDto) })
     create(@Body() dto: CreateCategoryDto) {
         return this.service.create(dto);
     }
@@ -62,6 +75,7 @@ export class CategoriesController {
     @Put(':id')
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Update category (slug and/or name)' })
+    @ApiOkResponse({ type: DataOf(SuccessResponseDto) })
     rename(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: RenameCategoryDto,
@@ -74,6 +88,7 @@ export class CategoriesController {
     @ApiOperation({
         summary: 'Replace the full factors and metrics list for a category',
     })
+    @ApiOkResponse({ type: DataOf(SuccessResponseDto) })
     updateCriteria(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateCategoryCriteriaDto,
@@ -84,6 +99,7 @@ export class CategoriesController {
     @Delete(':id')
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Delete category' })
+    @ApiOkResponse({ type: DataOf(SuccessResponseDto) })
     remove(@Param('id', ParseIntPipe) id: number) {
         return this.service.remove(id);
     }
