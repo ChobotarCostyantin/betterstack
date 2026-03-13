@@ -55,20 +55,16 @@ export async function renameCategory(
     client: KyInstance,
     id: number,
     input: RenameCategoryInput,
-): Promise<CategoryListItem> {
-    const raw = await client.put(`categories/${id}`, { json: input }).json();
-    return unwrapResponse(CategoryListItemSchema, raw);
+): Promise<void> {
+    await client.put(`categories/${id}`, { json: input });
 }
 
 export async function updateCategoryCriteria(
     client: KyInstance,
     id: number,
     input: UpdateCategoryCriteriaInput,
-): Promise<CategoryDetail> {
-    const raw = await client
-        .put(`categories/${id}/criteria`, { json: input })
-        .json();
-    return unwrapResponse(CategoryDetailSchema, raw);
+): Promise<void> {
+    await client.put(`categories/${id}/criteria`, { json: input });
 }
 
 export async function deleteCategory(

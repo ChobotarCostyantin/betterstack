@@ -52,11 +52,8 @@ export async function updateFactor(
     client: KyInstance,
     id: number,
     input: UpdateFactorInput,
-): Promise<Factor> {
-    const raw = await client
-        .put(`criteria/factors/${id}`, { json: input })
-        .json();
-    return unwrapResponse(FactorSchema, raw);
+): Promise<void> {
+    await client.put(`criteria/factors/${id}`, { json: input });
 }
 
 export async function deleteFactor(
@@ -103,11 +100,8 @@ export async function updateMetric(
     client: KyInstance,
     id: number,
     input: UpdateMetricInput,
-): Promise<Metric> {
-    const raw = await client
-        .put(`criteria/metrics/${id}`, { json: input })
-        .json();
-    return unwrapResponse(MetricSchema, raw);
+): Promise<void> {
+    await client.put(`criteria/metrics/${id}`, { json: input });
 }
 
 export async function deleteMetric(

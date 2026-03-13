@@ -101,7 +101,7 @@ export class CategoriesService {
         };
     }
 
-    async create(dto: CreateCategoryDto) {
+    async create(dto: CreateCategoryDto): Promise<CategoryListItemDto> {
         const category = this.categoryRepo.create({
             slug: dto.slug,
             name: dto.name,
@@ -117,18 +117,21 @@ export class CategoriesService {
                 ? await this.metricRepo.findBy({ id: In(dto.metricIds) })
                 : [];
 
-        return this.categoryRepo.save(category);
+        const saved = await this.categoryRepo.save(category);
+        return { id: saved.id, slug: saved.slug, name: saved.name };
     }
 
-    async rename(id: number, dto: RenameCategoryDto) {
+    async rename(id: number, dto: RenameCategoryDto): Promise<void> {
         const category = await this.categoryRepo.findOneBy({ id });
         if (!category)
             throw new NotFoundException(`Category with ID ${id} not found`);
         await this.categoryRepo.update(id, dto as DeepPartial<Category>);
-        return { ...category, ...dto };
     }
 
-    async updateCriteria(id: number, dto: UpdateCategoryCriteriaDto) {
+    async updateCriteria(
+        id: number,
+        dto: UpdateCategoryCriteriaDto,
+    ): Promise<void> {
         const category = await this.categoryRepo.findOne({
             where: { id },
             relations: ['factors', 'metrics'],
@@ -146,23 +149,7 @@ export class CategoriesService {
                 ? await this.metricRepo.findBy({ id: In(dto.metricIds) })
                 : [];
 
-        const updated = await this.categoryRepo.save(category);
-
-        return {
-            id: updated.id,
-            slug: updated.slug,
-            name: updated.name,
-            factors: (updated.factors ?? []).map((f) => ({
-                id: f.id,
-                positiveVariant: f.positiveVariant,
-                negativeVariant: f.negativeVariant,
-            })),
-            metrics: (updated.metrics ?? []).map((m) => ({
-                id: m.id,
-                name: m.name,
-                higherIsBetter: m.higherIsBetter,
-            })),
-        };
+        await this.categoryRepo.save(category);
     }
 
     async remove(id: number) {

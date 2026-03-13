@@ -28,6 +28,8 @@ import {
 import { FactorsService } from '@modules/criteria/services/factors.service';
 import { MetricsService } from '@modules/criteria/services/metrics.service';
 import { Category } from '@modules/categories/entities/category.entity';
+import { SoftwareDetailDto } from '../dto/software-response.dto';
+import { SoftwareQueryService } from './software-query.service';
 
 @Injectable()
 export class SoftwareManagementService {
@@ -42,9 +44,10 @@ export class SoftwareManagementService {
         private readonly softwareMetricRepo: Repository<SoftwareMetric>,
         private readonly factorsService: FactorsService,
         private readonly metricsService: MetricsService,
+        private readonly queryService: SoftwareQueryService,
     ) {}
 
-    async create(dto: CreateSoftwareDto): Promise<Software> {
+    async create(dto: CreateSoftwareDto): Promise<SoftwareDetailDto> {
         const { categoryIds, ...softwareData } = dto;
 
         const software = this.repo.create({
@@ -54,13 +57,14 @@ export class SoftwareManagementService {
         });
 
         try {
-            return await this.repo.save(software);
+            const saved = await this.repo.save(software);
+            return this.queryService.findOneBySlug(saved.slug);
         } catch (error) {
             this.handleDbError(error as { code: string });
         }
     }
 
-    async update(id: number, dto: UpdateSoftwareDto): Promise<Software> {
+    async update(id: number, dto: UpdateSoftwareDto): Promise<void> {
         const { categoryIds, ...softwareData } = dto;
 
         const software = await this.repo.preload({
@@ -79,7 +83,7 @@ export class SoftwareManagementService {
         }
 
         try {
-            return await this.repo.save(software);
+            await this.repo.save(software);
         } catch (error) {
             this.handleDbError(error as { code: string });
         }

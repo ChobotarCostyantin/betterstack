@@ -92,31 +92,24 @@ export async function updateSoftware(
     client: KyInstance,
     id: number,
     input: UpdateSoftwareInput,
-): Promise<SoftwareDetail> {
-    const raw = await client.put(`software/${id}`, { json: input }).json();
-    return unwrapResponse(SoftwareDetailSchema, raw);
+): Promise<void> {
+    await client.put(`software/${id}`, { json: input });
 }
 
 export async function updateSoftwareFactors(
     client: KyInstance,
     id: number,
     input: UpdateSoftwareFactorsInput,
-): Promise<SoftwareDetail> {
-    const raw = await client
-        .put(`software/${id}/factors`, { json: input })
-        .json();
-    return unwrapResponse(SoftwareDetailSchema, raw);
+): Promise<void> {
+    await client.put(`software/${id}/factors`, { json: input });
 }
 
 export async function updateSoftwareMetrics(
     client: KyInstance,
     id: number,
     input: UpdateSoftwareMetricsInput,
-): Promise<SoftwareDetail> {
-    const raw = await client
-        .put(`software/${id}/metrics`, { json: input })
-        .json();
-    return unwrapResponse(SoftwareDetailSchema, raw);
+): Promise<void> {
+    await client.put(`software/${id}/metrics`, { json: input });
 }
 
 export async function deleteSoftware(

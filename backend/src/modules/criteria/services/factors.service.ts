@@ -60,7 +60,7 @@ export class FactorsService {
         };
     }
 
-    async update(id: number, dto: UpdateFactorDto): Promise<FactorDto> {
+    async update(id: number, dto: UpdateFactorDto): Promise<void> {
         await this.repo.update(id, dto as DeepPartial<Factor>);
         const factor = await this.repo.findOneBy({ id });
         if (!factor)
@@ -74,15 +74,9 @@ export class FactorsService {
                 factor.negativeVariant,
             ),
         );
-
-        return {
-            id: factor.id,
-            positiveVariant: factor.positiveVariant,
-            negativeVariant: factor.negativeVariant,
-        };
     }
 
-    async remove(id: number) {
+    async remove(id: number): Promise<{ success: true }> {
         const factor = await this.repo.findOneBy({ id });
         if (!factor)
             throw new NotFoundException(`Factor with ID ${id} not found`);

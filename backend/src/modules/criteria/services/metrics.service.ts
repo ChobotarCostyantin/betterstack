@@ -60,7 +60,7 @@ export class MetricsService {
         };
     }
 
-    async update(id: number, dto: UpdateMetricDto): Promise<MetricDto> {
+    async update(id: number, dto: UpdateMetricDto): Promise<void> {
         await this.repo.update(id, dto as DeepPartial<Metric>);
         const metric = await this.repo.findOneBy({ id });
         if (!metric)
@@ -70,15 +70,9 @@ export class MetricsService {
             MetricUpdatedEvent.eventName,
             new MetricUpdatedEvent(id, metric.name),
         );
-
-        return {
-            id: metric.id,
-            name: metric.name,
-            higherIsBetter: metric.higherIsBetter,
-        };
     }
 
-    async remove(id: number) {
+    async remove(id: number): Promise<{ success: true }> {
         const metric = await this.repo.findOneBy({ id });
         if (!metric)
             throw new NotFoundException(`Metric with ID ${id} not found`);
