@@ -19,6 +19,7 @@ import {
 import { Role } from '@common/enums/role.enum';
 import { Authenticated } from '@common/decorators/authenticated.decorator';
 import { PaginatedOf } from '@common/dto/paginated-response.dto';
+import { DataOf, DataArrayOf } from '@common/dto/response.dto';
 import { SuccessResponseDto } from '@common/dto/success-response.dto';
 import { ParseIdsPipe } from '@common/pipes/parse-ids.pipe';
 import { FactorsService } from '../services/factors.service';
@@ -51,7 +52,7 @@ export class FactorsController {
         description: 'Comma-separated category IDs',
         example: '1,2',
     })
-    @ApiOkResponse({ type: [FactorDto] })
+    @ApiOkResponse({ type: DataArrayOf(FactorDto) })
     findByCategories(
         @Query('categoryIds', new ParseIdsPipe({ required: true }))
         ids: number[],
@@ -62,7 +63,7 @@ export class FactorsController {
     @Post()
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Create a new factor' })
-    @ApiCreatedResponse({ type: FactorDto })
+    @ApiCreatedResponse({ type: DataOf(FactorDto) })
     create(@Body() dto: CreateFactorDto) {
         return this.service.create(dto);
     }
@@ -70,7 +71,7 @@ export class FactorsController {
     @Put(':id')
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Update a factor' })
-    @ApiOkResponse({ type: SuccessResponseDto })
+    @ApiOkResponse({ type: DataOf(SuccessResponseDto) })
     update(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateFactorDto,
@@ -81,7 +82,7 @@ export class FactorsController {
     @Delete(':id')
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Delete a factor' })
-    @ApiOkResponse({ type: SuccessResponseDto })
+    @ApiOkResponse({ type: DataOf(SuccessResponseDto) })
     remove(@Param('id', ParseIntPipe) id: number) {
         return this.service.remove(id);
     }
