@@ -75,10 +75,8 @@ export default async function SoftwareArticlePage({
 
     if (isAuthenticated) {
         try {
-            isUsedByCurrentUser = await hasUserUsedSoftware(
-                client,
-                software.id,
-            );
+            const { isUsed } = await hasUserUsedSoftware(client, software.id);
+            isUsedByCurrentUser = isUsed;
         } catch {
             isUsedByCurrentUser = false;
         }

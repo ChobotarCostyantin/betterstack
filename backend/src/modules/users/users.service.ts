@@ -155,8 +155,9 @@ export class UsersService implements OnModuleInit {
     async hasUserUsedSoftware(
         userId: number,
         softwareId: number,
-    ): Promise<boolean> {
-        return this.usageRepo.existsBy({ userId, softwareId });
+    ): Promise<{ isUsed: boolean }> {
+        const isUsed = await this.usageRepo.existsBy({ userId, softwareId });
+        return { isUsed };
     }
 
     private buildAuthResult(user: User): AuthResult {

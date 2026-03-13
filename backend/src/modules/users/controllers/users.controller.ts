@@ -21,7 +21,7 @@ import { PaginationQueryDto } from '@common/dto/pagination-query.dto';
 import { PaginatedOf } from '@common/dto/paginated-response.dto';
 import { DataOf } from '@common/dto/response.dto';
 import { SuccessResponseDto } from '@common/dto/success-response.dto';
-import { BooleanResponseDto } from '@common/dto/boolean-response.dto';
+import { IsUsedResponseDto } from '../dto/is-used-response.dto';
 import { UsersService } from '../users.service';
 import { UserDto } from '../dto/user.dto';
 import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
@@ -47,13 +47,13 @@ export class UsersController {
         return this.usersService.makeAdmin(id);
     }
 
-    @Get('software/hasUsed/:softwareId')
+    @Get('software/has-used/:softwareId')
     @Authenticated()
     @ApiOperation({
         summary:
             'Get whether a software is used by the authenticated user or not',
     })
-    @ApiOkResponse({ type: DataOf(BooleanResponseDto) })
+    @ApiOkResponse({ type: DataOf(IsUsedResponseDto) })
     hasUsed(
         @Req() req: AuthenticatedRequest,
         @Param('softwareId', ParseIntPipe) softwareId: number,
