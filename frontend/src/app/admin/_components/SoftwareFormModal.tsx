@@ -246,7 +246,7 @@ export function SoftwareFormModal({
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
             <div className="bg-[#111114] border border-zinc-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                <div className="sticky top-0 flex items-center justify-between p-6 border-b border-zinc-800 bg-[#111114]">
+                <div className="sticky top-0 z-20 flex items-center justify-between p-6 border-b border-zinc-800 bg-[#111114]">
                     <h3 className="text-lg font-bold text-white">
                         {isEditing ? 'Edit Software' : 'Add Software'}
                     </h3>
@@ -313,7 +313,7 @@ export function SoftwareFormModal({
                             />
                         </div>
 
-                        <div ref={dropdownRef}>
+                        <div ref={dropdownRef} className="relative">
                             <label className="block text-sm font-medium text-zinc-300 mb-2">
                                 Categories
                             </label>
