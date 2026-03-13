@@ -60,7 +60,7 @@ export class FactorsService {
         };
     }
 
-    async update(id: number, dto: UpdateFactorDto): Promise<void> {
+    async update(id: number, dto: UpdateFactorDto): Promise<{ success: true }> {
         await this.repo.update(id, dto as DeepPartial<Factor>);
         const factor = await this.repo.findOneBy({ id });
         if (!factor)
@@ -74,6 +74,8 @@ export class FactorsService {
                 factor.negativeVariant,
             ),
         );
+
+        return { success: true };
     }
 
     async remove(id: number): Promise<{ success: true }> {

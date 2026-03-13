@@ -2,6 +2,7 @@ import type { KyInstance } from 'ky';
 import {
     unwrapResponse,
     unwrapPaginatedResponse,
+    unwrapSuccessResponse,
 } from '../common/common.utils';
 import {
     SoftwareListItemSchema,
@@ -93,7 +94,8 @@ export async function updateSoftware(
     id: number,
     input: UpdateSoftwareInput,
 ): Promise<void> {
-    await client.put(`software/${id}`, { json: input });
+    const raw = await client.put(`software/${id}`, { json: input }).json();
+    unwrapSuccessResponse(raw);
 }
 
 export async function updateSoftwareFactors(
@@ -101,7 +103,10 @@ export async function updateSoftwareFactors(
     id: number,
     input: UpdateSoftwareFactorsInput,
 ): Promise<void> {
-    await client.put(`software/${id}/factors`, { json: input });
+    const raw = await client
+        .put(`software/${id}/factors`, { json: input })
+        .json();
+    unwrapSuccessResponse(raw);
 }
 
 export async function updateSoftwareMetrics(
@@ -109,12 +114,16 @@ export async function updateSoftwareMetrics(
     id: number,
     input: UpdateSoftwareMetricsInput,
 ): Promise<void> {
-    await client.put(`software/${id}/metrics`, { json: input });
+    const raw = await client
+        .put(`software/${id}/metrics`, { json: input })
+        .json();
+    unwrapSuccessResponse(raw);
 }
 
 export async function deleteSoftware(
     client: KyInstance,
     id: number,
 ): Promise<void> {
-    await client.delete(`software/${id}`);
+    const raw = await client.delete(`software/${id}`).json();
+    unwrapSuccessResponse(raw);
 }

@@ -60,7 +60,7 @@ export class MetricsService {
         };
     }
 
-    async update(id: number, dto: UpdateMetricDto): Promise<void> {
+    async update(id: number, dto: UpdateMetricDto): Promise<{ success: true }> {
         await this.repo.update(id, dto as DeepPartial<Metric>);
         const metric = await this.repo.findOneBy({ id });
         if (!metric)
@@ -70,6 +70,8 @@ export class MetricsService {
             MetricUpdatedEvent.eventName,
             new MetricUpdatedEvent(id, metric.name),
         );
+
+        return { success: true };
     }
 
     async remove(id: number): Promise<{ success: true }> {

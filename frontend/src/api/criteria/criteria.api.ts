@@ -2,6 +2,7 @@ import type { KyInstance } from 'ky';
 import {
     unwrapResponse,
     unwrapPaginatedResponse,
+    unwrapSuccessResponse,
 } from '../common/common.utils';
 import {
     FactorSchema,
@@ -53,14 +54,18 @@ export async function updateFactor(
     id: number,
     input: UpdateFactorInput,
 ): Promise<void> {
-    await client.put(`criteria/factors/${id}`, { json: input });
+    const raw = await client
+        .put(`criteria/factors/${id}`, { json: input })
+        .json();
+    unwrapSuccessResponse(raw);
 }
 
 export async function deleteFactor(
     client: KyInstance,
     id: number,
 ): Promise<void> {
-    await client.delete(`criteria/factors/${id}`);
+    const raw = await client.delete(`criteria/factors/${id}`).json();
+    unwrapSuccessResponse(raw);
 }
 
 export async function listMetrics(
@@ -101,12 +106,16 @@ export async function updateMetric(
     id: number,
     input: UpdateMetricInput,
 ): Promise<void> {
-    await client.put(`criteria/metrics/${id}`, { json: input });
+    const raw = await client
+        .put(`criteria/metrics/${id}`, { json: input })
+        .json();
+    unwrapSuccessResponse(raw);
 }
 
 export async function deleteMetric(
     client: KyInstance,
     id: number,
 ): Promise<void> {
-    await client.delete(`criteria/metrics/${id}`);
+    const raw = await client.delete(`criteria/metrics/${id}`).json();
+    unwrapSuccessResponse(raw);
 }

@@ -2,6 +2,7 @@ import type { KyInstance } from 'ky';
 import {
     unwrapResponse,
     unwrapPaginatedResponse,
+    unwrapSuccessResponse,
 } from '../common/common.utils';
 import {
     CategoryListItemSchema,
@@ -56,7 +57,8 @@ export async function renameCategory(
     id: number,
     input: RenameCategoryInput,
 ): Promise<void> {
-    await client.put(`categories/${id}`, { json: input });
+    const raw = await client.put(`categories/${id}`, { json: input }).json();
+    unwrapSuccessResponse(raw);
 }
 
 export async function updateCategoryCriteria(
@@ -64,12 +66,16 @@ export async function updateCategoryCriteria(
     id: number,
     input: UpdateCategoryCriteriaInput,
 ): Promise<void> {
-    await client.put(`categories/${id}/criteria`, { json: input });
+    const raw = await client
+        .put(`categories/${id}/criteria`, { json: input })
+        .json();
+    unwrapSuccessResponse(raw);
 }
 
 export async function deleteCategory(
     client: KyInstance,
     id: number,
 ): Promise<void> {
-    await client.delete(`categories/${id}`);
+    const raw = await client.delete(`categories/${id}`).json();
+    unwrapSuccessResponse(raw);
 }

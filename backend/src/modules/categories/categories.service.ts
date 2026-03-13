@@ -121,17 +121,21 @@ export class CategoriesService {
         return { id: saved.id, slug: saved.slug, name: saved.name };
     }
 
-    async rename(id: number, dto: RenameCategoryDto): Promise<void> {
+    async rename(
+        id: number,
+        dto: RenameCategoryDto,
+    ): Promise<{ success: true }> {
         const category = await this.categoryRepo.findOneBy({ id });
         if (!category)
             throw new NotFoundException(`Category with ID ${id} not found`);
         await this.categoryRepo.update(id, dto as DeepPartial<Category>);
+        return { success: true };
     }
 
     async updateCriteria(
         id: number,
         dto: UpdateCategoryCriteriaDto,
-    ): Promise<void> {
+    ): Promise<{ success: true }> {
         const category = await this.categoryRepo.findOne({
             where: { id },
             relations: ['factors', 'metrics'],
@@ -150,9 +154,10 @@ export class CategoriesService {
                 : [];
 
         await this.categoryRepo.save(category);
+        return { success: true };
     }
 
-    async remove(id: number) {
+    async remove(id: number): Promise<{ success: true }> {
         const category = await this.categoryRepo.findOneBy({ id });
         if (!category) throw new NotFoundException('Category not found');
 

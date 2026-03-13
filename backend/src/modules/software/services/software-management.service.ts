@@ -64,7 +64,10 @@ export class SoftwareManagementService {
         }
     }
 
-    async update(id: number, dto: UpdateSoftwareDto): Promise<void> {
+    async update(
+        id: number,
+        dto: UpdateSoftwareDto,
+    ): Promise<{ success: true }> {
         const { categoryIds, ...softwareData } = dto;
 
         const software = await this.repo.preload({
@@ -87,6 +90,8 @@ export class SoftwareManagementService {
         } catch (error) {
             this.handleDbError(error as { code: string });
         }
+
+        return { success: true };
     }
 
     private handleDbError(error: unknown): never {

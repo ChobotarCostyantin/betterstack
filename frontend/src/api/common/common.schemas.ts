@@ -12,3 +12,5 @@ export const PaginationQuerySchema: z.ZodType<PaginationQuery> = z.object({
     page: z.number().int().positive().optional(),
     perPage: z.number().int().positive().optional(),
 });
+
+export const SuccessResponseSchema = z.object({ success: z.literal(true) });

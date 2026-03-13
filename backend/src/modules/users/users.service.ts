@@ -110,7 +110,10 @@ export class UsersService implements OnModuleInit {
         return UserDto.from(updated);
     }
 
-    async markSoftwareAsUsed(userId: number, softwareId: number) {
+    async markSoftwareAsUsed(
+        userId: number,
+        softwareId: number,
+    ): Promise<{ success: true }> {
         const user = await this.userRepo.findOneBy({ id: userId });
         if (!user)
             throw new NotFoundException(`User with ID ${userId} not found`);
@@ -128,7 +131,10 @@ export class UsersService implements OnModuleInit {
         return { success: true };
     }
 
-    async markSoftwareAsUnused(userId: number, softwareId: number) {
+    async markSoftwareAsUnused(
+        userId: number,
+        softwareId: number,
+    ): Promise<{ success: true }> {
         const user = await this.userRepo.findOneBy({ id: userId });
         if (!user)
             throw new NotFoundException(`User with ID ${userId} not found`);
@@ -146,7 +152,10 @@ export class UsersService implements OnModuleInit {
         return { success: true };
     }
 
-    async hasUserUsedSoftware(userId: number, softwareId: number) {
+    async hasUserUsedSoftware(
+        userId: number,
+        softwareId: number,
+    ): Promise<boolean> {
         return this.usageRepo.existsBy({ userId, softwareId });
     }
 
