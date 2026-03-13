@@ -32,3 +32,7 @@
 ## Підключення Google Search Console
 
 ![Domain verification](./google-search-verified.jpg)
+
+### Запит на індексацію головної сторінки
+
+![Indexing request](./requesting-indexing.png)
