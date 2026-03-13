@@ -28,3 +28,7 @@
 ## Google Cache перевірка
 
 ![Google Cache](./screen-google-search.png)
+
+## Підключення Google Search Console
+
+![Domain verification](./google-search-verified.jpg)
