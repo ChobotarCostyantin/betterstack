@@ -2,10 +2,11 @@ import type { KyInstance } from 'ky';
 import {
     unwrapResponse,
     unwrapPaginatedResponse,
+    unwrapSuccessResponse,
 } from '../common/common.utils';
 import { type User, UserSchema } from '../auth/auth.schemas';
 import type { Paginated, PaginationQuery } from '../common/common.types';
-import z, { boolean } from 'zod';
+import z from 'zod';
 
 export async function listUsers(
     client: KyInstance,
@@ -32,14 +33,16 @@ export async function markSoftwareAsUsed(
     client: KyInstance,
     softwareId: number,
 ): Promise<void> {
-    await client.post(`users/software/${softwareId}/use`);
+    const raw = await client.post(`users/software/${softwareId}/use`).json();
+    unwrapSuccessResponse(raw);
 }
 
 export async function markSoftwareAsUnused(
     client: KyInstance,
     softwareId: number,
 ): Promise<void> {
-    await client.delete(`users/software/${softwareId}/use`);
+    const raw = await client.delete(`users/software/${softwareId}/use`).json();
+    unwrapSuccessResponse(raw);
 }
 
 export async function hasUserUsedSoftware(

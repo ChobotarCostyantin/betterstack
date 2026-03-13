@@ -15,6 +15,7 @@ import {
     ApiOperation,
     ApiCreatedResponse,
     ApiOkResponse,
+    ApiNoContentResponse,
 } from '@nestjs/swagger';
 import { UsersService } from '../users.service';
 import { RegisterDto, LoginDto, AuthResponseDto } from '../dto/auth.dto';
@@ -60,6 +61,7 @@ export class AuthController {
     @Post('logout')
     @HttpCode(HttpStatus.NO_CONTENT)
     @ApiOperation({ summary: 'Logout — clears the auth cookie' })
+    @ApiNoContentResponse({ description: 'Cookie cleared' })
     logout(@Res({ passthrough: true }) res: Response): void {
         res.clearCookie(this.auth.cookieName, this.auth.cookieOptions);
     }

@@ -9,11 +9,18 @@ import {
     ParseIntPipe,
     Req,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
+import {
+    ApiTags,
+    ApiOperation,
+    ApiOkResponse,
+    ApiCreatedResponse,
+} from '@nestjs/swagger';
 import { Role } from '@common/enums/role.enum';
 import { Authenticated } from '@common/decorators/authenticated.decorator';
 import { PaginationQueryDto } from '@common/dto/pagination-query.dto';
 import { PaginatedOf } from '@common/dto/paginated-response.dto';
+import { SuccessResponseDto } from '@common/dto/success-response.dto';
+import { BooleanResponseDto } from '@common/dto/boolean-response.dto';
 import { UsersService } from '../users.service';
 import { UserDto } from '../dto/user.dto';
 import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
@@ -45,6 +52,7 @@ export class UsersController {
         summary:
             'Get whether a software is used by the authenticated user or not',
     })
+    @ApiOkResponse({ type: BooleanResponseDto })
     hasUsed(
         @Req() req: AuthenticatedRequest,
         @Param('softwareId', ParseIntPipe) softwareId: number,
@@ -57,6 +65,7 @@ export class UsersController {
     @ApiOperation({
         summary: 'Mark a software as used by the authenticated user',
     })
+    @ApiCreatedResponse({ type: SuccessResponseDto })
     markAsUsed(
         @Req() req: AuthenticatedRequest,
         @Param('softwareId', ParseIntPipe) softwareId: number,
@@ -69,6 +78,7 @@ export class UsersController {
     @ApiOperation({
         summary: "Remove a software from the authenticated user's used list",
     })
+    @ApiOkResponse({ type: SuccessResponseDto })
     markAsUnused(
         @Req() req: AuthenticatedRequest,
         @Param('softwareId', ParseIntPipe) softwareId: number,

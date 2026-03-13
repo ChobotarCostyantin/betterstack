@@ -18,12 +18,7 @@ import {
     UpdateSoftwareFactorsDto,
     UpdateSoftwareMetricsDto,
 } from '../dto/update-software.dto';
-import {
-    SoftwareDetailDto,
-    SoftwareFactorDto,
-    SoftwareFactorsDto,
-    SoftwareMetricDto,
-} from '../dto/software-response.dto';
+import { SoftwareDetailDto } from '../dto/software-response.dto';
 import { CategoryDeletedEvent } from '@common/events/category.events';
 import { FactorUpdatedEvent } from '@common/events/factor.events';
 import { MetricUpdatedEvent } from '@common/events/metric.events';
@@ -34,6 +29,7 @@ import {
 import { FactorsService } from '@modules/criteria/services/factors.service';
 import { MetricsService } from '@modules/criteria/services/metrics.service';
 import { Category } from '@modules/categories/entities/category.entity';
+import { SoftwareQueryService } from './software-query.service';
 
 @Injectable()
 export class SoftwareManagementService {
@@ -48,63 +44,8 @@ export class SoftwareManagementService {
         private readonly softwareMetricRepo: Repository<SoftwareMetric>,
         private readonly factorsService: FactorsService,
         private readonly metricsService: MetricsService,
+        private readonly queryService: SoftwareQueryService,
     ) {}
-
-    private groupFactors(
-        softwareFactors: SoftwareFactor[],
-    ): SoftwareFactorsDto {
-        return (softwareFactors ?? []).reduce<SoftwareFactorsDto>(
-            (acc, sf) => {
-                if (sf.isPositive) {
-                    acc.positive.push({
-                        factorId: sf.factorId,
-                        factorName: sf.factorName,
-                    } as SoftwareFactorDto);
-                } else {
-                    acc.negative.push({
-                        factorId: sf.factorId,
-                        factorName: sf.factorName,
-                    } as SoftwareFactorDto);
-                }
-                return acc;
-            },
-            { positive: [], negative: [] },
-        );
-    }
-
-    private toDetailDto(sw: Software): SoftwareDetailDto {
-        const metrics: SoftwareMetricDto[] = (sw.softwareMetrics ?? []).map(
-            (sm) => ({
-                metricId: sm.metricId,
-                metricName: sm.metricName,
-                higherIsBetter: sm.metric?.higherIsBetter ?? false,
-                value: Number(sm.value),
-            }),
-        );
-
-        return {
-            id: sw.id,
-            slug: sw.slug,
-            name: sw.name,
-            developer: sw.developer,
-            shortDescription: sw.shortDescription,
-            fullDescription: sw.fullDescription,
-            websiteUrl: sw.websiteUrl,
-            gitRepoUrl: sw.gitRepoUrl,
-            logoUrl: sw.logoUrl,
-            screenshotUrls: sw.screenshotUrls,
-            usageCount: sw.usageCount,
-            createdAt: sw.createdAt,
-            updatedAt: sw.updatedAt,
-            categories: (sw.categories ?? []).map((c) => ({
-                id: c.id,
-                slug: c.slug,
-                name: c.name,
-            })),
-            factors: this.groupFactors(sw.softwareFactors ?? []),
-            metrics,
-        };
-    }
 
     async create(dto: CreateSoftwareDto): Promise<SoftwareDetailDto> {
         const { categoryIds, ...softwareData } = dto;
@@ -117,21 +58,7 @@ export class SoftwareManagementService {
 
         try {
             const saved = await this.repo.save(software);
-            // Reload with relations to return detailed DTO
-            const loaded = await this.repo.findOne({
-                where: { id: saved.id },
-                relations: [
-                    'categories',
-                    'softwareFactors',
-                    'softwareMetrics',
-                    'softwareMetrics.metric',
-                ],
-            });
-            if (!loaded)
-                throw new NotFoundException(
-                    'Software not found after creation',
-                );
-            return this.toDetailDto(loaded);
+            return this.queryService.findOneBySlug(saved.slug);
         } catch (error) {
             this.handleDbError(error as { code: string });
         }
@@ -140,7 +67,7 @@ export class SoftwareManagementService {
     async update(
         id: number,
         dto: UpdateSoftwareDto,
-    ): Promise<SoftwareDetailDto> {
+    ): Promise<{ success: true }> {
         const { categoryIds, ...softwareData } = dto;
 
         const software = await this.repo.preload({
@@ -159,23 +86,12 @@ export class SoftwareManagementService {
         }
 
         try {
-            const saved = await this.repo.save(software);
-            // Reload with relations to return detailed DTO
-            const loaded = await this.repo.findOne({
-                where: { id: saved.id },
-                relations: [
-                    'categories',
-                    'softwareFactors',
-                    'softwareMetrics',
-                    'softwareMetrics.metric',
-                ],
-            });
-            if (!loaded)
-                throw new NotFoundException('Software not found after update');
-            return this.toDetailDto(loaded);
+            await this.repo.save(software);
         } catch (error) {
             this.handleDbError(error as { code: string });
         }
+
+        return { success: true };
     }
 
     private handleDbError(error: unknown): never {
