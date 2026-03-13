@@ -19,6 +19,7 @@ import {
 import { Role } from '@common/enums/role.enum';
 import { Authenticated } from '@common/decorators/authenticated.decorator';
 import { PaginatedOf } from '@common/dto/paginated-response.dto';
+import { DataOf, DataArrayOf } from '@common/dto/response.dto';
 import { SuccessResponseDto } from '@common/dto/success-response.dto';
 import { ParseIdsPipe } from '@common/pipes/parse-ids.pipe';
 import {
@@ -71,7 +72,7 @@ export class SoftwareController {
     @Get('most-used')
     @ApiOperation({ summary: 'Get most-used software' })
     @ApiQuery({ name: 'limit', required: false, example: 10 })
-    @ApiOkResponse({ type: [SoftwareListItemDto] })
+    @ApiOkResponse({ type: DataArrayOf(SoftwareListItemDto) })
     findMostUsed(
         @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
     ) {
@@ -80,7 +81,7 @@ export class SoftwareController {
 
     @Get('compare')
     @ApiOperation({ summary: 'Compare two software items by slug' })
-    @ApiOkResponse({ type: SoftwareComparisonDto })
+    @ApiOkResponse({ type: DataOf(SoftwareComparisonDto) })
     @ApiQuery({ name: 'a', required: true, description: 'Slug of software A' })
     @ApiQuery({ name: 'b', required: true, description: 'Slug of software B' })
     compare(@Query('a') slugA: string, @Query('b') slugB: string) {
@@ -105,7 +106,7 @@ export class SoftwareController {
 
     @Get(':slug')
     @ApiOperation({ summary: 'Get software by slug' })
-    @ApiOkResponse({ type: SoftwareDetailDto })
+    @ApiOkResponse({ type: DataOf(SoftwareDetailDto) })
     findOneBySlug(@Param('slug') slug: string) {
         return this.queryService.findOneBySlug(slug);
     }
@@ -113,7 +114,7 @@ export class SoftwareController {
     @Post()
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Create new software' })
-    @ApiCreatedResponse({ type: SoftwareDetailDto })
+    @ApiCreatedResponse({ type: DataOf(SoftwareDetailDto) })
     create(@Body() dto: CreateSoftwareDto) {
         return this.managementService.create(dto);
     }
@@ -121,7 +122,7 @@ export class SoftwareController {
     @Put(':id')
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Update software' })
-    @ApiOkResponse({ type: SuccessResponseDto })
+    @ApiOkResponse({ type: DataOf(SuccessResponseDto) })
     update(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateSoftwareDto,
@@ -135,7 +136,7 @@ export class SoftwareController {
         summary:
             "Replace software's factors (must belong to software's categories)",
     })
-    @ApiOkResponse({ type: SuccessResponseDto })
+    @ApiOkResponse({ type: DataOf(SuccessResponseDto) })
     updateFactors(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateSoftwareFactorsDto,
@@ -148,7 +149,7 @@ export class SoftwareController {
     @ApiOperation({
         summary: "Replace software's metrics (all category metrics required)",
     })
-    @ApiOkResponse({ type: SuccessResponseDto })
+    @ApiOkResponse({ type: DataOf(SuccessResponseDto) })
     updateMetrics(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateSoftwareMetricsDto,
@@ -159,7 +160,7 @@ export class SoftwareController {
     @Delete(':id')
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Delete software' })
-    @ApiOkResponse({ type: SuccessResponseDto })
+    @ApiOkResponse({ type: DataOf(SuccessResponseDto) })
     remove(@Param('id', ParseIntPipe) id: number) {
         return this.managementService.remove(id);
     }

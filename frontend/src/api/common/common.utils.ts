@@ -28,5 +28,5 @@ export function unwrapPaginatedResponse<T extends z.ZodTypeAny>(
 }
 
 export function unwrapSuccessResponse(raw: unknown): void {
-    SuccessResponseSchema.parse(raw);
+    z.object({ data: SuccessResponseSchema }).parse(raw);
 }
