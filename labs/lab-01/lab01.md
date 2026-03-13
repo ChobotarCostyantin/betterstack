@@ -1,0 +1,30 @@
+
+## Результати перевірки ключових елементів через curl.txt
+
+### Аналіз результату
+
+| Елемент | Присутність | Вміст / Опис |
+| --- | :---: | --- |
+| **Текст статей** | **Ні** | Повний текст статей відсутній; наявні лише картки-прев'ю програмного забезпечення. |
+| **`<title>`** | **Так** | Home &#124; betterstack |
+| **`<meta name="description">`** | **Так** | `View and choose the best software.` |
+---
+
+### Body
+
+### Навігація та заголовок
+
+* **Заголовок сторінки (H1)**: «Find the perfect stack».
+
+
+* **Пошук**: Інтерактивне поле «Search software or frameworks...».
+* **Populare Software**: Список популярних програмного забезпечення. (Jet Brains Rider, Visual Studio Code та Vim)
+
+
+
+### View Source в браузері
+Ідентичний (файл view-source.html)
+
+## Google Cache перевірка
+
+![Google Cache](./screen-google-search.png)
