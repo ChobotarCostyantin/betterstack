@@ -122,7 +122,7 @@ export class SoftwareController {
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Update software' })
     @ApiOkResponse({ type: SuccessResponseDto })
-    upcate(
+    update(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateSoftwareDto,
     ) {
