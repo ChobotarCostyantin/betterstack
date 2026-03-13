@@ -313,7 +313,7 @@ export function SoftwareFormModal({
                             />
                         </div>
 
-                        <div ref={dropdownRef} className="relative">
+                        <div ref={dropdownRef}>
                             <label className="block text-sm font-medium text-zinc-300 mb-2">
                                 Categories
                             </label>
