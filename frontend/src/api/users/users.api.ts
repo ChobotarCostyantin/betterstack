@@ -6,7 +6,7 @@ import {
 } from '../common/common.utils';
 import { type User, UserSchema } from '../auth/auth.schemas';
 import type { Paginated, PaginationQuery } from '../common/common.types';
-import z from 'zod';
+import { IsUsedResponseSchema, type IsUsedResponse } from './users.schemas';
 
 export async function listUsers(
     client: KyInstance,
@@ -48,7 +48,9 @@ export async function markSoftwareAsUnused(
 export async function hasUserUsedSoftware(
     client: KyInstance,
     softwareId: number,
-): Promise<boolean> {
-    const raw = await client.get(`users/software/hasUsed/${softwareId}`).json();
-    return unwrapResponse(z.boolean(), raw);
+): Promise<IsUsedResponse> {
+    const raw = await client
+        .get(`users/software/has-used/${softwareId}`)
+        .json();
+    return unwrapResponse(IsUsedResponseSchema, raw);
 }
