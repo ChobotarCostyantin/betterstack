@@ -15,6 +15,7 @@ export const envValidationSchema = Joi.object({
     POSTGRES_CA_CERT: Joi.string(),
 
     // JWT
+    COOKIE_DOMAIN: Joi.string(),
     JWT_SECRET: Joi.string().min(10).required(),
     JWT_EXPIRES_IN_SEC: Joi.number().default(86400),
 
