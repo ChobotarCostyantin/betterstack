@@ -10,6 +10,7 @@ export const authConfig = registerAs('auth', () => {
     return {
         cookieName: 'access-token',
         cookieOptions: {
+            domain: process.env.COOKIE_DOMAIN,
             httpOnly: true,
             sameSite: (isProduction ? 'none' : 'lax') as
                 | 'none'

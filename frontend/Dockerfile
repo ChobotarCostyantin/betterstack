@@ -47,9 +47,9 @@ CMD ["npm", "run", "dev", "-w", "frontend"]
 FROM base AS production
 ENV NODE_ENV=production
 
-COPY --from=build /usr/src/app/frontend/.next/standalone .
-COPY --from=build /usr/src/app/frontend/.next/static ./frontend/.next/static
-COPY --from=build /usr/src/app/frontend/public ./frontend/public
+COPY --from=build --chown=node:node /usr/src/app/frontend/.next/standalone .
+COPY --from=build --chown=node:node /usr/src/app/frontend/.next/static ./frontend/.next/static
+COPY --from=build --chown=node:node /usr/src/app/frontend/public ./frontend/public
 
 USER node
 CMD ["node", "frontend/server.js"]
