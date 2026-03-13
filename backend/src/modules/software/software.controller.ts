@@ -19,7 +19,10 @@ import { Role } from '@common/enums/role.enum';
 import { Authenticated } from '@common/decorators/authenticated.decorator';
 import { PaginatedOf } from '@common/dto/paginated-response.dto';
 import { ParseIdsPipe } from '@common/pipes/parse-ids.pipe';
-import { SoftwareListItemDto } from './dto/software-response.dto';
+import {
+    SoftwareListItemDto,
+    SoftwareDetailDto,
+} from './dto/software-response.dto';
 import { SoftwareComparisonDto } from './dto/software-comparison.dto';
 import { SoftwareQueryService } from './services/software-query.service';
 import { SoftwareManagementService } from './services/software-management.service';
@@ -106,6 +109,7 @@ export class SoftwareController {
     @Post()
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Create new software' })
+    @ApiOkResponse({ type: SoftwareDetailDto })
     create(@Body() dto: CreateSoftwareDto) {
         return this.managementService.create(dto);
     }
@@ -113,6 +117,7 @@ export class SoftwareController {
     @Put(':id')
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Update software' })
+    @ApiOkResponse({ type: SoftwareDetailDto })
     update(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateSoftwareDto,

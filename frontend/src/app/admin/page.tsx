@@ -8,12 +8,31 @@ import { useAdminAuth } from './_hooks/useAdminAuth';
 import { useAdminData } from './_hooks/useAdminData';
 import { Sidebar } from './_components/Sidebar';
 import { DataTable } from './_components/DataTable';
-import type { Tab } from './types';
+import { SoftwareFormModal } from './_components/SoftwareFormModal';
+import { CategoryFormModal } from './_components/CategoryFormModal';
+import { CriteriaFormModal } from './_components/CriteriaFormModal';
+import type { Tab, TableRecord } from './types';
 
 export default function Admin() {
     const router = useRouter();
     const status = useAdminAuth();
     const [activeTab, setActiveTab] = useState<Tab>('software');
+
+    // Modal state management
+    const [softwareModalOpen, setSoftwareModalOpen] = useState(false);
+    const [softwareEditItem, setSoftwareEditItem] =
+        useState<TableRecord | null>(null);
+
+    const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+    const [categoryEditItem, setCategoryEditItem] =
+        useState<TableRecord | null>(null);
+
+    const [criteriaModalOpen, setCriteriaModalOpen] = useState(false);
+    const [criteriaType, setCriteriaType] = useState<'Metric' | 'Factor'>(
+        'Metric',
+    );
+    const [criteriaEditItem, setCriteriaEditItem] =
+        useState<TableRecord | null>(null);
 
     const {
         data,
@@ -25,6 +44,95 @@ export default function Admin() {
         hasMore,
         loadMore,
     } = useAdminData(activeTab, status === 'authorized');
+
+    // Handle opening add modals
+    const openSoftwareModal = () => {
+        setSoftwareEditItem(null);
+        setSoftwareModalOpen(true);
+    };
+
+    const openCategoryModal = () => {
+        setCategoryEditItem(null);
+        setCategoryModalOpen(true);
+    };
+
+    const openMetricModal = () => {
+        setCriteriaType('Metric');
+        setCriteriaEditItem(null);
+        setCriteriaModalOpen(true);
+    };
+
+    const openFactorModal = () => {
+        setCriteriaType('Factor');
+        setCriteriaEditItem(null);
+        setCriteriaModalOpen(true);
+    };
+
+    // Handle opening edit modals
+    const handleEditSoftware = (item: TableRecord) => {
+        setSoftwareEditItem(item);
+        setSoftwareModalOpen(true);
+    };
+
+    const handleEditCategory = (item: TableRecord) => {
+        setCategoryEditItem(item);
+        setCategoryModalOpen(true);
+    };
+
+    const handleEditMetric = (item: TableRecord) => {
+        setCriteriaType('Metric');
+        setCriteriaEditItem(item);
+        setCriteriaModalOpen(true);
+    };
+
+    const handleEditFactor = (item: TableRecord) => {
+        setCriteriaType('Factor');
+        setCriteriaEditItem(item);
+        setCriteriaModalOpen(true);
+    };
+
+    // Handle modal success
+    const handleSoftwareSuccess = (newItem: TableRecord) => {
+        if (softwareEditItem) {
+            // Update existing item
+            setData((prev) =>
+                prev.map((item) => (item.id === newItem.id ? newItem : item)),
+            );
+        } else {
+            // Add new item
+            setData((prev) => [newItem, ...prev]);
+        }
+        setSoftwareModalOpen(false);
+        setSoftwareEditItem(null);
+    };
+
+    const handleCategorySuccess = (newItem: TableRecord) => {
+        if (categoryEditItem) {
+            // Update existing item
+            setData((prev) =>
+                prev.map((item) => (item.id === newItem.id ? newItem : item)),
+            );
+        } else {
+            // Add new item
+            setData((prev) => [newItem, ...prev]);
+        }
+        setCategoryModalOpen(false);
+        setCategoryEditItem(null);
+    };
+
+    const handleCriteriaSuccess = (newItem: TableRecord) => {
+        if (criteriaEditItem) {
+            // Update existing item
+            setData((prev) =>
+                prev.map((item) => (item.id === newItem.id ? newItem : item)),
+            );
+        } else {
+            // Add new item
+            setData((prev) => [newItem, ...prev]);
+        }
+        setCriteriaModalOpen(false);
+        setCriteriaEditItem(null);
+    };
 
     if (status === 'forbidden') {
         forbidden();
@@ -58,9 +166,7 @@ export default function Admin() {
                                         Metrics
                                     </h3>
                                     <button
-                                        onClick={() =>
-                                            console.log('Add Metric Modal')
-                                        }
+                                        onClick={openMetricModal}
                                         className="flex items-center gap-x-2 bg-zinc-100 hover:bg-zinc-300 text-zinc-900 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                                     >
                                         <Plus size={16} />
@@ -79,6 +185,8 @@ export default function Admin() {
                                     isFetchingNextPage={isFetchingNextPage}
                                     hasMore={hasMore}
                                     onLoadMore={loadMore}
+                                    onEditMetric={handleEditMetric}
+                                    onEditFactor={handleEditFactor}
                                 />
                             </div>
 
@@ -88,9 +196,7 @@ export default function Admin() {
                                         Factors
                                     </h3>
                                     <button
-                                        onClick={() =>
-                                            console.log('Add Factor Modal')
-                                        }
+                                        onClick={openFactorModal}
                                         className="flex items-center gap-x-2 bg-zinc-100 hover:bg-zinc-300 text-zinc-900 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                                     >
                                         <Plus size={16} />
@@ -109,6 +215,8 @@ export default function Admin() {
                                     isFetchingNextPage={isFetchingNextPage}
                                     hasMore={hasMore}
                                     onLoadMore={loadMore}
+                                    onEditMetric={handleEditMetric}
+                                    onEditFactor={handleEditFactor}
                                 />
                             </div>
                         </div>
@@ -117,7 +225,11 @@ export default function Admin() {
                             {activeTab !== 'user' && (
                                 <div>
                                     <button
-                                        onClick={() => router.push('/')}
+                                        onClick={
+                                            activeTab === 'software'
+                                                ? openSoftwareModal
+                                                : openCategoryModal
+                                        }
                                         className="flex items-center gap-x-2 bg-zinc-100 hover:bg-zinc-300 text-zinc-900 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                                     >
                                         <Plus size={16} />
@@ -136,11 +248,50 @@ export default function Admin() {
                                 isFetchingNextPage={isFetchingNextPage}
                                 hasMore={hasMore}
                                 onLoadMore={loadMore}
+                                onEditSoftware={handleEditSoftware}
+                                onEditCategory={handleEditCategory}
                             />
                         </>
                     )}
                 </div>
             </main>
+
+            {/* Software Modal */}
+            <SoftwareFormModal
+                isOpen={softwareModalOpen}
+                isEditing={!!softwareEditItem}
+                item={softwareEditItem}
+                onClose={() => {
+                    setSoftwareModalOpen(false);
+                    setSoftwareEditItem(null);
+                }}
+                onSuccess={handleSoftwareSuccess}
+            />
+
+            {/* Category Modal */}
+            <CategoryFormModal
+                isOpen={categoryModalOpen}
+                isEditing={!!categoryEditItem}
+                item={categoryEditItem}
+                onClose={() => {
+                    setCategoryModalOpen(false);
+                    setCategoryEditItem(null);
+                }}
+                onSuccess={handleCategorySuccess}
+            />
+
+            {/* Criteria Modal */}
+            <CriteriaFormModal
+                isOpen={criteriaModalOpen}
+                isEditing={!!criteriaEditItem}
+                criteriaType={criteriaType}
+                item={criteriaEditItem}
+                onClose={() => {
+                    setCriteriaModalOpen(false);
+                    setCriteriaEditItem(null);
+                }}
+                onSuccess={handleCriteriaSuccess}
+            />
         </div>
     );
 }

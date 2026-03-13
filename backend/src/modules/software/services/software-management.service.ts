@@ -18,6 +18,12 @@ import {
     UpdateSoftwareFactorsDto,
     UpdateSoftwareMetricsDto,
 } from '../dto/update-software.dto';
+import {
+    SoftwareDetailDto,
+    SoftwareFactorDto,
+    SoftwareFactorsDto,
+    SoftwareMetricDto,
+} from '../dto/software-response.dto';
 import { CategoryDeletedEvent } from '@common/events/category.events';
 import { FactorUpdatedEvent } from '@common/events/factor.events';
 import { MetricUpdatedEvent } from '@common/events/metric.events';
@@ -44,7 +50,63 @@ export class SoftwareManagementService {
         private readonly metricsService: MetricsService,
     ) {}
 
-    async create(dto: CreateSoftwareDto): Promise<Software> {
+    private groupFactors(
+        softwareFactors: SoftwareFactor[],
+    ): SoftwareFactorsDto {
+        return (softwareFactors ?? []).reduce<SoftwareFactorsDto>(
+            (acc, sf) => {
+                if (sf.isPositive) {
+                    acc.positive.push({
+                        factorId: sf.factorId,
+                        factorName: sf.factorName,
+                    } as SoftwareFactorDto);
+                } else {
+                    acc.negative.push({
+                        factorId: sf.factorId,
+                        factorName: sf.factorName,
+                    } as SoftwareFactorDto);
+                }
+                return acc;
+            },
+            { positive: [], negative: [] },
+        );
+    }
+
+    private toDetailDto(sw: Software): SoftwareDetailDto {
+        const metrics: SoftwareMetricDto[] = (sw.softwareMetrics ?? []).map(
+            (sm) => ({
+                metricId: sm.metricId,
+                metricName: sm.metricName,
+                higherIsBetter: sm.metric?.higherIsBetter ?? false,
+                value: Number(sm.value),
+            }),
+        );
+
+        return {
+            id: sw.id,
+            slug: sw.slug,
+            name: sw.name,
+            developer: sw.developer,
+            shortDescription: sw.shortDescription,
+            fullDescription: sw.fullDescription,
+            websiteUrl: sw.websiteUrl,
+            gitRepoUrl: sw.gitRepoUrl,
+            logoUrl: sw.logoUrl,
+            screenshotUrls: sw.screenshotUrls,
+            usageCount: sw.usageCount,
+            createdAt: sw.createdAt,
+            updatedAt: sw.updatedAt,
+            categories: (sw.categories ?? []).map((c) => ({
+                id: c.id,
+                slug: c.slug,
+                name: c.name,
+            })),
+            factors: this.groupFactors(sw.softwareFactors ?? []),
+            metrics,
+        };
+    }
+
+    async create(dto: CreateSoftwareDto): Promise<SoftwareDetailDto> {
         const { categoryIds, ...softwareData } = dto;
 
         const software = this.repo.create({
@@ -54,13 +116,31 @@ export class SoftwareManagementService {
         });
 
         try {
-            return await this.repo.save(software);
+            const saved = await this.repo.save(software);
+            // Reload with relations to return detailed DTO
+            const loaded = await this.repo.findOne({
+                where: { id: saved.id },
+                relations: [
+                    'categories',
+                    'softwareFactors',
+                    'softwareMetrics',
+                    'softwareMetrics.metric',
+                ],
+            });
+            if (!loaded)
+                throw new NotFoundException(
+                    'Software not found after creation',
+                );
+            return this.toDetailDto(loaded);
         } catch (error) {
             this.handleDbError(error as { code: string });
         }
     }
 
-    async update(id: number, dto: UpdateSoftwareDto): Promise<Software> {
+    async update(
+        id: number,
+        dto: UpdateSoftwareDto,
+    ): Promise<SoftwareDetailDto> {
         const { categoryIds, ...softwareData } = dto;
 
         const software = await this.repo.preload({
@@ -79,19 +159,46 @@ export class SoftwareManagementService {
         }
 
         try {
-            return await this.repo.save(software);
+            const saved = await this.repo.save(software);
+            // Reload with relations to return detailed DTO
+            const loaded = await this.repo.findOne({
+                where: { id: saved.id },
+                relations: [
+                    'categories',
+                    'softwareFactors',
+                    'softwareMetrics',
+                    'softwareMetrics.metric',
+                ],
+            });
+            if (!loaded)
+                throw new NotFoundException('Software not found after update');
+            return this.toDetailDto(loaded);
         } catch (error) {
             this.handleDbError(error as { code: string });
         }
     }
 
     private handleDbError(error: unknown): never {
+        this.logger.error({ err: error }, 'Database operation failed');
+
         if (typeof error === 'object' && error !== null && 'code' in error) {
-            const dbError = error as { code: string };
+            const dbError = error as { code: string; detail?: string };
 
             if (dbError.code === '23503') {
                 throw new BadRequestException(
                     'Provided category ID does not exist',
+                );
+            }
+
+            if (dbError.code === '23505') {
+                throw new BadRequestException(
+                    `Record already exists: ${dbError.detail || ''}`,
+                );
+            }
+
+            if (dbError.code === '23502') {
+                throw new BadRequestException(
+                    `Missing required field in database: ${dbError.detail || ''}`,
                 );
             }
         }
