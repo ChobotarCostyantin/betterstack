@@ -11,7 +11,10 @@ export const authConfig = registerAs('auth', () => {
         cookieName: 'access-token',
         cookieOptions: {
             httpOnly: true,
-            sameSite: isProduction ? 'none' : 'lax',
+            sameSite: (isProduction ? 'none' : 'lax') as
+                | 'none'
+                | 'lax'
+                | 'strict',
             secure: isProduction,
             path: '/',
             maxAge: tokenExpiresInSec * 1000,
