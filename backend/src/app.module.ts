@@ -8,6 +8,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from './modules/users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
+import { HealthModule } from './modules/health/health.module';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 import { appConfig } from '@config/app.config';
 import { adminConfig } from '@config/admin.config';
@@ -16,10 +20,13 @@ import { corsConfig } from '@config/cors.config';
 import { postgresConfig, PostgresConfig } from '@config/postgres.config';
 import { envValidationSchema } from '@config/env.validation';
 import { loggerConfig } from '@config/logger.config';
+import { throttlerConfig } from '@config/throttler.config';
 
 @Module({
     imports: [
+        HealthModule,
         LoggerModule.forRoot(loggerConfig),
+        ThrottlerModule.forRoot(throttlerConfig),
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: ['.env.development'],
@@ -47,6 +54,7 @@ import { loggerConfig } from '@config/logger.config';
                 migrations: [__dirname + '/../database/migrations/*.js'],
                 retryAttempts: 5,
                 retryDelay: 3000,
+                ssl: postgres.sslOptions,
             }),
         }),
         JwtModule.registerAsync({
@@ -62,6 +70,12 @@ import { loggerConfig } from '@config/logger.config';
         CriteriaModule,
         SoftwareModule,
         UsersModule,
+    ],
+    providers: [
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+        },
     ],
 })
 export class AppModule {}
