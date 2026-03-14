@@ -35,9 +35,7 @@ export default function ScreenshotGallery({
         if (!carouselRef.current) return;
         const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
 
-        const scrollable = scrollWidth > Math.ceil(clientWidth) + 1;
-        setIsScrollable(scrollable);
-
+        setIsScrollable(scrollWidth > Math.ceil(clientWidth) + 1);
         setCanScrollLeft(scrollLeft > 2);
         setCanScrollRight(
             Math.ceil(scrollLeft + clientWidth) < scrollWidth - 2,
@@ -46,12 +44,13 @@ export default function ScreenshotGallery({
 
     useEffect(() => {
         const timeoutId = setTimeout(updateScrollState, 100);
-
         const ref = carouselRef.current;
-        if (ref)
+
+        if (ref) {
             ref.addEventListener('scroll', updateScrollState, {
                 passive: true,
             });
+        }
         window.addEventListener('resize', updateScrollState);
 
         return () => {
@@ -70,11 +69,7 @@ export default function ScreenshotGallery({
     }, [selectedImage]);
 
     useEffect(() => {
-        if (selectedImage) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
+        document.body.style.overflow = selectedImage ? 'hidden' : 'unset';
         return () => {
             document.body.style.overflow = 'unset';
         };
@@ -85,33 +80,21 @@ export default function ScreenshotGallery({
     const scroll = (direction: 'left' | 'right') => {
         if (!carouselRef.current) return;
         const container = carouselRef.current;
-        const children = Array.from(container.children) as HTMLElement[];
-        if (children.length === 0) return;
+        const firstChild = container.firstElementChild as HTMLElement;
+        if (!firstChild) return;
 
-        const containerScrollLeft = container.scrollLeft;
-        let targetOffset = 0;
+        const containerStyle = window.getComputedStyle(container);
+        const gap = parseFloat(containerStyle.gap) || 0;
+        const itemWidth = firstChild.offsetWidth + gap;
 
-        if (direction === 'right') {
-            const nextChild = children.find(
-                (child) => child.offsetLeft > containerScrollLeft + 5,
-            );
-            if (nextChild) {
-                targetOffset = nextChild.offsetLeft;
-            } else {
-                targetOffset = container.scrollWidth;
-            }
-        } else {
-            const prevChild = children
-                .slice()
-                .reverse()
-                .find((child) => child.offsetLeft < containerScrollLeft - 5);
-            if (prevChild) {
-                targetOffset = prevChild.offsetLeft;
-            }
-        }
+        const visibleItems = Math.max(
+            1,
+            Math.floor(container.clientWidth / itemWidth),
+        );
+        const scrollAmount = itemWidth * visibleItems;
 
-        container.scrollTo({
-            left: targetOffset,
+        container.scrollBy({
+            left: direction === 'left' ? -scrollAmount : scrollAmount,
             behavior: 'smooth',
         });
     };
@@ -179,17 +162,17 @@ export default function ScreenshotGallery({
                 typeof document !== 'undefined' &&
                 createPortal(
                     <div
-                        className="fixed inset-0 z-9999 bg-black/95 flex items-center justify-center p-2 sm:p-4 md:p-12 cursor-zoom-out backdrop-blur-md"
+                        className="fixed inset-0 z-9999 bg-black/95 flex items-center justify-center p-4 md:p-8 cursor-zoom-out backdrop-blur-md"
                         onClick={closeFullscreen}
                     >
                         <div
-                            className="relative flex items-center justify-center cursor-default max-w-full max-h-full"
+                            className="relative w-full h-full max-w-7xl flex items-center justify-center cursor-default"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {!isLoadingFullscreen && (
                                 <button
                                     onClick={closeFullscreen}
-                                    className="absolute top-2 right-2 sm:-top-4 sm:-right-4 md:-top-5 md:-right-5 z-10000 p-1.5 md:p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer bg-zinc-900/80 sm:bg-zinc-900 border border-zinc-700 shadow-xl rounded-full backdrop-blur-sm sm:backdrop-blur-none"
+                                    className="absolute top-0 right-0 z-10000 p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer bg-zinc-900/80 border border-zinc-700 shadow-xl rounded-full backdrop-blur-sm"
                                     aria-label="Close"
                                 >
                                     <X className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -205,9 +188,8 @@ export default function ScreenshotGallery({
                             <Image
                                 src={selectedImage}
                                 alt="Screenshot Fullscreen"
-                                width={1920}
-                                height={1080}
-                                className={`object-contain w-auto h-auto max-w-[95vw] sm:max-w-full max-h-[85vh] sm:max-h-[90vh] rounded-lg shadow-2xl transition-opacity duration-300 ${
+                                fill
+                                className={`object-contain transition-opacity duration-300 ${
                                     isLoadingFullscreen
                                         ? 'opacity-0'
                                         : 'opacity-100'
