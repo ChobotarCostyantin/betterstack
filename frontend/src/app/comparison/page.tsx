@@ -59,6 +59,15 @@ export async function generateMetadata({
                 return {
                     title: `${soft1.name} vs ${soft2.name} | betterstack`,
                     description: `Detailed comparison between ${soft1.name} and ${soft2.name}. Compare pros, cons, and metrics.`,
+                    openGraph: {
+                        images: [
+                            {
+                                url: ogUrl.toString(),
+                                width: 1200,
+                                height: 630,
+                            },
+                        ],
+                    },
                 };
             }
         }
@@ -73,6 +82,15 @@ export async function generateMetadata({
                 return {
                     title: `Compare ${soft.name} | betterstack`,
                     description: `Find alternatives and compare ${soft.name} with other software.`,
+                    openGraph: {
+                        images: [
+                            {
+                                url: ogUrl.toString(),
+                                width: 1200,
+                                height: 630,
+                            },
+                        ],
+                    },
                 };
             }
         }
