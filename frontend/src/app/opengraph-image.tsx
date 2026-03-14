@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og';
-import fs from 'fs/promises';
+import fs, { readFile } from 'fs/promises';
 import path from 'path';
+import { existsSync } from 'fs';
 
 export const size = {
     width: 1200,
@@ -10,8 +11,17 @@ export const size = {
 export const contentType = 'image/png';
 
 export default async function Image() {
-    const fontPath = path.join(process.cwd(), 'assets/ARIALBD.ttf');
-    const arialBoldData = await fs.readFile(fontPath);
+    // Load font
+    let fontPath = path.join(process.cwd(), 'assets', 'ARIALBD.ttf');
+    if (!existsSync(fontPath)) {
+        fontPath = path.join(
+            process.cwd(),
+            'frontend',
+            'assets',
+            'ARIALBD.ttf',
+        );
+    }
+    const arialBoldData = await readFile(fontPath);
 
     const logoPath = path.join(process.cwd(), 'assets/logo.svg');
     let logoDataUrl = '';

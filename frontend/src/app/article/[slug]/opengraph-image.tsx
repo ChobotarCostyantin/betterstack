@@ -1,8 +1,9 @@
 import { ImageResponse } from 'next/og';
 import { createServerClient } from '@/src/lib/api/server.client';
 import { getSoftwareBySlug } from '@/src/api/software/software.api';
-import fs from 'fs/promises';
+import fs, { readFile } from 'fs/promises';
 import path from 'path';
+import { existsSync } from 'fs';
 
 export const size = {
     width: 1200,
@@ -19,8 +20,17 @@ export default async function Image({
     const { slug } = await params;
     const client = await createServerClient();
 
-    const fontPath = path.join(process.cwd(), '/assets/ARIALBD.ttf');
-    const arialBoldData = await fs.readFile(fontPath);
+    // Load font
+    let fontPath = path.join(process.cwd(), 'assets', 'ARIALBD.ttf');
+    if (!existsSync(fontPath)) {
+        fontPath = path.join(
+            process.cwd(),
+            'frontend',
+            'assets',
+            'ARIALBD.ttf',
+        );
+    }
+    const arialBoldData = await readFile(fontPath);
 
     let software;
     try {

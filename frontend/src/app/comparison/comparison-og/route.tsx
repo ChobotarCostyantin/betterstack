@@ -4,9 +4,10 @@ import {
     compareSoftware,
     getSoftwareBySlug,
 } from '@/src/api/software/software.api';
-import fs from 'fs/promises';
+import fs, { readFile } from 'fs/promises';
 import path from 'path';
 import { SoftwareComparisonSide } from '@/src/api/software/software.schemas';
+import { existsSync } from 'fs';
 
 export const runtime = 'nodejs'; // Required for fs
 
@@ -18,8 +19,16 @@ export async function GET(request: Request) {
     const client = await createServerClient();
 
     // Load font
-    const fontPath = path.join(process.cwd(), 'assets/ARIALBD.ttf');
-    const arialBoldData = await fs.readFile(fontPath);
+    let fontPath = path.join(process.cwd(), 'assets', 'ARIALBD.ttf');
+    if (!existsSync(fontPath)) {
+        fontPath = path.join(
+            process.cwd(),
+            'frontend',
+            'assets',
+            'ARIALBD.ttf',
+        );
+    }
+    const arialBoldData = await readFile(fontPath);
 
     // Fetch data
     const softwareComparison =
