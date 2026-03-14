@@ -21,13 +21,13 @@ export default async function Image({
     const client = await createServerClient();
 
     // Load font
-    let fontPath = path.join(process.cwd(), 'assets', 'ARIALBD.ttf');
+    let fontPath = path.join(process.cwd(), 'assets', 'ARIALBD.TTF');
     if (!existsSync(fontPath)) {
         fontPath = path.join(
             process.cwd(),
             'frontend',
             'assets',
-            'ARIALBD.ttf',
+            'ARIALBD.TTF',
         );
     }
     const arialBoldData = await readFile(fontPath);
