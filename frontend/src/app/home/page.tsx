@@ -9,6 +9,12 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
     title: 'Home | betterstack',
     description: 'View and choose the best software.',
+    openGraph: {
+        url: new URL(
+            '/home',
+            process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
+        ),
+    },
 };
 
 export default async function Home() {

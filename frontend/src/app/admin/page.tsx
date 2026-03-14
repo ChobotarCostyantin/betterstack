@@ -12,6 +12,18 @@ import { SoftwareFormModal } from './_components/SoftwareFormModal';
 import { CategoryFormModal } from './_components/CategoryFormModal';
 import { CriteriaFormModal } from './_components/CriteriaFormModal';
 import type { Tab, TableRecord } from './types';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Admin panel | betterstack',
+    description: 'Admin panel.',
+    openGraph: {
+        url: new URL(
+            '/admin',
+            process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
+        ),
+    },
+};
 
 export default function Admin() {
     const router = useRouter();
