@@ -34,7 +34,7 @@ export async function generateMetadata({
 
     const ogUrl = new URL(
         '/comparison/comparison-og',
-        process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+        process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
     );
     if (firstSoft) ogUrl.searchParams.set('firstSoft', firstSoft as string);
     if (secondSoft) ogUrl.searchParams.set('secondSoft', secondSoft as string);
