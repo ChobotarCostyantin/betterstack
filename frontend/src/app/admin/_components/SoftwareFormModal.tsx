@@ -15,6 +15,7 @@ import type {
     CreateSoftwareInput,
     UpdateSoftwareInput,
 } from '@/src/api/software/software.schemas';
+import Markdown from '@/src/components/Markdown';
 
 interface SoftwareFormModalProps {
     isOpen: boolean;
@@ -239,8 +240,8 @@ export function SoftwareFormModal({
         .join(', ');
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-            <div className="bg-[#111114] border border-zinc-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 py-6">
+            <div className="bg-[#111114] border border-zinc-800 rounded-xl shadow-2xl max-w-5xl w-full max-h-full flex flex-col overflow-hidden">
                 <div className="flex items-center justify-between p-6 border-b border-zinc-800 bg-[#111114]">
                     <h3 className="text-lg font-bold text-white">
                         {isEditing ? 'Edit Software' : 'Add Software'}
@@ -262,14 +263,14 @@ export function SoftwareFormModal({
                             </span>
                         </div>
                     ) : (
-                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                        <form onSubmit={handleSubmit} className="p-6 space-y-6">
                             {error && (
                                 <div className="p-4 rounded-lg bg-red-500/10 text-red-500 text-sm">
                                     {error}
                                 </div>
                             )}
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-zinc-300 mb-2">
                                         Name *
@@ -301,7 +302,7 @@ export function SoftwareFormModal({
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-zinc-300 mb-2">
                                         Developer *
@@ -413,21 +414,41 @@ export function SoftwareFormModal({
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-zinc-300 mb-2">
-                                    Full Description (Markdown)
-                                </label>
-                                <textarea
-                                    name="fullDescription"
-                                    value={formData.fullDescription}
-                                    onChange={handleInputChange}
-                                    rows={3}
-                                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-700 resize-none"
-                                    placeholder="## Overview&#10;Write detailed description here..."
-                                />
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div className="flex flex-col">
+                                    <label className="block text-sm font-medium text-zinc-300 mb-2">
+                                        Full Description (Editor)
+                                    </label>
+                                    <textarea
+                                        name="fullDescription"
+                                        value={formData.fullDescription}
+                                        onChange={handleInputChange}
+                                        className="w-full h-87.5 bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-700 resize-none"
+                                        placeholder="## Overview&#10;Write detailed description here..."
+                                    />
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label className="block text-sm font-medium text-zinc-300 mb-2">
+                                        Preview (Markdown)
+                                    </label>
+                                    <div className="w-full h-87.5 bg-[#09090b] border border-zinc-800 rounded-lg p-4 overflow-y-auto prose prose-sm prose-invert prose-zinc max-w-none">
+                                        {formData.fullDescription ? (
+                                            <Markdown
+                                                content={
+                                                    formData.fullDescription
+                                                }
+                                            />
+                                        ) : (
+                                            <span className="text-zinc-600 italic">
+                                                Preview will appear here...
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-zinc-300 mb-2">
                                         Website URL
