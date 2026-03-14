@@ -32,6 +32,13 @@ export async function generateMetadata({
             ? resolvedParams.secondSoft
             : undefined;
 
+    const ogUrl = new URL(
+        '/comparison/comparison-og',
+        process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    );
+    if (firstSoft) ogUrl.searchParams.set('firstSoft', firstSoft as string);
+    if (secondSoft) ogUrl.searchParams.set('secondSoft', secondSoft as string);
+
     if (!firstSoft && !secondSoft) {
         return {
             title: 'Software Comparison | betterstack',
@@ -79,6 +86,15 @@ export async function generateMetadata({
     return {
         title: 'Comparison | betterstack',
         description: 'Compare software in BetterStack',
+        openGraph: {
+            images: [
+                {
+                    url: ogUrl.toString(),
+                    width: 1200,
+                    height: 630,
+                },
+            ],
+        },
     };
 }
 

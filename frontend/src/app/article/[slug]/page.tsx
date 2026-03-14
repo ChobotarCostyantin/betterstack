@@ -36,7 +36,6 @@ export async function generateMetadata({
                 description:
                     software.shortDescription ||
                     `View details and features of ${software.name}.`,
-                images: software.logoUrl ? [software.logoUrl] : [],
             },
         };
     } catch {
