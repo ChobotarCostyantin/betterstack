@@ -14,6 +14,13 @@ export const metadata: Metadata = {
             '/home',
             process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
         ),
+        images: [
+            {
+                url: '/opengraph-image',
+                width: 1200,
+                height: 630,
+            },
+        ],
     },
 };
 
