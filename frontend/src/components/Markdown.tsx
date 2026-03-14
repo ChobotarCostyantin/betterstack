@@ -3,7 +3,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 
 import 'highlight.js/styles/github-dark.css';
-import { CopyButton } from '../app/article/[slug]/_components/CopyButton';
+import { CopyButton } from './CopyButton';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, {
     defaultSchema,
