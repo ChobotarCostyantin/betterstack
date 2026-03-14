@@ -22,7 +22,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
     const slugObject = await params;
     const client = await createServerClient();
-
+    const url = new URL(
+        `/article/${slugObject.slug}`,
+        process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
+    );
     try {
         const software = await getSoftwareBySlug(client, slugObject.slug);
 
@@ -36,6 +39,7 @@ export async function generateMetadata({
                 description:
                     software.shortDescription ||
                     `View details and features of ${software.name}.`,
+                url: url,
             },
         };
     } catch {
