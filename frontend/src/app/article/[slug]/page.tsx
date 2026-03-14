@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import CategoryTags from '@/src/components/CategoryTags';
 import ScreenshotGallery from './_components/ScreenshotGallery';
-import Markdown from './_components/Markdown';
+import Markdown from '../../../components/Markdown';
 import ProsAndCons from './_components/ProsAndCons';
 import SoftwareAlternatives from './_components/SoftwareAlternatives';
 import UseSoftwareButton from './_components/UseSoftwareButton';
