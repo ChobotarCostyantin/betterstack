@@ -41,14 +41,14 @@
 
 ### 3. Реєстрація домену
 
-Було роздобуто домен [betterstack.tech](betterstack.tech).
+Було роздобуто домен [betterstack.tech](https://betterstack.tech).
 
 ### 4. Підключення домену до хостингу
 
 Із контрольної панелі управління DNS було налаштовано CNAME записи для
 переспрямування на IP сервісів на хостингу.
 
-Сайт доступний тут 👉 [betterstack.tech](betterstack.tech).
+Сайт доступний тут 👉 [betterstack.tech](https://betterstack.tech).
 
 ### 5. "Що бачить Google?"
 
