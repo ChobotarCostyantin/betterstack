@@ -144,6 +144,7 @@ export class SoftwareQueryService {
                 'softwareFactors',
                 'softwareMetrics',
                 'softwareMetrics.metric',
+                'author',
             ],
         });
         if (!sw)
@@ -179,6 +180,12 @@ export class SoftwareQueryService {
                 slug: c.slug,
                 name: c.name,
             })),
+            author: {
+                id: sw.author.id,
+                fullName: sw.author.fullName,
+                avatarUrl: sw.author.avatarUrl,
+                bio: sw.author.bio,
+            },
             factors: this.groupFactors(sw.softwareFactors ?? []),
             metrics,
         };

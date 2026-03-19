@@ -7,11 +7,14 @@ import {
     OneToMany,
     CreateDateColumn,
     UpdateDateColumn,
+    ManyToOne,
+    JoinColumn,
 } from 'typeorm';
 import type { Category } from '@modules/categories/entities/category.entity';
 import { SoftwareFactor } from './software-factor.entity';
 import { SoftwareMetric } from './software-metric.entity';
 import { SoftwareComparisonNote } from './software-comparison-note.entity';
+import { User } from '@modules/users/entities/user.entity';
 
 @Entity('software')
 export class Software {
@@ -61,6 +64,13 @@ export class Software {
         inverseJoinColumn: { name: 'category_id', referencedColumnName: 'id' },
     })
     categories: Category[];
+
+    @Column({ nullable: false })
+    authorId: number;
+
+    @ManyToOne('User', 'authoredSoftware')
+    @JoinColumn({ name: 'authorId' })
+    author: User;
 
     @OneToMany(() => SoftwareFactor, (sf) => sf.software)
     softwareFactors: SoftwareFactor[];
