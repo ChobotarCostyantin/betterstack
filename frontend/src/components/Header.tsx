@@ -60,7 +60,7 @@ export default function Header() {
             setIsLoggedIn(false);
             setIsAdmin(false);
             setIsMenuOpen(false);
-            router.push('/home');
+            router.push('/');
             router.refresh();
         } catch (err) {
             console.error('Logout failed:', err);
@@ -73,7 +73,7 @@ export default function Header() {
                 <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                     <div className="shrink-0 relative z-50">
                         <Link
-                            href="/home"
+                            href="/"
                             title="betterstack"
                             className="text-2xl font-bold tracking-wide hover:text-gray-400 transition-colors"
                         >
@@ -145,7 +145,7 @@ export default function Header() {
                 </div>
                 <div className="flex flex-col px-4 py-6 gap-y-2 overflow-y-auto">
                     <MobileNavLink
-                        href="/home"
+                        href="/"
                         onClick={() => setIsMenuOpen(false)}
                     >
                         <Home size={22} className="text-zinc-400" />

@@ -34,7 +34,7 @@ export default function LoginForm() {
 
         try {
             await register(browserClient, validationResult.data);
-            router.push('/home');
+            router.push('/');
             router.refresh();
         } catch (err) {
             if (err instanceof HTTPError) {
