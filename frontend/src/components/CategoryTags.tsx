@@ -1,6 +1,6 @@
 'use client';
 
-import CategoryPopup from '@/src/app/home/_components/CategoryPopup';
+import CategoryPopup from './CategoryPopup';
 
 interface CategoryTagsProps {
     categories?: string[] | null;

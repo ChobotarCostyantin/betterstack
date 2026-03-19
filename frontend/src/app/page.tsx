@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
-import SearchBar from '@/src/app/home/_components/SearchBar';
+import SearchBar from './_components/SearchBar';
 import { createServerClient } from '@/src/lib/api/server.client';
 import { getMostUsedSoftware } from '@/src/api/software/software.api';
 import SoftwareCard from '@/src/components/SoftwareCard';
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     description: 'View and choose the best software.',
     openGraph: {
         url: new URL(
-            '/home',
+            '/',
             process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
         ),
         images: [
