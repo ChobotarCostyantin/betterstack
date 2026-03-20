@@ -11,7 +11,6 @@ import { DataTable } from './_components/DataTable';
 import { SoftwareFormModal } from './_components/SoftwareFormModal';
 import { CategoryFormModal } from './_components/CategoryFormModal';
 import { CriteriaFormModal } from './_components/CriteriaFormModal';
-import { AuthorDetailsFormModal } from './_components/AuthorDetailsFormModal';
 import type { Tab, TableRecord } from './types';
 
 export default function Admin() {
@@ -33,11 +32,6 @@ export default function Admin() {
     );
     const [criteriaEditItem, setCriteriaEditItem] =
         useState<TableRecord | null>(null);
-
-    const [authorModalOpen, setAuthorModalOpen] = useState(false);
-    const [authorEditItem, setAuthorEditItem] = useState<TableRecord | null>(
-        null,
-    );
 
     const {
         data,
@@ -96,11 +90,6 @@ export default function Admin() {
         setCriteriaModalOpen(true);
     };
 
-    const handleEditAuthor = (item: TableRecord) => {
-        setAuthorEditItem(item);
-        setAuthorModalOpen(true);
-    };
-
     // Handle modal success
     const handleSoftwareSuccess = (newItem: TableRecord) => {
         if (softwareEditItem) {
@@ -142,14 +131,6 @@ export default function Admin() {
         }
         setCriteriaModalOpen(false);
         setCriteriaEditItem(null);
-    };
-
-    const handleAuthorSuccess = (newItem: TableRecord) => {
-        setData((prev) =>
-            prev.map((item) => (item.id === newItem.id ? newItem : item)),
-        );
-        setAuthorModalOpen(false);
-        setAuthorEditItem(null);
     };
 
     if (status === 'forbidden') {
@@ -240,7 +221,7 @@ export default function Admin() {
                         </div>
                     ) : (
                         <>
-                            {activeTab !== 'user' && activeTab !== 'author' && (
+                            {activeTab !== 'user' && (
                                 <div>
                                     <button
                                         onClick={
@@ -268,7 +249,6 @@ export default function Admin() {
                                 onLoadMore={loadMore}
                                 onEditSoftware={handleEditSoftware}
                                 onEditCategory={handleEditCategory}
-                                onEditAuthor={handleEditAuthor}
                             />
                         </>
                     )}
@@ -310,17 +290,6 @@ export default function Admin() {
                     setCriteriaEditItem(null);
                 }}
                 onSuccess={handleCriteriaSuccess}
-            />
-
-            {/* Author Details Modal */}
-            <AuthorDetailsFormModal
-                isOpen={authorModalOpen}
-                item={authorEditItem}
-                onClose={() => {
-                    setAuthorModalOpen(false);
-                    setAuthorEditItem(null);
-                }}
-                onSuccess={handleAuthorSuccess}
             />
         </div>
     );

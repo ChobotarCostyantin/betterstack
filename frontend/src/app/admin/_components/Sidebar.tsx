@@ -6,7 +6,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
-    const tabs: Tab[] = ['software', 'category', 'criteria', 'user', 'author'];
+    const tabs: Tab[] = ['software', 'category', 'criteria', 'user'];
 
     return (
         <aside className="w-60 shrink-0 flex flex-col gap-y-2">

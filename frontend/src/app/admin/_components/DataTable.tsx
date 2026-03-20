@@ -19,7 +19,6 @@ interface DataTableProps {
     onEditCategory?: (item: TableRecord) => void;
     onEditMetric?: (item: TableRecord) => void;
     onEditFactor?: (item: TableRecord) => void;
-    onEditAuthor?: (item: TableRecord) => void;
 }
 
 export function DataTable({
@@ -35,7 +34,6 @@ export function DataTable({
     onEditCategory,
     onEditMetric,
     onEditFactor,
-    onEditAuthor,
 }: DataTableProps) {
     const router = useRouter();
     const [pickedItem, setPickedItem] = useState<TableRecord | null>(null);
@@ -158,11 +156,6 @@ export function DataTable({
                                                     onEditCategory
                                                 ) {
                                                     onEditCategory(row);
-                                                } else if (
-                                                    activeTab === 'author' &&
-                                                    onEditAuthor
-                                                ) {
-                                                    onEditAuthor(row);
                                                 } else if (
                                                     activeTab === 'criteria'
                                                 ) {

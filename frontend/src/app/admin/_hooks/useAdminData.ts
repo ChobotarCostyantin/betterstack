@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { listSoftware } from '@/src/api/software/software.api';
 import { listCategories } from '@/src/api/categories/categories.api';
 import { listFactors, listMetrics } from '@/src/api/criteria/criteria.api';
-import { listUsers, listAuthors } from '@/src/api/users/users.api';
+import { listUsers } from '@/src/api/users/users.api';
 import { browserClient } from '@/src/lib/api/browser.client';
 import type { Tab, TableRecord } from '../types';
 
@@ -95,9 +95,6 @@ export function useAdminData(activeTab: Tab, isAuthorized: boolean) {
                     }
                     case 'user':
                         result = await listUsers(browserClient, query);
-                        break;
-                    case 'author':
-                        result = await listAuthors(browserClient); // no pagination implemented yet on backend
                         break;
                 }
 
