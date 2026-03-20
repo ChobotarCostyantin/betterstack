@@ -6,7 +6,13 @@ import {
 } from '../common/common.utils';
 import { type User, UserSchema, type Role } from '../auth/auth.schemas';
 import type { Paginated, PaginationQuery } from '../common/common.types';
-import { IsUsedResponseSchema, type IsUsedResponse } from './users.schemas';
+import {
+    IsUsedResponseSchema,
+    type IsUsedResponse,
+    AuthorDetailsWithUserSchema,
+    type AuthorDetailsWithUser,
+    type UpdateAuthorDetailsInput,
+} from './users.schemas';
 
 export async function listUsers(
     client: KyInstance,
@@ -56,4 +62,20 @@ export async function hasUserUsedSoftware(
         .get(`users/software/has-used/${softwareId}`)
         .json();
     return unwrapResponse(IsUsedResponseSchema, raw);
+}
+
+export async function listAuthors(
+    client: KyInstance,
+): Promise<AuthorDetailsWithUser[]> {
+    const raw = await client.get('users/authors').json();
+    return unwrapResponse(AuthorDetailsWithUserSchema.array(), raw);
+}
+
+export async function updateAuthorDetails(
+    client: KyInstance,
+    id: number,
+    input: UpdateAuthorDetailsInput,
+): Promise<void> {
+    const raw = await client.put(`users/authors/${id}`, { json: input }).json();
+    unwrapSuccessResponse(raw);
 }

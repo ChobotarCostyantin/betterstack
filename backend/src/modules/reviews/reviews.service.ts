@@ -6,7 +6,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { AuthorDetails } from './entities/author-details.entity';
 import { SoftwareReview } from './entities/software-review.entity';
 import { SoftwareComparisonReview } from './entities/software-comparison-review.entity';
 import { User } from '../users/entities/user.entity';
@@ -16,10 +15,7 @@ import {
     UpdateSoftwareReviewDto,
     CreateSoftwareComparisonReviewDto,
     UpdateSoftwareComparisonReviewDto,
-    UpdateAuthorDetailsDto,
-    AuthorDetailsWithUserDto,
 } from './dto/reviews.dto';
-import { Role } from '@common/enums/role.enum';
 
 @Injectable()
 export class ReviewsService {
@@ -28,30 +24,9 @@ export class ReviewsService {
         private readonly swReviewRepo: Repository<SoftwareReview>,
         @InjectRepository(SoftwareComparisonReview)
         private readonly cmpReviewRepo: Repository<SoftwareComparisonReview>,
-        @InjectRepository(AuthorDetails)
-        private readonly authorRepo: Repository<AuthorDetails>,
         @InjectRepository(User)
         private readonly userRepo: Repository<User>,
     ) {}
-
-    private async getOrCreateAuthorDetails(
-        userId: number,
-    ): Promise<AuthorDetails> {
-        let author = await this.authorRepo.findOneBy({ userId });
-        if (!author) {
-            const user = await this.userRepo.findOneBy({ id: userId });
-            if (!user)
-                throw new NotFoundException(`User with ID ${userId} not found`);
-
-            const newAuthor = this.authorRepo.create({
-                userId: userId,
-                fullName: user.email.split('@')[0],
-                bio: 'Software Author',
-            });
-            author = await this.authorRepo.save(newAuthor);
-        }
-        return author;
-    }
 
     async getSoftwareReviewBySlug(
         slug: string,
@@ -84,12 +59,10 @@ export class ReviewsService {
             );
         }
 
-        const author = await this.getOrCreateAuthorDetails(userId);
-
         const review = this.swReviewRepo.create({
             softwareSlug: dto.softwareSlug,
             content: dto.content,
-            authorDetailsId: author.id,
+            userId,
         });
 
         const saved = await this.swReviewRepo.save(review);
@@ -173,13 +146,11 @@ export class ReviewsService {
             );
         }
 
-        const author = await this.getOrCreateAuthorDetails(userId);
-
         const review = this.cmpReviewRepo.create({
             softwareSlugA: dto.softwareSlugA,
             softwareSlugB: dto.softwareSlugB,
             content: dto.content,
-            authorDetailsId: author.id,
+            userId,
         });
 
         const saved = await this.cmpReviewRepo.save(review);
@@ -221,50 +192,6 @@ export class ReviewsService {
         return { success: true };
     }
 
-    async listAuthors(): Promise<AuthorDetailsWithUserDto[]> {
-        const authors = await this.authorRepo.find({
-            relations: ['user'],
-        });
-
-        // Filter only those whose current role is admin or author
-        const filtered = authors.filter(
-            (a) =>
-                a.user &&
-                (a.user.role === Role.ADMIN || a.user.role === Role.AUTHOR),
-        );
-
-        return filtered.map((a) => ({
-            id: a.id,
-            userId: a.userId,
-            fullName: a.fullName,
-            bio: a.bio,
-            avatarUrl: a.avatarUrl,
-            websiteUrl: a.websiteUrl,
-            userEmail: a.user.email,
-            userRole: a.user.role,
-        }));
-    }
-
-    async updateAuthorDetails(
-        id: number,
-        dto: UpdateAuthorDetailsDto,
-    ): Promise<{ success: boolean }> {
-        const author = await this.authorRepo.findOneBy({ id });
-        if (!author) {
-            throw new NotFoundException(
-                `AuthorDetails with ID ${id} not found`,
-            );
-        }
-
-        author.fullName = dto.fullName;
-        author.bio = dto.bio;
-        author.avatarUrl = dto.avatarUrl;
-        author.websiteUrl = dto.websiteUrl;
-
-        await this.authorRepo.save(author);
-        return { success: true };
-    }
-
     private mapToResponseDto(
         review: SoftwareReview | SoftwareComparisonReview,
     ): SoftwareReviewResponseDto {
@@ -273,9 +200,10 @@ export class ReviewsService {
             content: review.content,
             author: {
                 id: review.author.id,
-                userId: review.author.userId,
-                fullName: review.author.fullName,
-                bio: review.author.bio,
+                userId: review.author.id,
+                fullName:
+                    review.author.fullName || review.author.email.split('@')[0],
+                bio: review.author.bio || 'Software Author',
                 avatarUrl: review.author.avatarUrl,
                 websiteUrl: review.author.websiteUrl,
             },

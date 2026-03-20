@@ -6,7 +6,7 @@ import {
     JoinColumn,
     Unique,
 } from 'typeorm';
-import { AuthorDetails } from './author-details.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity('software_comparison_reviews')
 @Unique(['softwareSlugA', 'softwareSlugB'])
@@ -24,12 +24,9 @@ export class SoftwareComparisonReview {
     content: string;
 
     @Column()
-    authorDetailsId: number;
+    userId: number;
 
-    @ManyToOne(
-        () => AuthorDetails,
-        (author) => author.softwareComparisonReviews,
-    )
-    @JoinColumn({ name: 'authorDetailsId' })
-    author: AuthorDetails;
+    @ManyToOne(() => User, (user) => user.softwareComparisonReviews)
+    @JoinColumn({ name: 'userId' })
+    author: User;
 }

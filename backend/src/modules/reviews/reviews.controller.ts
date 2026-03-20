@@ -29,8 +29,6 @@ import {
     UpdateSoftwareReviewDto,
     CreateSoftwareComparisonReviewDto,
     UpdateSoftwareComparisonReviewDto,
-    UpdateAuthorDetailsDto,
-    AuthorDetailsWithUserDto,
 } from './dto/reviews.dto';
 
 @ApiTags('Reviews')
@@ -118,24 +116,5 @@ export class ReviewsController {
     @ApiOkResponse({ type: DataOf(SuccessResponseDto) })
     deleteSoftwareComparisonReview(@Param('id', ParseIntPipe) id: number) {
         return this.reviewsService.deleteSoftwareComparisonReview(id);
-    }
-
-    @Get('authors')
-    @Authenticated(Role.ADMIN)
-    @ApiOperation({ summary: 'List all authors and admins (Admin only)' })
-    @ApiOkResponse({ type: [AuthorDetailsWithUserDto] })
-    listAuthors() {
-        return this.reviewsService.listAuthors();
-    }
-
-    @Put('authors/:id')
-    @Authenticated(Role.ADMIN)
-    @ApiOperation({ summary: 'Update author details (Admin only)' })
-    @ApiOkResponse({ type: DataOf(SuccessResponseDto) })
-    updateAuthorDetails(
-        @Param('id', ParseIntPipe) id: number,
-        @Body() dto: UpdateAuthorDetailsDto,
-    ) {
-        return this.reviewsService.updateAuthorDetails(id, dto);
     }
 }

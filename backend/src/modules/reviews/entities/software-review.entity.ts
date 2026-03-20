@@ -5,7 +5,7 @@ import {
     ManyToOne,
     JoinColumn,
 } from 'typeorm';
-import { AuthorDetails } from './author-details.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity('software_reviews')
 export class SoftwareReview {
@@ -19,9 +19,9 @@ export class SoftwareReview {
     content: string;
 
     @Column()
-    authorDetailsId: number;
+    userId: number;
 
-    @ManyToOne(() => AuthorDetails, (author) => author.softwareReviews)
-    @JoinColumn({ name: 'authorDetailsId' })
-    author: AuthorDetails;
+    @ManyToOne(() => User, (user) => user.softwareReviews)
+    @JoinColumn({ name: 'userId' })
+    author: User;
 }

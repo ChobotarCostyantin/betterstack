@@ -7,13 +7,17 @@ import {
     Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import * as bcrypt from 'bcrypt';
 
 import { Role } from '@common/enums/role.enum';
+import {
+    AuthorDetailsWithUserDto,
+    UpdateAuthorDetailsDto,
+} from './dto/user.dto';
 import { PaginatedResponseDto } from '@common/dto/paginated-response.dto';
 import {
     SoftwareMarkedUsedEvent,
@@ -160,12 +164,68 @@ export class UsersService implements OnModuleInit {
         return { isUsed };
     }
 
+    async updateProfile(
+        userId: number,
+        dto: import('./dto/user.dto').UpdateUserProfileDto,
+    ): Promise<AuthResult> {
+        const user = await this.userRepo.findOneBy({ id: userId });
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+
+        if (dto.fullName !== undefined) user.fullName = dto.fullName;
+        if (dto.bio !== undefined) user.bio = dto.bio;
+        if (dto.avatarUrl !== undefined) user.avatarUrl = dto.avatarUrl;
+        if (dto.websiteUrl !== undefined) user.websiteUrl = dto.websiteUrl;
+
+        const updated = await this.userRepo.save(user);
+        return this.buildAuthResult(updated);
+    }
+
     private buildAuthResult(user: User): AuthResult {
         const token = this.jwtService.sign({
             id: user.id,
             email: user.email,
             role: user.role,
+            fullName: user.fullName,
+            bio: user.bio,
+            avatarUrl: user.avatarUrl,
         });
         return { token, user: UserDto.from(user) };
+    }
+
+    async listAuthors(): Promise<AuthorDetailsWithUserDto[]> {
+        const users = await this.userRepo.find({
+            where: { role: In([Role.ADMIN, Role.AUTHOR]) },
+        });
+
+        return users.map((user) => ({
+            id: user.id,
+            userId: user.id,
+            fullName: user.fullName || user.email.split('@')[0],
+            bio: user.bio || 'Software Author',
+            avatarUrl: user.avatarUrl,
+            websiteUrl: user.websiteUrl,
+            userEmail: user.email,
+            userRole: user.role,
+        }));
+    }
+
+    async updateAuthorDetails(
+        userId: number,
+        dto: UpdateAuthorDetailsDto,
+    ): Promise<{ success: boolean }> {
+        const user = await this.userRepo.findOneBy({ id: userId });
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+
+        if (dto.fullName !== undefined) user.fullName = dto.fullName;
+        if (dto.bio !== undefined) user.bio = dto.bio;
+        if (dto.avatarUrl !== undefined) user.avatarUrl = dto.avatarUrl;
+        if (dto.websiteUrl !== undefined) user.websiteUrl = dto.websiteUrl;
+
+        await this.userRepo.save(user);
+        return { success: true };
     }
 }

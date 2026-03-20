@@ -1,25 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsOptional, IsNotEmpty } from 'class-validator';
-
-export class AuthorDetailsDto {
-    @ApiProperty()
-    id: number;
-
-    @ApiProperty()
-    userId: number;
-
-    @ApiProperty()
-    fullName: string;
-
-    @ApiProperty()
-    bio: string;
-
-    @ApiPropertyOptional()
-    avatarUrl: string | null;
-
-    @ApiPropertyOptional()
-    websiteUrl: string | null;
-}
+import { AuthorDto } from '../../users/dto/user.dto';
 
 export class SoftwareReviewResponseDto {
     @ApiProperty()
@@ -28,8 +9,8 @@ export class SoftwareReviewResponseDto {
     @ApiProperty()
     content: string;
 
-    @ApiProperty({ type: AuthorDetailsDto })
-    author: AuthorDetailsDto;
+    @ApiProperty({ type: AuthorDto })
+    author: AuthorDto;
 }
 
 export class CreateSoftwareReviewDto {
@@ -73,33 +54,4 @@ export class UpdateSoftwareComparisonReviewDto {
     @IsString()
     @IsOptional()
     content?: string;
-}
-
-export class UpdateAuthorDetailsDto {
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    fullName: string;
-
-    @ApiProperty()
-    @IsString()
-    bio: string;
-
-    @ApiPropertyOptional()
-    @IsString()
-    @IsOptional()
-    avatarUrl: string | null;
-
-    @ApiPropertyOptional()
-    @IsString()
-    @IsOptional()
-    websiteUrl: string | null;
-}
-
-export class AuthorDetailsWithUserDto extends AuthorDetailsDto {
-    @ApiProperty()
-    userEmail: string;
-
-    @ApiProperty()
-    userRole: string;
 }

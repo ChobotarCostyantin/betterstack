@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import type { TableRecord } from '../types';
-import { updateAuthorDetails } from '@/src/api/reviews/reviews.api';
+import { updateAuthorDetails } from '@/src/api/users/users.api';
 import { browserClient } from '@/src/lib/api/browser.client';
-import type { UpdateAuthorDetailsInput } from '@/src/api/reviews/reviews.schemas';
+import type { UpdateAuthorDetailsInput } from '@/src/api/users/users.schemas';
 
 interface AuthorDetailsFormModalProps {
     isOpen: boolean;

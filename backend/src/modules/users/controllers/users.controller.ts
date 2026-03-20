@@ -1,5 +1,6 @@
 import {
     Controller,
+    Put,
     Get,
     Patch,
     Post,
@@ -9,7 +10,10 @@ import {
     ParseIntPipe,
     Req,
     Body,
+    Res,
+    Inject,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import {
     ApiTags,
     ApiOperation,
@@ -24,13 +28,24 @@ import { DataOf } from '@common/dto/response.dto';
 import { SuccessResponseDto } from '@common/dto/success-response.dto';
 import { IsUsedResponseDto } from '../dto/is-used-response.dto';
 import { UsersService } from '../users.service';
-import { UserDto, UpdateUserRoleDto } from '../dto/user.dto';
+import {
+    UserDto,
+    UpdateUserRoleDto,
+    UpdateUserProfileDto,
+    AuthorDetailsWithUserDto,
+    UpdateAuthorDetailsDto,
+} from '../dto/user.dto';
 import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
+import { authConfig, type AuthConfig } from '@config/auth.config';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(
+        private readonly usersService: UsersService,
+        @Inject(authConfig.KEY)
+        private readonly auth: AuthConfig,
+    ) {}
 
     @Get()
     @Authenticated(Role.ADMIN)
@@ -38,6 +53,23 @@ export class UsersController {
     @ApiOkResponse({ type: PaginatedOf(UserDto) })
     findAll(@Query() query: PaginationQueryDto) {
         return this.usersService.findAll(query);
+    }
+
+    @Patch('me')
+    @Authenticated()
+    @ApiOperation({ summary: 'Update your own user profile' })
+    @ApiOkResponse({ type: DataOf(UserDto) })
+    async updateProfile(
+        @Req() req: AuthenticatedRequest,
+        @Body() dto: UpdateUserProfileDto,
+        @Res({ passthrough: true }) res: Response,
+    ) {
+        const { token, user } = await this.usersService.updateProfile(
+            req.user.id,
+            dto,
+        );
+        res.cookie(this.auth.cookieName, token, this.auth.cookieOptions);
+        return user;
     }
 
     @Patch(':id/role')
@@ -89,5 +121,24 @@ export class UsersController {
         @Param('softwareId', ParseIntPipe) softwareId: number,
     ) {
         return this.usersService.markSoftwareAsUnused(req.user.id, softwareId);
+    }
+
+    @Get('authors')
+    @Authenticated(Role.ADMIN)
+    @ApiOperation({ summary: 'List all authors and admins (Admin only)' })
+    @ApiOkResponse({ type: [AuthorDetailsWithUserDto] })
+    listAuthors() {
+        return this.usersService.listAuthors();
+    }
+
+    @Put('authors/:id')
+    @Authenticated(Role.ADMIN)
+    @ApiOperation({ summary: 'Update author details (Admin only)' })
+    @ApiOkResponse({ type: DataOf(SuccessResponseDto) })
+    updateAuthorDetails(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: UpdateAuthorDetailsDto,
+    ) {
+        return this.usersService.updateAuthorDetails(id, dto);
     }
 }
