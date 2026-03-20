@@ -65,7 +65,7 @@ export default async function Home() {
                             className="relative flex items-center gap-x-2 px-6 py-3 bg-zinc-900 text-zinc-300 hover:text-white rounded-full border border-zinc-800 transition-all duration-300"
                         >
                             <span>View all software</span>
-                            <ChevronDown className="w-5 h-5  transition-transform duration-300" />
+                            <ChevronDown className="w-5 h-5 transition-transform duration-300" />
                         </Link>
                     </div>
                 </div>
