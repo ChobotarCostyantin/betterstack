@@ -100,12 +100,12 @@ export class UsersService implements OnModuleInit {
         );
     }
 
-    async makeAdmin(id: number): Promise<UserDto> {
+    async updateRole(id: number, role: Role): Promise<UserDto> {
         const user = await this.userRepo.findOneBy({ id });
         if (!user) {
             throw new NotFoundException(`User with ID ${id} not found`);
         }
-        user.role = Role.ADMIN;
+        user.role = role;
         const updated = await this.userRepo.save(user);
         return UserDto.from(updated);
     }

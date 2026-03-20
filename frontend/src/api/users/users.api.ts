@@ -4,7 +4,7 @@ import {
     unwrapPaginatedResponse,
     unwrapSuccessResponse,
 } from '../common/common.utils';
-import { type User, UserSchema } from '../auth/auth.schemas';
+import { type User, UserSchema, type Role } from '../auth/auth.schemas';
 import type { Paginated, PaginationQuery } from '../common/common.types';
 import { IsUsedResponseSchema, type IsUsedResponse } from './users.schemas';
 
@@ -21,11 +21,14 @@ export async function listUsers(
     return unwrapPaginatedResponse(UserSchema, raw);
 }
 
-export async function makeAdmin(
+export async function updateUserRole(
     client: KyInstance,
     userId: number,
+    role: Role,
 ): Promise<User> {
-    const raw = await client.patch(`users/${userId}/make-admin`).json();
+    const raw = await client
+        .patch(`users/${userId}/role`, { json: { role } })
+        .json();
     return unwrapResponse(UserSchema, raw);
 }
 

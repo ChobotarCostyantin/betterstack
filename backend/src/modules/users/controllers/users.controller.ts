@@ -8,6 +8,7 @@ import {
     Query,
     ParseIntPipe,
     Req,
+    Body,
 } from '@nestjs/common';
 import {
     ApiTags,
@@ -23,7 +24,7 @@ import { DataOf } from '@common/dto/response.dto';
 import { SuccessResponseDto } from '@common/dto/success-response.dto';
 import { IsUsedResponseDto } from '../dto/is-used-response.dto';
 import { UsersService } from '../users.service';
-import { UserDto } from '../dto/user.dto';
+import { UserDto, UpdateUserRoleDto } from '../dto/user.dto';
 import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
 
 @ApiTags('Users')
@@ -39,12 +40,15 @@ export class UsersController {
         return this.usersService.findAll(query);
     }
 
-    @Patch(':id/make-admin')
+    @Patch(':id/role')
     @Authenticated(Role.ADMIN)
-    @ApiOperation({ summary: 'Promote a user to admin (admin only)' })
+    @ApiOperation({ summary: 'Update user role (admin only)' })
     @ApiOkResponse({ type: DataOf(UserDto) })
-    makeAdmin(@Param('id', ParseIntPipe) id: number) {
-        return this.usersService.makeAdmin(id);
+    updateRole(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: UpdateUserRoleDto,
+    ) {
+        return this.usersService.updateRole(id, dto.role);
     }
 
     @Get('software/has-used/:softwareId')
