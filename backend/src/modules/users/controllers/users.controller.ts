@@ -39,6 +39,13 @@ export class UsersController {
         return this.usersService.findAll(query);
     }
 
+    @Get(':userId')
+    @ApiOperation({ summary: 'Get user by ID' })
+    @ApiOkResponse({ type: DataOf(UserDto) })
+    findOne(@Param('userId', ParseIntPipe) userId: number) {
+        return this.usersService.findOne(userId);
+    }
+
     @Patch(':id/make-admin')
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Promote a user to admin (admin only)' })

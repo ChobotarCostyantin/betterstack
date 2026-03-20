@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { CategoryListItemSchema } from '../categories/categories.schemas';
+import { UserSchema } from '../auth/auth.schemas';
 
 export const SoftwareListItemSchema = z.object({
     id: z.number(),
@@ -41,6 +42,7 @@ export const SoftwareDetailSchema = z.object({
     createdAt: z.string(),
     updatedAt: z.string(),
     categories: z.array(CategoryListItemSchema),
+    author: UserSchema,
     factors: z.object({
         positive: z.array(SoftwareFactorEntrySchema),
         negative: z.array(SoftwareFactorEntrySchema),

@@ -21,6 +21,14 @@ export async function listUsers(
     return unwrapPaginatedResponse(UserSchema, raw);
 }
 
+export async function getUserById(
+    client: KyInstance,
+    userId: number,
+): Promise<User> {
+    const raw = await client.get(`users/${userId}`).json();
+    return unwrapResponse(UserSchema, raw);
+}
+
 export async function makeAdmin(
     client: KyInstance,
     userId: number,
