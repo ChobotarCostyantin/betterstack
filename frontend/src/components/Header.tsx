@@ -12,6 +12,7 @@ import {
     User,
     LogOut,
     Shield,
+    Info,
 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { me, logout } from '@/src/api/auth/auth.api';
@@ -107,6 +108,8 @@ export default function Header() {
                                     <NavLink href="/register">Sign up</NavLink>
                                 </>
                             ))}
+
+                        <NavLink href="/about">About</NavLink>
                     </div>
 
                     <button
@@ -205,6 +208,14 @@ export default function Header() {
                                 </MobileNavLink>
                             </>
                         ))}
+
+                    <MobileNavLink
+                        href="/about"
+                        onClick={() => setIsMenuOpen(false)}
+                    >
+                        <Info size={22} className="text-zinc-400" />
+                        <span>About</span>
+                    </MobileNavLink>
                 </div>
             </div>
         </>

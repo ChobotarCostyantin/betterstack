@@ -323,7 +323,7 @@ export function SoftwareFormModal({
                                         Categories
                                     </label>
                                     <div
-                                        className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white cursor-pointer flex justify-between items-center hover:border-zinc-600 transition-colors"
+                                        className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2.5 text-white cursor-pointer flex justify-between items-center hover:border-zinc-600 transition-colors"
                                         onClick={() =>
                                             setIsDropdownOpen(!isDropdownOpen)
                                         }
