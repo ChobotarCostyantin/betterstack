@@ -17,6 +17,7 @@ import {
 import { usePathname, useRouter } from 'next/navigation';
 import { me, logout } from '@/src/api/auth/auth.api';
 import { browserClient } from '@/src/lib/api/browser.client';
+import { set } from 'zod';
 
 export default function Header() {
     const router = useRouter();
@@ -26,7 +27,7 @@ export default function Header() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-
+    const [userId, setUserId] = useState<string | null>(null);
     useEffect(() => {
         if (isMenuOpen) {
             document.body.style.overflow = 'hidden';
@@ -42,9 +43,11 @@ export default function Header() {
         async function checkAuth() {
             try {
                 const user = await me(browserClient);
+                setUserId(user.id.toString());
                 setIsLoggedIn(true);
                 setIsAdmin(user.role === 'admin');
             } catch {
+                setUserId(null);
                 setIsLoggedIn(false);
                 setIsAdmin(false);
             } finally {
@@ -58,6 +61,7 @@ export default function Header() {
     const handleLogout = async () => {
         try {
             await logout(browserClient);
+            setUserId(null);
             setIsLoggedIn(false);
             setIsAdmin(false);
             setIsMenuOpen(false);
@@ -95,13 +99,19 @@ export default function Header() {
 
                         {!isLoading &&
                             (isLoggedIn ? (
-                                <button
-                                    onClick={handleLogout}
-                                    className="text-base font-medium transition-colors duration-300 hover:text-gray-400 relative group cursor-pointer"
-                                >
-                                    Logout
-                                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gray-400 transition-all duration-300 group-hover:w-full"></span>
-                                </button>
+                                <>
+                                    <NavLink href={`/profile/${userId}`}>
+                                        Profile
+                                    </NavLink>
+
+                                    <button
+                                        onClick={handleLogout}
+                                        className="text-base font-medium transition-colors duration-300 hover:text-gray-400 relative group cursor-pointer"
+                                    >
+                                        Sign Out
+                                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gray-400 transition-all duration-300 group-hover:w-full"></span>
+                                    </button>
+                                </>
                             ) : (
                                 <>
                                     <NavLink href="/login">Login</NavLink>
@@ -183,13 +193,26 @@ export default function Header() {
 
                     {!isLoading &&
                         (isLoggedIn ? (
-                            <button
-                                onClick={handleLogout}
-                                className="flex items-center gap-x-3 text-lg font-medium transition-colors px-3 py-3 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800/50 w-full text-left cursor-pointer"
-                            >
-                                <LogOut size={22} className="text-zinc-400" />
-                                <span>Logout</span>
-                            </button>
+                            <>
+                                <MobileNavLink
+                                    href={`/profile/${userId}`}
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <User size={22} className="text-zinc-400" />
+                                    <span>Profile</span>
+                                </MobileNavLink>
+
+                                <button
+                                    onClick={handleLogout}
+                                    className="flex items-center gap-x-3 text-lg font-medium transition-colors px-3 py-3 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800/50 w-full text-left cursor-pointer"
+                                >
+                                    <LogOut
+                                        size={22}
+                                        className="text-zinc-400"
+                                    />
+                                    <span>Sign Out</span>
+                                </button>
+                            </>
                         ) : (
                             <>
                                 <MobileNavLink

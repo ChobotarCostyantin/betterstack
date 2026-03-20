@@ -12,7 +12,12 @@ import {
     AuthorDetailsWithUserSchema,
     type AuthorDetailsWithUser,
     type UpdateAuthorDetailsInput,
+    type UpdateProfileInput,
 } from './users.schemas';
+import {
+    SoftwareListItemSchema,
+    type SoftwareListItem,
+} from '../software/software.schemas';
 
 export async function listUsers(
     client: KyInstance,
@@ -78,4 +83,27 @@ export async function updateAuthorDetails(
 ): Promise<void> {
     const raw = await client.put(`users/authors/${id}`, { json: input }).json();
     unwrapSuccessResponse(raw);
+}
+
+export async function getUserById(
+    client: KyInstance,
+    userId: number,
+): Promise<User> {
+    const raw = await client.get(`users/${userId}`).json();
+    return unwrapResponse(UserSchema, raw);
+}
+
+export async function updateProfile(
+    client: KyInstance,
+    input: UpdateProfileInput,
+): Promise<User> {
+    const raw = await client.patch('users/me', { json: input }).json();
+    return unwrapResponse(UserSchema, raw);
+}
+
+export async function getMyStack(
+    client: KyInstance,
+): Promise<SoftwareListItem[]> {
+    const raw = await client.get('users/me/software').json();
+    return unwrapResponse(SoftwareListItemSchema.array(), raw);
 }

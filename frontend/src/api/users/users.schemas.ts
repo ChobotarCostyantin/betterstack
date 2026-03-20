@@ -28,3 +28,11 @@ export const UpdateAuthorDetailsInputSchema = z.object({
 export type UpdateAuthorDetailsInput = z.infer<
     typeof UpdateAuthorDetailsInputSchema
 >;
+
+export const UpdateProfileInputSchema = z.object({
+    fullName: z.string().optional(),
+    bio: z.string().optional(),
+    avatarUrl: z.string().optional(),
+    websiteUrl: z.string().optional(),
+});
+export type UpdateProfileInput = z.infer<typeof UpdateProfileInputSchema>;
