@@ -40,9 +40,9 @@ export default function AboutPage() {
                     </h1>
 
                     <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground leading-relaxed mb-10">
-                        BetterStack helps developers and teams discover,
-                        compare, and choose the most effective software
-                        solutions for modern web development.
+                        The betterstack platform helps developers and teams
+                        discover, compare, and choose the most effective
+                        software solutions for modern web development.
                     </p>
 
                     <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
@@ -75,7 +75,7 @@ export default function AboutPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     <div className="space-y-6 text-left">
                         <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-                            Why BetterStack?
+                            Why betterstack?
                         </h2>
                         <p className="text-lg text-muted-foreground leading-relaxed">
                             Choosing the right tool is the hardest part of any
