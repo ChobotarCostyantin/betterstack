@@ -15,7 +15,6 @@ import type {
     CreateSoftwareInput,
     UpdateSoftwareInput,
 } from '@/src/api/software/software.schemas';
-import Markdown from '@/src/components/Markdown';
 
 interface SoftwareFormModalProps {
     isOpen: boolean;
@@ -37,7 +36,6 @@ export function SoftwareFormModal({
         name: '',
         developer: '',
         shortDescription: '',
-        fullDescription: '',
         websiteUrl: '',
         gitRepoUrl: '',
         logoUrl: '',
@@ -70,7 +68,6 @@ export function SoftwareFormModal({
                         name: detail.name || '',
                         developer: detail.developer || '',
                         shortDescription: detail.shortDescription || '',
-                        fullDescription: detail.fullDescription || '',
                         websiteUrl: detail.websiteUrl || '',
                         gitRepoUrl: detail.gitRepoUrl || '',
                         logoUrl: detail.logoUrl || '',
@@ -98,7 +95,6 @@ export function SoftwareFormModal({
                 name: '',
                 developer: '',
                 shortDescription: '',
-                fullDescription: '',
                 websiteUrl: '',
                 gitRepoUrl: '',
                 logoUrl: '',
@@ -175,9 +171,6 @@ export function SoftwareFormModal({
                 ...(formData.developer && { developer: formData.developer }),
                 ...(formData.shortDescription && {
                     shortDescription: formData.shortDescription,
-                }),
-                ...(formData.fullDescription && {
-                    fullDescription: formData.fullDescription,
                 }),
                 ...(formData.websiteUrl && { websiteUrl: formData.websiteUrl }),
                 ...(formData.gitRepoUrl && { gitRepoUrl: formData.gitRepoUrl }),
@@ -412,40 +405,6 @@ export function SoftwareFormModal({
                                     placeholder="Fast & powerful cross-platform IDE"
                                     required
                                 />
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                <div className="flex flex-col">
-                                    <label className="block text-sm font-medium text-zinc-300 mb-2">
-                                        Full Description (Editor)
-                                    </label>
-                                    <textarea
-                                        name="fullDescription"
-                                        value={formData.fullDescription}
-                                        onChange={handleInputChange}
-                                        className="w-full h-87.5 bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-700 resize-none"
-                                        placeholder="## Overview&#10;Write detailed description here..."
-                                    />
-                                </div>
-
-                                <div className="flex flex-col">
-                                    <label className="block text-sm font-medium text-zinc-300 mb-2">
-                                        Preview (Markdown)
-                                    </label>
-                                    <div className="w-full h-87.5 bg-[#09090b] border border-zinc-800 rounded-lg p-4 overflow-y-auto prose prose-sm prose-invert prose-zinc max-w-none">
-                                        {formData.fullDescription ? (
-                                            <Markdown
-                                                content={
-                                                    formData.fullDescription
-                                                }
-                                            />
-                                        ) : (
-                                            <span className="text-zinc-600 italic">
-                                                Preview will appear here...
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

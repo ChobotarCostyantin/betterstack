@@ -8,7 +8,6 @@ import {
     Param,
     Query,
     ParseIntPipe,
-    Req,
 } from '@nestjs/common';
 import {
     ApiTags,
@@ -36,7 +35,6 @@ import {
     UpdateSoftwareFactorsDto,
     UpdateSoftwareMetricsDto,
 } from './dto/update-software.dto';
-import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
 
 @ApiTags('Software')
 @Controller('software')
@@ -117,9 +115,7 @@ export class SoftwareController {
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Create new software' })
     @ApiCreatedResponse({ type: DataOf(SoftwareDetailDto) })
-    create(@Body() dto: CreateSoftwareDto, @Req() req: AuthenticatedRequest) {
-        const authorId = req.user.id;
-        dto.authorId = authorId;
+    create(@Body() dto: CreateSoftwareDto) {
         return this.managementService.create(dto);
     }
 
@@ -130,10 +126,7 @@ export class SoftwareController {
     update(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateSoftwareDto,
-        @Req() req: AuthenticatedRequest,
     ) {
-        const authorId = req.user.id;
-        dto.authorId = authorId;
         return this.managementService.update(id, dto);
     }
 

@@ -8,7 +8,11 @@ import {
     Query,
     ParseIntPipe,
     Req,
+    Body,
+    Res,
+    Inject,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import {
     ApiTags,
     ApiOperation,
@@ -23,13 +27,22 @@ import { DataOf } from '@common/dto/response.dto';
 import { SuccessResponseDto } from '@common/dto/success-response.dto';
 import { IsUsedResponseDto } from '../dto/is-used-response.dto';
 import { UsersService } from '../users.service';
-import { UserDto } from '../dto/user.dto';
+import {
+    UserDto,
+    UpdateUserRoleDto,
+    UpdateUserProfileDto,
+} from '../dto/user.dto';
 import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
+import { authConfig, type AuthConfig } from '@config/auth.config';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(
+        private readonly usersService: UsersService,
+        @Inject(authConfig.KEY)
+        private readonly auth: AuthConfig,
+    ) {}
 
     @Get()
     @Authenticated(Role.ADMIN)
@@ -39,6 +52,42 @@ export class UsersController {
         return this.usersService.findAll(query);
     }
 
+    @Patch('me')
+    @Authenticated()
+    @ApiOperation({ summary: 'Update your own user profile' })
+    @ApiOkResponse({ type: DataOf(UserDto) })
+    async updateProfile(
+        @Req() req: AuthenticatedRequest,
+        @Body() dto: UpdateUserProfileDto,
+        @Res({ passthrough: true }) res: Response,
+    ) {
+        const { token, user } = await this.usersService.updateProfile(
+            req.user.id,
+            dto,
+        );
+        res.cookie(this.auth.cookieName, token, this.auth.cookieOptions);
+        return user;
+    }
+
+    @Get('me/software')
+    @Authenticated()
+    @ApiOperation({ summary: "Get the authenticated user's software stack" })
+    @ApiOkResponse()
+    async getMyStack(@Req() req: AuthenticatedRequest) {
+        const usages = await this.usersService.getUserSoftwareStack(
+            req.user.id,
+        );
+        return usages.map((u) => ({
+            id: u.software.id,
+            slug: u.software.slug,
+            name: u.software.name,
+            logoUrl: u.software.logoUrl,
+            shortDescription: u.software.shortDescription,
+            usageCount: u.software.usageCount,
+            categories: (u.software.categories ?? []).map((c) => c.name),
+        }));
+    }
+
     @Get(':userId')
     @ApiOperation({ summary: 'Get user by ID' })
     @ApiOkResponse({ type: DataOf(UserDto) })
@@ -46,12 +95,15 @@ export class UsersController {
         return this.usersService.findOne(userId);
     }
 
-    @Patch(':id/make-admin')
+    @Patch(':id/role')
     @Authenticated(Role.ADMIN)
-    @ApiOperation({ summary: 'Promote a user to admin (admin only)' })
+    @ApiOperation({ summary: 'Update user role (admin only)' })
     @ApiOkResponse({ type: DataOf(UserDto) })
-    makeAdmin(@Param('id', ParseIntPipe) id: number) {
-        return this.usersService.makeAdmin(id);
+    updateRole(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: UpdateUserRoleDto,
+    ) {
+        return this.usersService.updateRole(id, dto.role);
     }
 
     @Get('software/has-used/:softwareId')

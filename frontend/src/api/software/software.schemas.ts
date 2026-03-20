@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { CategoryListItemSchema } from '../categories/categories.schemas';
-import { UserSchema } from '../auth/auth.schemas';
 
 export const SoftwareListItemSchema = z.object({
     id: z.number(),
@@ -33,7 +32,6 @@ export const SoftwareDetailSchema = z.object({
     name: z.string(),
     developer: z.string(),
     shortDescription: z.string(),
-    fullDescription: z.string().nullable(),
     websiteUrl: z.string().nullable(),
     gitRepoUrl: z.string().nullable(),
     logoUrl: z.string().nullable(),
@@ -42,7 +40,6 @@ export const SoftwareDetailSchema = z.object({
     createdAt: z.string(),
     updatedAt: z.string(),
     categories: z.array(CategoryListItemSchema),
-    author: UserSchema,
     factors: z.object({
         positive: z.array(SoftwareFactorEntrySchema),
         negative: z.array(SoftwareFactorEntrySchema),
@@ -99,7 +96,6 @@ export const SoftwareComparisonSchema = z.object({
     softwareB: SoftwareComparisonSideSchema,
     metricsComparison: z.array(MetricComparisonEntrySchema),
     factorsComparison: z.array(FactorComparisonEntrySchema),
-    comparisonNote: z.string().nullable(),
 });
 export type SoftwareComparison = z.infer<typeof SoftwareComparisonSchema>;
 
@@ -108,7 +104,6 @@ export const CreateSoftwareInputSchema = z.object({
     name: z.string().max(50),
     developer: z.string().optional(),
     shortDescription: z.string(),
-    fullDescription: z.string().optional(),
     websiteUrl: z.string().url().optional(),
     gitRepoUrl: z.string().url().optional(),
     logoUrl: z.string().url().optional(),

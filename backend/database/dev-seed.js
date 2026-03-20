@@ -19,30 +19,6 @@ async function seed() {
     await qr.startTransaction();
 
     try {
-        const adminEmail = 'admin@betterstack.tech';
-        let admin = await qr.manager.findOneBy('users', { email: adminEmail });
-
-        if (!admin) {
-            const hashedPassword = "awd123123121"
-            const result = await qr.manager
-                .createQueryBuilder()
-                .insert()
-                .into('users')
-                .values({
-                    email: adminEmail,
-                    passwordHash: hashedPassword,
-                    role: 'admin',
-                    fullName: 'Tesey',
-                    bio: 'Full-stack developer and BetterStack maintainer.',
-                    githubUrl: 'https://github.com/TeseySTD',
-                    avatarUrl: 'https://github.com/TeseySTD.png',
-                })
-                .returning('*')
-                .execute();
-            admin = result.generatedMaps[0];
-            console.log('Admin user created.');
-        }
-
         // ------------------------------------------------------------------ //
         // Factors
         // ------------------------------------------------------------------ //
@@ -277,30 +253,8 @@ async function seed() {
                 developer: 'JetBrains',
                 shortDescription: 'The cross-platform .NET IDE.',
                 logoUrl: 'https://www.vectorlogo.zone/logos/jetbrains/jetbrains-icon.svg',
-                fullDescription: `## Overview
-Rider is an excellent choice for .NET developers. It offers advanced code analysis, fast performance, and cross-platform support out of the box.
-
-### Key Features 
-- Unmatched ReSharper-based code analysis
-- Built-in decompilers and database tools
-- Fast, responsive frontend
-
-### Code Example
-Rider provides excellent IntelliSense and refactoring suggestions for C#:
-\`\`\`csharp
-using System;
-
-public class HelloWorld
-{
-    public static void Main()
-    {
-        Console.WriteLine("Hello from Rider!");
-    }
-}
-\`\`\``,
-                websiteUrl: 'https://jetbrains.com/rider',
+                                websiteUrl: 'https://jetbrains.com/rider',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'visual-studio-code',
@@ -308,31 +262,12 @@ public class HelloWorld
                 developer: 'Microsoft',
                 shortDescription: 'A highly customizable and popular code editor.',
                 logoUrl: 'https://www.vectorlogo.zone/logos/visualstudio_code/visualstudio_code-icon.svg',
-                fullDescription: `## Overview
-Visual Studio Code is a streamlined code editor with support for development operations like debugging, task running, and version control.
-
-### Ecosystem
-It features an incredibly vast extension marketplace that allows it to support almost any programming language or framework.
-
-### Code Example
-VS Code is the defacto standard for modern web development:
-\`\`\`typescript
-import express from 'express';
-const app = express();
-
-app.get('/', (req, res) => {
-    res.send('Hello VS Code!');
-});
-
-app.listen(3000);
-\`\`\``,
-                websiteUrl: 'https://code.visualstudio.com/',
+                                websiteUrl: 'https://code.visualstudio.com/',
                 gitRepoUrl: 'https://github.com/microsoft/vscode',
                 screenshotUrls: [
                     'https://code.visualstudio.com/assets/home/swimlane-customized.png',
                     'https://code.visualstudio.com/assets/home/swimlane-anywhere.png'
                 ],
-                authorId: admin.id,
             },
             {
                 slug: 'vim',
@@ -340,32 +275,12 @@ app.listen(3000);
                 developer: 'Bram Moolenaar',
                 shortDescription: 'A highly configurable text editor built to make creating and changing any kind of text very efficient.',
                 logoUrl: 'https://www.vectorlogo.zone/logos/vim/vim-icon.svg',
-                fullDescription: `## Overview
-Vim is a highly configurable text editor built to enable efficient text editing.
-
-### Efficiency
-It is an improved version of the vi editor distributed with most UNIX systems. Vim is operated mostly via keyboard shortcuts, making it blazing fast for power users.
-
-### Configuration Example
-Example of a basic \`.vimrc\` configuration:
-\`\`\`vim
-" Enable syntax highlighting
-syntax on
-
-" Show line numbers
-set number
-
-" Use spaces instead of tabs
-set expandtab
-set shiftwidth=4
-\`\`\``,
-                websiteUrl: 'https://www.vim.org/',
+                                websiteUrl: 'https://www.vim.org/',
                 gitRepoUrl: 'https://github.com/vim/vim',
                 screenshotUrls: [
                     'https://geo-jobe.com/wp-content/uploads/2023/05/image2.gif',
                     'https://www.vim.org/images/0xbabaf000l.png'
                 ],
-                authorId: admin.id,
             },
             {
                 slug: 'postgresql',
@@ -373,30 +288,9 @@ set shiftwidth=4
                 developer: 'PostgreSQL Global Development Group',
                 shortDescription: 'The world\'s most advanced open source relational database.',
                 logoUrl: 'https://www.vectorlogo.zone/logos/postgresql/postgresql-icon.svg',
-                fullDescription: `## Overview
-PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development.
-
-### Features
-- Highly extensible (supports custom types and functions)
-- Deep SQL compliance
-- Excellent concurrency and performance
-
-### Code Example
-Creating a table and using modern JSONB features:
-\`\`\`sql
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    preferences JSONB DEFAULT '{}'::jsonb
-);
-
-INSERT INTO users (username, preferences) 
-VALUES ('admin', '{"theme": "dark"}');
-\`\`\``,
-                websiteUrl: 'https://www.postgresql.org/',
+                                websiteUrl: 'https://www.postgresql.org/',
                 gitRepoUrl: 'https://github.com/postgres/postgres',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'redis',
@@ -404,26 +298,9 @@ VALUES ('admin', '{"theme": "dark"}');
                 developer: 'Redis Ltd.',
                 shortDescription: 'The open source, in-memory data store used as a database, cache, and message broker.',
                 logoUrl: 'https://www.vectorlogo.zone/logos/redis/redis-icon.svg',
-                fullDescription: `## Overview
-Redis provides data structures such as strings, hashes, lists, sets, sorted sets with range queries, bitmaps, hyperloglogs, geospatial indexes, and streams.
-
-### Performance
-It is renowned for its sub-millisecond latency, operating entirely in memory.
-
-### Code Example
-Basic Redis CLI usage:
-\`\`\`bash
-> SET user:1:name "John Doe"
-OK
-> GET user:1:name
-"John Doe"
-> INCR page:views
-(integer) 1
-\`\`\``,
-                websiteUrl: 'https://redis.io/',
+                                websiteUrl: 'https://redis.io/',
                 gitRepoUrl: 'https://github.com/redis/redis',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'mongodb',
@@ -431,26 +308,7 @@ OK
                 developer: 'MongoDB Inc.',
                 shortDescription: 'A source-available cross-platform document-oriented database program.',
                 logoUrl: 'https://www.vectorlogo.zone/logos/mongodb/mongodb-icon.svg',
-                fullDescription: `## Overview
-MongoDB is a source-available cross-platform document-oriented database program. 
-It has a great GUI tool named *Mongodb Compass* which makes it easy to create, read, update, and delete data.
-
-### NoSQL
-Classified as a NoSQL database program, MongoDB uses JSON-like documents with optional schemas.
-
-### Code Example
-Inserting and querying documents in MongoDB:
-\`\`\`javascript
-db.users.insertOne({
-    name: "Alice",
-    age: 28,
-    skills: ["JavaScript", "React"]
-});
-
-// Find users older than 25
-db.users.find({ age: { $gt: 25 } });
-\`\`\``,
-                websiteUrl: 'https://www.mongodb.com/',
+                                websiteUrl: 'https://www.mongodb.com/',
                 gitRepoUrl: 'https://github.com/mongodb/mongo',
                 screenshotUrls: [
                     'https://serverspace.io/wp-content/uploads/2023/12/main_page-2048x964.png',
@@ -458,7 +316,6 @@ db.users.find({ age: { $gt: 25 } });
                     'https://serverspace.io/wp-content/uploads/2023/12/monitor-2048x1200.png',
                     'https://serverspace.io/wp-content/uploads/2023/12/connect-1-1-e1702836457328-2048x727.png'
                 ],
-                authorId: admin.id,
             },
             {
                 slug: 'mysql',
@@ -466,25 +323,9 @@ db.users.find({ age: { $gt: 25 } });
                 developer: 'Oracle Corporation',
                 shortDescription: 'An open-source relational database management system.',
                 logoUrl: 'https://www.vectorlogo.zone/logos/mysql/mysql-icon.svg',
-                fullDescription: `## Overview
-MySQL is an open-source relational database management system.
-
-### Reliability
-It is one of the most popular and widely used SQL databases in the world, known for its reliability, performance, and massive community support.
-
-### Code Example
-Standard SQL querying in MySQL:
-\`\`\`sql
-SELECT u.name, COUNT(o.id) as order_count
-FROM users u
-LEFT JOIN orders o ON u.id = o.user_id
-GROUP BY u.id
-HAVING order_count > 5;
-\`\`\``,
-                websiteUrl: 'https://www.mysql.com/',
+                                websiteUrl: 'https://www.mysql.com/',
                 gitRepoUrl: 'https://github.com/mysql/mysql-server',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'python',
@@ -492,25 +333,9 @@ HAVING order_count > 5;
                 developer: 'Python Software Foundation',
                 shortDescription: 'A programming language that lets you work quickly and integrate systems more effectively.',
                 logoUrl: 'https://www.vectorlogo.zone/logos/python/python-icon.svg',
-                fullDescription: `## Overview
-Python is an interpreted, high-level, general-purpose programming language. Its design philosophy emphasizes code readability.
-
-### Usage
-Extensively used in Web Development, Data Science, AI, and Automation.
-
-### Code Example
-A simple Python script using list comprehensions:
-\`\`\`python
-def get_even_squares(numbers):
-    return [n**2 for n in numbers if n % 2 == 0]
-
-nums = [1, 2, 3, 4, 5, 6]
-print(get_even_squares(nums)) # [4, 16, 36]
-\`\`\``,
-                websiteUrl: 'https://www.python.org/',
+                                websiteUrl: 'https://www.python.org/',
                 gitRepoUrl: 'https://github.com/python/cpython',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'go',
@@ -518,35 +343,9 @@ print(get_even_squares(nums)) # [4, 16, 36]
                 developer: 'Google',
                 shortDescription: 'An open source programming language supported by Google, built for simple, fast, and reliable software.',
                 logoUrl: 'https://www.vectorlogo.zone/logos/golang/golang-icon.svg',
-                fullDescription: `## Overview
-Go is a statically typed, compiled programming language designed at Google. It is syntactically similar to C, but with memory safety, garbage collection, structural typing, and CSP-style concurrency.
-
-### Code Example
-Goroutines make concurrent programming simple:
-\`\`\`go
-package main
-
-import (
-    "fmt"
-    "time"
-)
-
-func say(s string) {
-    for i := 0; i < 3; i++ {
-        time.Sleep(100 * time.Millisecond)
-        fmt.Println(s)
-    }
-}
-
-func main() {
-    go say("world")
-    say("hello")
-}
-\`\`\``,
-                websiteUrl: 'https://go.dev/',
+                                websiteUrl: 'https://go.dev/',
                 gitRepoUrl: 'https://github.com/golang/go',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'rust',
@@ -554,31 +353,9 @@ func main() {
                 developer: 'Rust Foundation',
                 shortDescription: 'A language empowering everyone to build reliable and efficient software.',
                 logoUrl: 'https://www.vectorlogo.zone/logos/rust-lang/rust-lang-icon.svg',
-                fullDescription: `## Overview
-Rust is a multi-paradigm programming language designed for performance and safety, especially safe concurrency.
-
-### Memory Safety
-Rust guarantees memory safety by using a borrow checker to validate references without a garbage collector.
-
-### Code Example
-Pattern matching and standard types in Rust:
-\`\`\`rust
-enum Message {
-    Quit,
-    Write(String),
-}
-
-fn process_message(msg: Message) {
-    match msg {
-        Message::Quit => println!("Quitting..."),
-        Message::Write(text) => println!("Writing: {}", text),
-    }
-}
-\`\`\``,
-                websiteUrl: 'https://www.rust-lang.org/',
+                                websiteUrl: 'https://www.rust-lang.org/',
                 gitRepoUrl: 'https://github.com/rust-lang/rust',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'typescript',
@@ -586,29 +363,9 @@ fn process_message(msg: Message) {
                 developer: 'Microsoft',
                 shortDescription: 'A strongly typed programming language that builds on JavaScript.',
                 logoUrl: 'https://www.vectorlogo.zone/logos/typescriptlang/typescriptlang-icon.svg',
-                fullDescription: `## Overview
-TypeScript is a free and open-source high-level programming language developed by Microsoft.
-
-### Typing
-It adds static typing with optional type annotations to JavaScript, improving tooling, refactoring, and stability at scale.
-
-### Code Example
-Defining interfaces and types:
-\`\`\`typescript
-interface User {
-    id: number;
-    name: string;
-    role?: 'admin' | 'user';
-}
-
-const greet = (user: User): string => {
-    return \`Hello, \${user.name} (\${user.role ?? 'user'})\`;
-};
-\`\`\``,
-                websiteUrl: 'https://www.typescriptlang.org/',
+                                websiteUrl: 'https://www.typescriptlang.org/',
                 gitRepoUrl: 'https://github.com/microsoft/TypeScript',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'javascript',
@@ -616,28 +373,8 @@ const greet = (user: User): string => {
                 developer: 'ECMA International',
                 shortDescription: 'The programming language of the Web.',
                 logoUrl: 'https://www.vectorlogo.zone/logos/javascript/javascript-icon.svg',
-                fullDescription: `## Overview
-JavaScript, often abbreviated as JS, is a programming language that is one of the core technologies of the World Wide Web.
-
-### Dynamism
-It is dynamic, weakly typed, and supports object-oriented, imperative, and declarative styles.
-
-### Code Example
-Modern asynchronous JavaScript with Promises:
-\`\`\`javascript
-async function fetchUserData(userId) {
-    try {
-        const response = await fetch(\`/api/users/\${userId}\`);
-        const data = await response.json();
-        console.log('User:', data);
-    } catch (error) {
-        console.error('Failed to fetch user:', error);
-    }
-}
-\`\`\``,
-                websiteUrl: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript',
+                                websiteUrl: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript',
                 screenshotUrls: [],
-                authorId: admin.id,
             }
         ];
 

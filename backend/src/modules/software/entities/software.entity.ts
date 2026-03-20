@@ -7,14 +7,10 @@ import {
     OneToMany,
     CreateDateColumn,
     UpdateDateColumn,
-    ManyToOne,
-    JoinColumn,
 } from 'typeorm';
 import type { Category } from '@modules/categories/entities/category.entity';
 import { SoftwareFactor } from './software-factor.entity';
 import { SoftwareMetric } from './software-metric.entity';
-import { SoftwareComparisonNote } from './software-comparison-note.entity';
-import { User } from '@modules/users/entities/user.entity';
 
 @Entity('software')
 export class Software {
@@ -34,8 +30,6 @@ export class Software {
     shortDescription: string;
 
     @Column({ type: 'text', nullable: true })
-    fullDescription: string | null;
-
     @Column({ type: 'varchar', nullable: true })
     websiteUrl: string | null;
 
@@ -65,22 +59,9 @@ export class Software {
     })
     categories: Category[];
 
-    @Column({ nullable: false })
-    authorId: number;
-
-    @ManyToOne('User', 'authoredSoftware')
-    @JoinColumn({ name: 'authorId' })
-    author: User;
-
     @OneToMany(() => SoftwareFactor, (sf) => sf.software)
     softwareFactors: SoftwareFactor[];
 
     @OneToMany(() => SoftwareMetric, (sm) => sm.software)
     softwareMetrics: SoftwareMetric[];
-
-    @OneToMany(() => SoftwareComparisonNote, (note) => note.softwareA)
-    comparisonsAsA: SoftwareComparisonNote[];
-
-    @OneToMany(() => SoftwareComparisonNote, (note) => note.softwareB)
-    comparisonsAsB: SoftwareComparisonNote[];
 }

@@ -2,15 +2,16 @@ import { createServerClient } from '@/src/lib/api/server.client';
 import { getSoftwareBySlug } from '@/src/api/software/software.api';
 import { me } from '@/src/api/auth/auth.api';
 import { hasUserUsedSoftware } from '@/src/api/users/users.api';
+import { getSoftwareReviewBySlug } from '@/src/api/reviews/reviews.api';
 import { HTTPError } from 'ky';
 import Image from 'next/image';
 import Link from 'next/link';
 import CategoryTags from '@/src/components/CategoryTags';
 import ScreenshotGallery from './_components/ScreenshotGallery';
-import Markdown from '../../../components/Markdown';
 import ProsAndCons from './_components/ProsAndCons';
 import SoftwareAlternatives from './_components/SoftwareAlternatives';
 import UseSoftwareButton from './_components/UseSoftwareButton';
+import SoftwareReviewSection from './_components/SoftwareReviewSection';
 import { notFound } from 'next/navigation';
 import { GlobeIcon, Users } from 'lucide-react';
 import { Metadata } from 'next';
@@ -68,10 +69,12 @@ export default async function SoftwareArticlePage({
 
     let isAuthenticated = false;
     let isUsedByCurrentUser = false;
+    let currentUser = null;
 
     try {
-        await me(client);
+        const user = await me(client);
         isAuthenticated = true;
+        currentUser = user;
     } catch {
         isAuthenticated = false;
     }
@@ -84,6 +87,27 @@ export default async function SoftwareArticlePage({
             isUsedByCurrentUser = false;
         }
     }
+
+    let review = null;
+    try {
+        review = await getSoftwareReviewBySlug(client, slugObject.slug);
+    } catch (err) {
+        // If 404, there's just no review
+        if (!(err instanceof HTTPError && err.response.status === 404)) {
+            console.error('Failed to fetch software review:', err);
+        }
+    }
+
+    const canEdit = !!(
+        currentUser &&
+        (currentUser.role === 'admin' || currentUser.role === 'author')
+    );
+    const isDifferentAuthor = !!(
+        review &&
+        currentUser &&
+        review.author.userId !== currentUser.id
+    );
+    const shouldShowEditButton = canEdit && !isDifferentAuthor;
 
     const categoryNames = software.categories.map((c) => c.name);
 
@@ -194,27 +218,58 @@ export default async function SoftwareArticlePage({
             </section>
 
             <section className="mb-8 sm:mb-12">
-                {software.shortDescription || software.fullDescription ? (
-                    <>
+                {software.shortDescription && (
+                    <div className="mb-8">
                         <h2 className="text-lg sm:text-xl font-semibold mb-3">
                             Description
                         </h2>
-                        <p className="text-base sm:text-lg font-medium mb-5">
+                        <p className="text-base sm:text-lg font-medium">
                             {software.shortDescription}
                         </p>
-                        {software.fullDescription && (
-                            <div className="max-w-none prose prose-sm sm:prose-base prose-zinc prose-invert">
-                                <Markdown content={software.fullDescription} />
+                    </div>
+                )}
+
+                <SoftwareReviewSection
+                    softwareSlug={slugObject.slug}
+                    review={review}
+                    canEdit={shouldShowEditButton}
+                />
+
+                {review?.author && (
+                    <Link href={`/profile/${review.author.userId}`}>
+                        <section className="my-8 sm:my-12 p-5 sm:p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800/50 transition-colors cursor-pointer">
+                            <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-4">
+                                Written by
+                            </h3>
+                            <div className="flex items-center gap-4">
+                                {review.author.avatarUrl ? (
+                                    <Image
+                                        src={review.author.avatarUrl}
+                                        alt={review.author.fullName || 'Author'}
+                                        width={48}
+                                        height={48}
+                                        className="rounded-full bg-zinc-800 object-cover w-12 h-12"
+                                    />
+                                ) : (
+                                    <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 font-semibold text-lg">
+                                        {(review.author.fullName || 'A')
+                                            .charAt(0)
+                                            .toUpperCase()}
+                                    </div>
+                                )}
+                                <div>
+                                    <div className="font-semibold text-zinc-100">
+                                        {review.author.fullName || 'Anonymous'}
+                                    </div>
+                                    {review.author.bio && (
+                                        <div className="text-sm text-zinc-400 mt-1 line-clamp-2">
+                                            {review.author.bio}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        )}
-                    </>
-                ) : (
-                    <>
-                        <h2 className="text-lg sm:text-xl font-semibold mb-2">
-                            No description
-                        </h2>
-                        <hr className="my-4 border-zinc-800" />
-                    </>
+                        </section>
+                    </Link>
                 )}
             </section>
 

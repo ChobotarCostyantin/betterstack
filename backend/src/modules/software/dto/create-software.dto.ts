@@ -38,8 +38,6 @@ export class CreateSoftwareDto {
     })
     @IsString()
     @IsOptional()
-    fullDescription?: string;
-
     @ApiPropertyOptional({ example: 'https://jetbrains.com/rider' })
     @IsUrl()
     @IsOptional()
@@ -65,14 +63,6 @@ export class CreateSoftwareDto {
     @IsString({ each: true })
     @IsOptional()
     screenshotUrls?: string[];
-
-    @ApiProperty({
-        example: 1,
-        description: 'IDs of uses who authored this content',
-    })
-    @IsNumber()
-    @IsNotEmpty()
-    authorId: number;
 
     @ApiPropertyOptional({
         example: [1, 2, 3],

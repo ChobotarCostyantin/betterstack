@@ -103,7 +103,4 @@ export class SoftwareComparisonDto {
 
     @ApiProperty({ type: [FactorComparisonItemDto] })
     factorsComparison: FactorComparisonItemDto[];
-
-    @ApiPropertyOptional({ nullable: true, type: String })
-    comparisonNote: string | null;
 }
