@@ -28,11 +28,11 @@ export class AuthorDetails {
     @Column({ type: 'text' })
     bio: string;
 
-    @Column({ nullable: true })
-    avatarUrl: string;
+    @Column({ type: 'varchar', nullable: true })
+    avatarUrl: string | null;
 
-    @Column({ nullable: true })
-    websiteUrl: string;
+    @Column({ type: 'varchar', nullable: true })
+    websiteUrl: string | null;
 
     @OneToMany(() => SoftwareReview, (review) => review.author)
     softwareReviews: SoftwareReview[];

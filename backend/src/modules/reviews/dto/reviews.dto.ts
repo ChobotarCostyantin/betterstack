@@ -74,3 +74,32 @@ export class UpdateSoftwareComparisonReviewDto {
     @IsOptional()
     content?: string;
 }
+
+export class UpdateAuthorDetailsDto {
+    @ApiProperty()
+    @IsString()
+    @IsNotEmpty()
+    fullName: string;
+
+    @ApiProperty()
+    @IsString()
+    bio: string;
+
+    @ApiPropertyOptional()
+    @IsString()
+    @IsOptional()
+    avatarUrl: string | null;
+
+    @ApiPropertyOptional()
+    @IsString()
+    @IsOptional()
+    websiteUrl: string | null;
+}
+
+export class AuthorDetailsWithUserDto extends AuthorDetailsDto {
+    @ApiProperty()
+    userEmail: string;
+
+    @ApiProperty()
+    userRole: string;
+}

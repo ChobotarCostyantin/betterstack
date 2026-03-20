@@ -16,7 +16,10 @@ import {
     UpdateSoftwareReviewDto,
     CreateSoftwareComparisonReviewDto,
     UpdateSoftwareComparisonReviewDto,
+    UpdateAuthorDetailsDto,
+    AuthorDetailsWithUserDto,
 } from './dto/reviews.dto';
+import { Role } from '@common/enums/role.enum';
 
 @Injectable()
 export class ReviewsService {
@@ -215,6 +218,50 @@ export class ReviewsService {
                 `SoftwareComparisonReview with ID ${id} not found`,
             );
         }
+        return { success: true };
+    }
+
+    async listAuthors(): Promise<AuthorDetailsWithUserDto[]> {
+        const authors = await this.authorRepo.find({
+            relations: ['user'],
+        });
+
+        // Filter only those whose current role is admin or author
+        const filtered = authors.filter(
+            (a) =>
+                a.user &&
+                (a.user.role === Role.ADMIN || a.user.role === Role.AUTHOR),
+        );
+
+        return filtered.map((a) => ({
+            id: a.id,
+            userId: a.userId,
+            fullName: a.fullName,
+            bio: a.bio,
+            avatarUrl: a.avatarUrl,
+            websiteUrl: a.websiteUrl,
+            userEmail: a.user.email,
+            userRole: a.user.role,
+        }));
+    }
+
+    async updateAuthorDetails(
+        id: number,
+        dto: UpdateAuthorDetailsDto,
+    ): Promise<{ success: boolean }> {
+        const author = await this.authorRepo.findOneBy({ id });
+        if (!author) {
+            throw new NotFoundException(
+                `AuthorDetails with ID ${id} not found`,
+            );
+        }
+
+        author.fullName = dto.fullName;
+        author.bio = dto.bio;
+        author.avatarUrl = dto.avatarUrl;
+        author.websiteUrl = dto.websiteUrl;
+
+        await this.authorRepo.save(author);
         return { success: true };
     }
 

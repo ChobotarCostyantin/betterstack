@@ -6,6 +6,9 @@ import {
     type UpdateSoftwareReviewInput,
     type CreateSoftwareComparisonReviewInput,
     type UpdateSoftwareComparisonReviewInput,
+    AuthorDetailsWithUserSchema,
+    type AuthorDetailsWithUser,
+    type UpdateAuthorDetailsInput,
 } from './reviews.schemas';
 import { unwrapResponse, unwrapSuccessResponse } from '../common/common.utils';
 
@@ -79,5 +82,23 @@ export async function deleteSoftwareComparisonReview(
     id: number,
 ): Promise<void> {
     const raw = await client.delete(`reviews/comparison/${id}`).json();
+    unwrapSuccessResponse(raw);
+}
+
+export async function listAuthors(
+    client: KyInstance,
+): Promise<AuthorDetailsWithUser[]> {
+    const raw = await client.get('reviews/authors').json();
+    return unwrapResponse(AuthorDetailsWithUserSchema.array(), raw);
+}
+
+export async function updateAuthorDetails(
+    client: KyInstance,
+    id: number,
+    input: UpdateAuthorDetailsInput,
+): Promise<void> {
+    const raw = await client
+        .put(`reviews/authors/${id}`, { json: input })
+        .json();
     unwrapSuccessResponse(raw);
 }
