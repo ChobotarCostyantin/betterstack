@@ -66,14 +66,6 @@ export class CreateSoftwareDto {
     @IsOptional()
     screenshotUrls?: string[];
 
-    @ApiProperty({
-        example: 1,
-        description: 'IDs of uses who authored this content',
-    })
-    @IsNumber()
-    @IsNotEmpty()
-    authorId: number;
-
     @ApiPropertyOptional({
         example: [1, 2, 3],
         description: 'List of category IDs to associate with this software',

@@ -19,30 +19,6 @@ async function seed() {
     await qr.startTransaction();
 
     try {
-        const adminEmail = 'admin@betterstack.tech';
-        let admin = await qr.manager.findOneBy('users', { email: adminEmail });
-
-        if (!admin) {
-            const hashedPassword = "awd123123121"
-            const result = await qr.manager
-                .createQueryBuilder()
-                .insert()
-                .into('users')
-                .values({
-                    email: adminEmail,
-                    passwordHash: hashedPassword,
-                    role: 'admin',
-                    fullName: 'Tesey',
-                    bio: 'Full-stack developer and BetterStack maintainer.',
-                    githubUrl: 'https://github.com/TeseySTD',
-                    avatarUrl: 'https://github.com/TeseySTD.png',
-                })
-                .returning('*')
-                .execute();
-            admin = result.generatedMaps[0];
-            console.log('Admin user created.');
-        }
-
         // ------------------------------------------------------------------ //
         // Factors
         // ------------------------------------------------------------------ //
@@ -300,7 +276,6 @@ public class HelloWorld
 \`\`\``,
                 websiteUrl: 'https://jetbrains.com/rider',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'visual-studio-code',
@@ -332,7 +307,6 @@ app.listen(3000);
                     'https://code.visualstudio.com/assets/home/swimlane-customized.png',
                     'https://code.visualstudio.com/assets/home/swimlane-anywhere.png'
                 ],
-                authorId: admin.id,
             },
             {
                 slug: 'vim',
@@ -365,7 +339,6 @@ set shiftwidth=4
                     'https://geo-jobe.com/wp-content/uploads/2023/05/image2.gif',
                     'https://www.vim.org/images/0xbabaf000l.png'
                 ],
-                authorId: admin.id,
             },
             {
                 slug: 'postgresql',
@@ -396,7 +369,6 @@ VALUES ('admin', '{"theme": "dark"}');
                 websiteUrl: 'https://www.postgresql.org/',
                 gitRepoUrl: 'https://github.com/postgres/postgres',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'redis',
@@ -423,7 +395,6 @@ OK
                 websiteUrl: 'https://redis.io/',
                 gitRepoUrl: 'https://github.com/redis/redis',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'mongodb',
@@ -458,7 +429,6 @@ db.users.find({ age: { $gt: 25 } });
                     'https://serverspace.io/wp-content/uploads/2023/12/monitor-2048x1200.png',
                     'https://serverspace.io/wp-content/uploads/2023/12/connect-1-1-e1702836457328-2048x727.png'
                 ],
-                authorId: admin.id,
             },
             {
                 slug: 'mysql',
@@ -484,7 +454,6 @@ HAVING order_count > 5;
                 websiteUrl: 'https://www.mysql.com/',
                 gitRepoUrl: 'https://github.com/mysql/mysql-server',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'python',
@@ -510,7 +479,6 @@ print(get_even_squares(nums)) # [4, 16, 36]
                 websiteUrl: 'https://www.python.org/',
                 gitRepoUrl: 'https://github.com/python/cpython',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'go',
@@ -546,7 +514,6 @@ func main() {
                 websiteUrl: 'https://go.dev/',
                 gitRepoUrl: 'https://github.com/golang/go',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'rust',
@@ -578,7 +545,6 @@ fn process_message(msg: Message) {
                 websiteUrl: 'https://www.rust-lang.org/',
                 gitRepoUrl: 'https://github.com/rust-lang/rust',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'typescript',
@@ -608,7 +574,6 @@ const greet = (user: User): string => {
                 websiteUrl: 'https://www.typescriptlang.org/',
                 gitRepoUrl: 'https://github.com/microsoft/TypeScript',
                 screenshotUrls: [],
-                authorId: admin.id,
             },
             {
                 slug: 'javascript',
@@ -637,7 +602,6 @@ async function fetchUserData(userId) {
 \`\`\``,
                 websiteUrl: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript',
                 screenshotUrls: [],
-                authorId: admin.id,
             }
         ];
 

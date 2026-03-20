@@ -6,17 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Software } from './entities/software.entity';
 import { SoftwareFactor } from './entities/software-factor.entity';
 import { SoftwareMetric } from './entities/software-metric.entity';
-import { SoftwareComparisonNote } from './entities/software-comparison-note.entity';
 import { CriteriaModule } from '@modules/criteria/criteria.module';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([
-            Software,
-            SoftwareFactor,
-            SoftwareMetric,
-            SoftwareComparisonNote,
-        ]),
+        TypeOrmModule.forFeature([Software, SoftwareFactor, SoftwareMetric]),
         CriteriaModule,
     ],
     controllers: [SoftwareController],

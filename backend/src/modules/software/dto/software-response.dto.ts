@@ -1,17 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-export class SoftwareAuthorDto {
-    @ApiProperty()
-    id: number;
 
-    @ApiProperty()
-    fullName: string;
-
-    @ApiPropertyOptional()
-    avatarUrl: string | null;
-
-    @ApiPropertyOptional()
-    bio: string | null;
-}
 export class SoftwareListItemDto {
     @ApiProperty()
     id: number;
@@ -104,9 +92,6 @@ export class SoftwareDetailDto {
 
     @ApiProperty()
     updatedAt: Date;
-
-    @ApiProperty({ type: SoftwareAuthorDto })
-    author: SoftwareAuthorDto;
 
     @ApiProperty({ type: () => Array })
     categories: { id: number; slug: string; name: string }[];

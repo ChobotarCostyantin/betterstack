@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { CriteriaModule } from './modules/criteria/criteria.module';
 import { SoftwareModule } from './modules/software/software.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
@@ -70,6 +71,7 @@ import { throttlerConfig } from '@config/throttler.config';
         CriteriaModule,
         SoftwareModule,
         UsersModule,
+        ReviewsModule,
     ],
     providers: [
         {

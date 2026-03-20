@@ -48,13 +48,12 @@ export class SoftwareManagementService {
     ) {}
 
     async create(dto: CreateSoftwareDto): Promise<SoftwareDetailDto> {
-        const { categoryIds, authorId, ...softwareData } = dto;
+        const { categoryIds, ...softwareData } = dto;
 
         const software = this.repo.create({
             ...softwareData,
             categories:
                 categoryIds?.map((id) => ({ id }) as unknown as Category) || [],
-            authorId: authorId,
         });
 
         try {
@@ -69,7 +68,7 @@ export class SoftwareManagementService {
         id: number,
         dto: UpdateSoftwareDto,
     ): Promise<{ success: true }> {
-        const { categoryIds, authorId, ...softwareData } = dto;
+        const { categoryIds, ...softwareData } = dto;
 
         const software = await this.repo.preload({
             id,
@@ -85,7 +84,6 @@ export class SoftwareManagementService {
                 (catId) => ({ id: catId }) as unknown as Category,
             );
         }
-        software.authorId = authorId as number;
 
         try {
             await this.repo.save(software);

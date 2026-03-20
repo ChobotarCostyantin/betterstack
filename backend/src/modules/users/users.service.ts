@@ -100,14 +100,6 @@ export class UsersService implements OnModuleInit {
         );
     }
 
-    async findOne(id: number): Promise<UserDto> {
-        const user = await this.userRepo.findOneBy({ id });
-        if (!user) {
-            throw new NotFoundException(`User with ID ${id} not found`);
-        }
-        return UserDto.from(user);
-    }
-
     async makeAdmin(id: number): Promise<UserDto> {
         const user = await this.userRepo.findOneBy({ id });
         if (!user) {
