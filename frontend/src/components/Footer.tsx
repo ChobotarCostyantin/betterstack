@@ -6,8 +6,10 @@ const footerLinks = [
         links: [
             { name: 'Next.js', href: 'https://nextjs.org/' },
             { name: 'Tailwind CSS', href: 'https://tailwindcss.com/' },
-            { name: 'Nest.js', href: 'https://nestjs.com/' },
             { name: 'TypeScript', href: 'https://www.typescriptlang.org/' },
+            { name: 'Nest.js', href: 'https://nestjs.com/' },
+            { name: 'TypeORM', href: 'https://typeorm.io/' },
+            { name: 'Docker', href: 'https://docker.com/' },
         ],
     },
     {

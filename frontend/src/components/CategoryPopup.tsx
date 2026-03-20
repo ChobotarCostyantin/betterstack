@@ -1,6 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef, useSyncExternalStore } from 'react';
+import React, {
+    useState,
+    useEffect,
+    useRef,
+    useSyncExternalStore,
+} from 'react';
 import { createPortal } from 'react-dom';
 
 interface CategoryPopupProps {
