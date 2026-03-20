@@ -69,6 +69,32 @@ export class UsersController {
         return user;
     }
 
+    @Get('me/software')
+    @Authenticated()
+    @ApiOperation({ summary: "Get the authenticated user's software stack" })
+    @ApiOkResponse()
+    async getMyStack(@Req() req: AuthenticatedRequest) {
+        const usages = await this.usersService.getUserSoftwareStack(
+            req.user.id,
+        );
+        return usages.map((u) => ({
+            id: u.software.id,
+            slug: u.software.slug,
+            name: u.software.name,
+            logoUrl: u.software.logoUrl,
+            shortDescription: u.software.shortDescription,
+            usageCount: u.software.usageCount,
+            categories: (u.software.categories ?? []).map((c) => c.name),
+        }));
+    }
+
+    @Get(':userId')
+    @ApiOperation({ summary: 'Get user by ID' })
+    @ApiOkResponse({ type: DataOf(UserDto) })
+    findOne(@Param('userId', ParseIntPipe) userId: number) {
+        return this.usersService.findOne(userId);
+    }
+
     @Patch(':id/role')
     @Authenticated(Role.ADMIN)
     @ApiOperation({ summary: 'Update user role (admin only)' })

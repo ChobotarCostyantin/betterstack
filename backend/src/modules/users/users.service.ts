@@ -178,6 +178,22 @@ export class UsersService implements OnModuleInit {
         return this.buildAuthResult(updated);
     }
 
+    async findOne(id: number): Promise<UserDto> {
+        const user = await this.userRepo.findOneBy({ id });
+        if (!user) {
+            throw new NotFoundException(`User with ID ${id} not found`);
+        }
+        return UserDto.from(user);
+    }
+
+    async getUserSoftwareStack(userId: number): Promise<SoftwareUsage[]> {
+        return this.usageRepo.find({
+            where: { userId },
+            relations: ['software', 'software.categories'],
+            order: { createdAt: 'DESC' },
+        });
+    }
+
     private buildAuthResult(user: User): AuthResult {
         const token = this.jwtService.sign({
             id: user.id,
