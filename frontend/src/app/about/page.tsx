@@ -56,6 +56,7 @@ export default function AboutPage() {
                         <Link
                             href={projectRepo}
                             target="_blank"
+                            rel="noopener noreferrer"
                             className="group inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all font-bold"
                         >
                             <Image
