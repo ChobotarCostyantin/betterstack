@@ -1,0 +1,64 @@
+--- backend/src/modules/users/dto/user.dto.ts
++++ backend/src/modules/users/dto/user.dto.ts
+@@ -1,5 +1,5 @@
+-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+-import { IsEnum, IsString, IsOptional } from 'class-validator';
++import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
++import { IsEnum, IsString, IsOptional } from 'class-validator';
+ import { Role } from '@common/enums/role.enum';
+ import type { User } from '../entities/user.entity';
+ 
+@@ -53,3 +53,39 @@
+     @IsOptional()
+     websiteUrl?: string | null;
+ }
++
++export class AuthorDto {
++    @ApiProperty()
++    id: number;
++
++    @ApiProperty()
++    userId: number;
++
++    @ApiProperty()
++    fullName: string;
++
++    @ApiProperty()
++    bio: string;
++
++    @ApiPropertyOptional()
++    avatarUrl: string | null;
++
++    @ApiPropertyOptional()
++    websiteUrl: string | null;
++}
++
++export class UpdateAuthorDetailsDto {
++    @ApiPropertyOptional()
++    @IsString()
++    @IsOptional()
++    fullName?: string;
++
++    @ApiPropertyOptional()
++    @IsString()
++    @IsOptional()
++    bio?: string;
++
++    @ApiPropertyOptional()
++    @IsString()
++    @IsOptional()
++    avatarUrl?: string | null;
++
++    @ApiPropertyOptional()
++    @IsString()
++    @IsOptional()
++    websiteUrl?: string | null;
++}
++
++export class AuthorDetailsWithUserDto extends AuthorDto {
++    @ApiProperty()
++    userEmail: string;
++
++    @ApiProperty()
++    userRole: string;
++}

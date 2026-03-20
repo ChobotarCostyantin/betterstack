@@ -1,6 +1,5 @@
 import {
     Controller,
-    Put,
     Get,
     Patch,
     Post,
@@ -32,8 +31,6 @@ import {
     UserDto,
     UpdateUserRoleDto,
     UpdateUserProfileDto,
-    AuthorDetailsWithUserDto,
-    UpdateAuthorDetailsDto,
 } from '../dto/user.dto';
 import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
 import { authConfig, type AuthConfig } from '@config/auth.config';
@@ -121,24 +118,5 @@ export class UsersController {
         @Param('softwareId', ParseIntPipe) softwareId: number,
     ) {
         return this.usersService.markSoftwareAsUnused(req.user.id, softwareId);
-    }
-
-    @Get('authors')
-    @Authenticated(Role.ADMIN)
-    @ApiOperation({ summary: 'List all authors and admins (Admin only)' })
-    @ApiOkResponse({ type: [AuthorDetailsWithUserDto] })
-    listAuthors() {
-        return this.usersService.listAuthors();
-    }
-
-    @Put('authors/:id')
-    @Authenticated(Role.ADMIN)
-    @ApiOperation({ summary: 'Update author details (Admin only)' })
-    @ApiOkResponse({ type: DataOf(SuccessResponseDto) })
-    updateAuthorDetails(
-        @Param('id', ParseIntPipe) id: number,
-        @Body() dto: UpdateAuthorDetailsDto,
-    ) {
-        return this.usersService.updateAuthorDetails(id, dto);
     }
 }

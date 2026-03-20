@@ -65,23 +65,3 @@ export class UpdateUserProfileDto {
     @IsOptional()
     websiteUrl?: string | null;
 }
-
-export class AuthorDto {
-    @ApiProperty()
-    id: number;
-
-    @ApiProperty()
-    userId: number;
-
-    @ApiProperty()
-    fullName: string;
-
-    @ApiProperty()
-    bio: string;
-
-    @ApiPropertyOptional()
-    avatarUrl: string | null;
-
-    @ApiPropertyOptional()
-    websiteUrl: string | null;
-}
