@@ -5,6 +5,7 @@ import { ReviewsController } from './reviews.controller';
 import { AuthorDetails } from './entities/author-details.entity';
 import { SoftwareReview } from './entities/software-review.entity';
 import { SoftwareComparisonReview } from './entities/software-comparison-review.entity';
+import { User } from '../users/entities/user.entity';
 
 @Module({
     imports: [
@@ -12,6 +13,7 @@ import { SoftwareComparisonReview } from './entities/software-comparison-review.
             AuthorDetails,
             SoftwareReview,
             SoftwareComparisonReview,
+            User,
         ]),
     ],
     controllers: [ReviewsController],

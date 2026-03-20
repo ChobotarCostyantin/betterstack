@@ -70,8 +70,6 @@ export class SoftwareDetailDto {
     shortDescription: string;
 
     @ApiPropertyOptional()
-    fullDescription: string | null;
-
     @ApiPropertyOptional()
     websiteUrl: string | null;
 

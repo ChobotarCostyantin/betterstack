@@ -163,7 +163,6 @@ export class SoftwareQueryService {
             name: sw.name,
             developer: sw.developer,
             shortDescription: sw.shortDescription,
-            fullDescription: sw.fullDescription,
             websiteUrl: sw.websiteUrl,
             gitRepoUrl: sw.gitRepoUrl,
             logoUrl: sw.logoUrl,

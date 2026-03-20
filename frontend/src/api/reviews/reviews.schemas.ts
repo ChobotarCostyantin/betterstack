@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const AuthorDetailsSchema = z.object({
     id: z.number(),
+    userId: z.number(),
     fullName: z.string(),
     bio: z.string(),
     avatarUrl: z.string().nullable(),
@@ -20,7 +21,6 @@ export type SoftwareReviewResponse = z.infer<
 
 export const CreateSoftwareReviewInputSchema = z.object({
     softwareSlug: z.string(),
-    authorDetailsId: z.number(),
     content: z.string(),
 });
 export type CreateSoftwareReviewInput = z.infer<
@@ -37,7 +37,6 @@ export type UpdateSoftwareReviewInput = z.infer<
 export const CreateSoftwareComparisonReviewInputSchema = z.object({
     softwareSlugA: z.string(),
     softwareSlugB: z.string(),
-    authorDetailsId: z.number(),
     content: z.string(),
 });
 export type CreateSoftwareComparisonReviewInput = z.infer<

@@ -2,15 +2,16 @@ import { createServerClient } from '@/src/lib/api/server.client';
 import { getSoftwareBySlug } from '@/src/api/software/software.api';
 import { me } from '@/src/api/auth/auth.api';
 import { hasUserUsedSoftware } from '@/src/api/users/users.api';
+import { getSoftwareReviewBySlug } from '@/src/api/reviews/reviews.api';
 import { HTTPError } from 'ky';
 import Image from 'next/image';
 import Link from 'next/link';
 import CategoryTags from '@/src/components/CategoryTags';
 import ScreenshotGallery from './_components/ScreenshotGallery';
-import Markdown from '../../../components/Markdown';
 import ProsAndCons from './_components/ProsAndCons';
 import SoftwareAlternatives from './_components/SoftwareAlternatives';
 import UseSoftwareButton from './_components/UseSoftwareButton';
+import SoftwareReviewSection from './_components/SoftwareReviewSection';
 import { notFound } from 'next/navigation';
 import { GlobeIcon, Users } from 'lucide-react';
 import { Metadata } from 'next';
@@ -68,10 +69,12 @@ export default async function SoftwareArticlePage({
 
     let isAuthenticated = false;
     let isUsedByCurrentUser = false;
+    let currentUser = null;
 
     try {
-        await me(client);
+        const user = await me(client);
         isAuthenticated = true;
+        currentUser = user;
     } catch {
         isAuthenticated = false;
     }
@@ -84,6 +87,27 @@ export default async function SoftwareArticlePage({
             isUsedByCurrentUser = false;
         }
     }
+
+    let review = null;
+    try {
+        review = await getSoftwareReviewBySlug(client, slugObject.slug);
+    } catch (err) {
+        // If 404, there's just no review
+        if (!(err instanceof HTTPError && err.response.status === 404)) {
+            console.error('Failed to fetch software review:', err);
+        }
+    }
+
+    const canEdit = !!(
+        currentUser &&
+        (currentUser.role === 'admin' || currentUser.role === 'author')
+    );
+    const isDifferentAuthor = !!(
+        review &&
+        currentUser &&
+        review.author.userId !== currentUser.id
+    );
+    const shouldShowEditButton = canEdit && !isDifferentAuthor;
 
     const categoryNames = software.categories.map((c) => c.name);
 
@@ -194,28 +218,22 @@ export default async function SoftwareArticlePage({
             </section>
 
             <section className="mb-8 sm:mb-12">
-                {software.shortDescription || software.fullDescription ? (
-                    <>
+                {software.shortDescription && (
+                    <div className="mb-8">
                         <h2 className="text-lg sm:text-xl font-semibold mb-3">
                             Description
                         </h2>
-                        <p className="text-base sm:text-lg font-medium mb-5">
+                        <p className="text-base sm:text-lg font-medium">
                             {software.shortDescription}
                         </p>
-                        {software.fullDescription && (
-                            <div className="max-w-none prose prose-sm sm:prose-base prose-zinc prose-invert">
-                                <Markdown content={software.fullDescription} />
-                            </div>
-                        )}
-                    </>
-                ) : (
-                    <>
-                        <h2 className="text-lg sm:text-xl font-semibold mb-2">
-                            No description
-                        </h2>
-                        <hr className="my-4 border-zinc-800" />
-                    </>
+                    </div>
                 )}
+
+                <SoftwareReviewSection
+                    softwareSlug={slugObject.slug}
+                    review={review}
+                    canEdit={shouldShowEditButton}
+                />
             </section>
 
             <div className="mb-8 sm:mb-12">

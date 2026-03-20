@@ -38,8 +38,6 @@ export class CreateSoftwareDto {
     })
     @IsString()
     @IsOptional()
-    fullDescription?: string;
-
     @ApiPropertyOptional({ example: 'https://jetbrains.com/rider' })
     @IsUrl()
     @IsOptional()

@@ -30,8 +30,6 @@ export class Software {
     shortDescription: string;
 
     @Column({ type: 'text', nullable: true })
-    fullDescription: string | null;
-
     @Column({ type: 'varchar', nullable: true })
     websiteUrl: string | null;
 

@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { AuthorDetails } from './entities/author-details.entity';
 import { SoftwareReview } from './entities/software-review.entity';
 import { SoftwareComparisonReview } from './entities/software-comparison-review.entity';
+import { User } from '../users/entities/user.entity';
 import {
     SoftwareReviewResponseDto,
     CreateSoftwareReviewDto,
@@ -26,7 +27,28 @@ export class ReviewsService {
         private readonly cmpReviewRepo: Repository<SoftwareComparisonReview>,
         @InjectRepository(AuthorDetails)
         private readonly authorRepo: Repository<AuthorDetails>,
+        @InjectRepository(User)
+        private readonly userRepo: Repository<User>,
     ) {}
+
+    private async getOrCreateAuthorDetails(
+        userId: number,
+    ): Promise<AuthorDetails> {
+        let author = await this.authorRepo.findOneBy({ userId });
+        if (!author) {
+            const user = await this.userRepo.findOneBy({ id: userId });
+            if (!user)
+                throw new NotFoundException(`User with ID ${userId} not found`);
+
+            const newAuthor = this.authorRepo.create({
+                userId: userId,
+                fullName: user.email.split('@')[0],
+                bio: 'Software Author',
+            });
+            author = await this.authorRepo.save(newAuthor);
+        }
+        return author;
+    }
 
     async getSoftwareReviewBySlug(
         slug: string,
@@ -46,8 +68,9 @@ export class ReviewsService {
     }
 
     async createSoftwareReview(
+        userId: number,
         dto: CreateSoftwareReviewDto,
-    ): Promise<{ id: number }> {
+    ): Promise<SoftwareReviewResponseDto> {
         const existing = await this.swReviewRepo.findOne({
             where: { softwareSlug: dto.softwareSlug },
         });
@@ -58,23 +81,20 @@ export class ReviewsService {
             );
         }
 
-        const author = await this.authorRepo.findOneBy({
-            id: dto.authorDetailsId,
-        });
-        if (!author) {
-            throw new NotFoundException(
-                `AuthorDetails with ID ${dto.authorDetailsId} not found`,
-            );
-        }
+        const author = await this.getOrCreateAuthorDetails(userId);
 
         const review = this.swReviewRepo.create({
             softwareSlug: dto.softwareSlug,
             content: dto.content,
-            authorDetailsId: dto.authorDetailsId,
+            authorDetailsId: author.id,
         });
 
         const saved = await this.swReviewRepo.save(review);
-        return { id: saved.id };
+        const fullReview = await this.swReviewRepo.findOne({
+            where: { id: saved.id },
+            relations: ['author'],
+        });
+        return this.mapToResponseDto(fullReview!);
     }
 
     async updateSoftwareReview(
@@ -128,8 +148,9 @@ export class ReviewsService {
     }
 
     async createSoftwareComparisonReview(
+        userId: number,
         dto: CreateSoftwareComparisonReviewDto,
-    ): Promise<{ id: number }> {
+    ): Promise<SoftwareReviewResponseDto> {
         const existing = await this.cmpReviewRepo.findOne({
             where: [
                 {
@@ -149,24 +170,21 @@ export class ReviewsService {
             );
         }
 
-        const author = await this.authorRepo.findOneBy({
-            id: dto.authorDetailsId,
-        });
-        if (!author) {
-            throw new NotFoundException(
-                `AuthorDetails with ID ${dto.authorDetailsId} not found`,
-            );
-        }
+        const author = await this.getOrCreateAuthorDetails(userId);
 
         const review = this.cmpReviewRepo.create({
             softwareSlugA: dto.softwareSlugA,
             softwareSlugB: dto.softwareSlugB,
             content: dto.content,
-            authorDetailsId: dto.authorDetailsId,
+            authorDetailsId: author.id,
         });
 
         const saved = await this.cmpReviewRepo.save(review);
-        return { id: saved.id };
+        const fullReview = await this.cmpReviewRepo.findOne({
+            where: { id: saved.id },
+            relations: ['author'],
+        });
+        return this.mapToResponseDto(fullReview!);
     }
 
     async updateSoftwareComparisonReview(
@@ -208,6 +226,7 @@ export class ReviewsService {
             content: review.content,
             author: {
                 id: review.author.id,
+                userId: review.author.userId,
                 fullName: review.author.fullName,
                 bio: review.author.bio,
                 avatarUrl: review.author.avatarUrl,

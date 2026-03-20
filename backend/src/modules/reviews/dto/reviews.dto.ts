@@ -1,9 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNumber, IsOptional, IsNotEmpty } from 'class-validator';
+import { IsString, IsOptional, IsNotEmpty } from 'class-validator';
 
 export class AuthorDetailsDto {
     @ApiProperty()
     id: number;
+
+    @ApiProperty()
+    userId: number;
 
     @ApiProperty()
     fullName: string;
@@ -36,10 +39,6 @@ export class CreateSoftwareReviewDto {
     softwareSlug: string;
 
     @ApiProperty()
-    @IsNumber()
-    authorDetailsId: number;
-
-    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     content: string;
@@ -62,10 +61,6 @@ export class CreateSoftwareComparisonReviewDto {
     @IsString()
     @IsNotEmpty()
     softwareSlugB: string;
-
-    @ApiProperty()
-    @IsNumber()
-    authorDetailsId: number;
 
     @ApiProperty()
     @IsString()

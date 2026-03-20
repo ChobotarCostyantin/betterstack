@@ -8,6 +8,7 @@ import {
     Param,
     Query,
     ParseIntPipe,
+    Req,
 } from '@nestjs/common';
 import {
     ApiTags,
@@ -21,6 +22,7 @@ import { Authenticated } from '@common/decorators/authenticated.decorator';
 import { Role } from '@common/enums/role.enum';
 import { SuccessResponseDto } from '@common/dto/success-response.dto';
 import { DataOf } from '@common/dto/response.dto';
+import type { AuthenticatedRequest } from '@common/interfaces/jwt-payload.interface';
 import {
     SoftwareReviewResponseDto,
     CreateSoftwareReviewDto,
@@ -45,8 +47,11 @@ export class ReviewsController {
     @Authenticated(Role.AUTHOR)
     @ApiOperation({ summary: 'Create a software review' })
     @ApiCreatedResponse({ type: DataOf(SoftwareReviewResponseDto) })
-    createSoftwareReview(@Body() dto: CreateSoftwareReviewDto) {
-        return this.reviewsService.createSoftwareReview(dto);
+    createSoftwareReview(
+        @Req() req: AuthenticatedRequest,
+        @Body() dto: CreateSoftwareReviewDto,
+    ) {
+        return this.reviewsService.createSoftwareReview(req.user.id, dto);
     }
 
     @Put('software/:id')
@@ -85,9 +90,13 @@ export class ReviewsController {
     @ApiOperation({ summary: 'Create a software comparison review' })
     @ApiCreatedResponse({ type: DataOf(SoftwareReviewResponseDto) })
     createSoftwareComparisonReview(
+        @Req() req: AuthenticatedRequest,
         @Body() dto: CreateSoftwareComparisonReviewDto,
     ) {
-        return this.reviewsService.createSoftwareComparisonReview(dto);
+        return this.reviewsService.createSoftwareComparisonReview(
+            req.user.id,
+            dto,
+        );
     }
 
     @Put('comparison/:id')
