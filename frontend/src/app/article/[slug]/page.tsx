@@ -234,6 +234,43 @@ export default async function SoftwareArticlePage({
                     review={review}
                     canEdit={shouldShowEditButton}
                 />
+
+                {review?.author && (
+                    <Link href={`/profile/${review.author.userId}`}>
+                        <section className="my-8 sm:my-12 p-5 sm:p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800/50 transition-colors cursor-pointer">
+                            <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-4">
+                                Written by
+                            </h3>
+                            <div className="flex items-center gap-4">
+                                {review.author.avatarUrl ? (
+                                    <Image
+                                        src={review.author.avatarUrl}
+                                        alt={review.author.fullName || 'Author'}
+                                        width={48}
+                                        height={48}
+                                        className="rounded-full bg-zinc-800 object-cover w-12 h-12"
+                                    />
+                                ) : (
+                                    <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 font-semibold text-lg">
+                                        {(review.author.fullName || 'A')
+                                            .charAt(0)
+                                            .toUpperCase()}
+                                    </div>
+                                )}
+                                <div>
+                                    <div className="font-semibold text-zinc-100">
+                                        {review.author.fullName || 'Anonymous'}
+                                    </div>
+                                    {review.author.bio && (
+                                        <div className="text-sm text-zinc-400 mt-1 line-clamp-2">
+                                            {review.author.bio}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </section>
+                    </Link>
+                )}
             </section>
 
             <div className="mb-8 sm:mb-12">
