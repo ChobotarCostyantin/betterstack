@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ScreenshotItemDto } from './create-software.dto';
 
 export class SoftwareListItemDto {
     @ApiProperty()
@@ -79,8 +80,8 @@ export class SoftwareDetailDto {
     @ApiPropertyOptional()
     logoUrl: string | null;
 
-    @ApiProperty({ type: [String] })
-    screenshotUrls: string[];
+    @ApiProperty({ type: [ScreenshotItemDto] })
+    screenshots: { url: string; alt?: string }[];
 
     @ApiProperty()
     usageCount: number;
