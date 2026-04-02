@@ -5,6 +5,21 @@ import Image from 'next/image';
 import { Mail, Globe, Shield, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { absoluteUrl } from '@/src/lib/url';
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ userId: string }>;
+}) {
+    const { userId } = await params;
+    const canonical = absoluteUrl(`/profile/${userId}`);
+
+    return {
+        title: 'User Profile | betterstack',
+        alternates: { canonical },
+    };
+}
 
 export default async function ProfileOverview({
     params,

@@ -5,15 +5,16 @@ import { createServerClient } from '@/src/lib/api/server.client';
 import { getMostUsedSoftware } from '@/src/api/software/software.api';
 import SoftwareCard from '@/src/components/SoftwareCard';
 import { Metadata } from 'next';
+import { absoluteUrl } from '../lib/url';
+
+const canonical = absoluteUrl('/');
 
 export const metadata: Metadata = {
     title: 'Home | betterstack',
     description: 'View and choose the best software.',
+    alternates: { canonical },
     openGraph: {
-        url: new URL(
-            '/',
-            process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
-        ),
+        url: canonical,
         images: [
             {
                 url: '/opengraph-image',

@@ -1,10 +1,7 @@
 import { ImageResponse } from 'next/og';
 import { createServerClient } from '@/src/lib/api/server.client';
-import {
-    compareSoftware,
-    getSoftwareBySlug,
-} from '@/src/api/software/software.api';
-import fs, { readFile } from 'fs/promises';
+import { compareSoftware } from '@/src/api/software/software.api';
+import { readFile } from 'fs/promises';
 import path from 'path';
 import { SoftwareComparisonSide } from '@/src/api/software/software.schemas';
 import { existsSync } from 'fs';

@@ -15,39 +15,44 @@ import SoftwareReviewSection from './_components/SoftwareReviewSection';
 import { notFound } from 'next/navigation';
 import { GlobeIcon, Users } from 'lucide-react';
 import { Metadata } from 'next';
+import { absoluteUrl } from '@/src/lib/url';
 
 export async function generateMetadata({
     params,
 }: {
     params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-    const slugObject = await params;
+    const { slug } = await params;
+    const canonical = absoluteUrl(`/article/${slug}`);
+
+    const defaultMeta = {
+        title: 'Software Not Found | betterstack',
+        description: 'The requested software could not be found.',
+        alternates: { canonical },
+    };
+
+    const customMeta = await getCustomArticleMetadata(canonical, slug);
+
+    return { ...defaultMeta, ...customMeta };
+}
+
+async function getCustomArticleMetadata(url: URL, slug: string) {
     const client = await createServerClient();
-    const url = new URL(
-        `/article/${slugObject.slug}`,
-        process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
-    );
+
     try {
-        const software = await getSoftwareBySlug(client, slugObject.slug);
+        const software = await getSoftwareBySlug(client, slug);
+        const title = `${software.name} | betterstack`;
+        const description =
+            software.shortDescription ||
+            `View details and features of ${software.name}.`;
 
         return {
-            title: `${software.name} | betterstack`,
-            description:
-                software.shortDescription ||
-                `View details and features of ${software.name}.`,
-            openGraph: {
-                title: `${software.name} | betterstack`,
-                description:
-                    software.shortDescription ||
-                    `View details and features of ${software.name}.`,
-                url: url,
-            },
+            title,
+            description,
+            openGraph: { title, url, description },
         };
     } catch {
-        return {
-            title: 'Software Not Found | betterstack',
-            description: 'The requested software could not be found.',
-        };
+        return {};
     }
 }
 

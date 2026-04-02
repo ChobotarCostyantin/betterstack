@@ -17,11 +17,13 @@ export async function generateMetadata({
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<Metadata> {
     const { firstSoft, secondSoft } =
-        await resolveComparisongSearchParams(searchParams);
+        await resolveComparisonSearchParams(searchParams);
+    const canonical = getCanonicalUrl(firstSoft, secondSoft);
 
     const defaultMeta: Metadata = {
         title: 'Software Comparison | betterstack',
         description: 'Compare software tools side-by-side in BetterStack.',
+        alternates: { canonical },
     };
 
     if (!firstSoft && !secondSoft) return defaultMeta;
@@ -73,16 +75,7 @@ export async function generateMetadata({
     }
 }
 
-function getComparisonMetadataForSingleSoftware(
-    soft: SoftwareDetail,
-): Metadata {
-    return {
-        title: `Compare ${soft.name} | betterstack`,
-        description: `Find alternatives and compare ${soft.name} with other software.`,
-    };
-}
-
-async function resolveComparisongSearchParams(
+async function resolveComparisonSearchParams(
     searchParams: Promise<{ firstSoft?: string; secondSoft?: string }>,
 ) {
     const resolvedParams = await searchParams;
@@ -99,6 +92,23 @@ async function resolveComparisongSearchParams(
     return { firstSoft, secondSoft };
 }
 
+function getComparisonMetadataForSingleSoftware(
+    soft: SoftwareDetail,
+): Metadata {
+    return {
+        title: `Compare ${soft.name} | betterstack`,
+        description: `Find alternatives and compare ${soft.name} with other software.`,
+    };
+}
+
+function getCanonicalUrl(first?: string, second?: string): URL {
+    const [a, b] = first && second ? [first, second].sort() : [first, second];
+    const url = absoluteUrl('/comparison');
+    if (a) url.searchParams.set('firstSoft', a);
+    if (b) url.searchParams.set('secondSoft', b);
+    return url;
+}
+
 function getComparisonUrl(first?: string, second?: string): string {
     const params = new URLSearchParams();
     if (first) params.set('firstSoft', first);
@@ -113,7 +123,7 @@ export default async function Comparison({
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
     const { firstSoft, secondSoft } =
-        await resolveComparisongSearchParams(searchParams);
+        await resolveComparisonSearchParams(searchParams);
     const serverClient = await createServerClient();
 
     if (firstSoft && secondSoft && firstSoft === secondSoft) {
