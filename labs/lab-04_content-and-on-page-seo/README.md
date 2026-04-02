@@ -101,15 +101,13 @@ H1: ___
 
 #### 1.4 - Оптимізація зображень
 
-Знайти на обраній сторінці мінімум **3 зображення** і заповнити таблицю:
-
 | Зображення   | Поточний alt | Поточний формат | Розмір файлу | Оптимізований alt | Рекомендований формат |
 |--------------|--------------|-----------------|--------------|-------------------|-----------------------|
 | ![Vim](https://www.vectorlogo.zone/logos/vim/vim-icon.svg) | Vim | `.svg`| 4.4 КБ | Vim text editor logo | `.svg` |
 | ![Screenshot 1](https://geo-jobe.com/wp-content/uploads/2023/05/image2.gif) | Screenshot 1 | `.gif` | 174 КБ | Vim interface showing code editing with syntax highlighting and version control markers | `.webp` |
 | ![Screenshot 2](https://www.vim.org/images/0xbabaf000l.png) | Screenshot 2 | `.png` | 146 КБ | Comic of a penguin rejecting Emacs as too heavy and Vim as too weird, then regretting choosing Notepad++ | `.webp` |
 
-Для одного з зображень виконати реальну конвертацію через **Squoosh**:
+Конвертація `image2.gif` через **Squoosh**:
 
 ```
 Вихідний файл:     image2.gif, розмір 174 КБ
