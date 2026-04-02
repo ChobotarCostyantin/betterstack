@@ -26,9 +26,6 @@ export class SoftwareComparisonSideDto {
     @ApiPropertyOptional()
     logoUrl: string | null;
 
-    @ApiProperty({ type: [String] })
-    screenshotUrls: string[];
-
     @ApiProperty()
     usageCount: number;
 

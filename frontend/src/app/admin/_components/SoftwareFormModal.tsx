@@ -71,9 +71,9 @@ export function SoftwareFormModal({
                         websiteUrl: detail.websiteUrl || '',
                         gitRepoUrl: detail.gitRepoUrl || '',
                         logoUrl: detail.logoUrl || '',
-                        screenshotUrls: Array.isArray(detail.screenshotUrls)
-                            ? detail.screenshotUrls.join('\n')
-                            : '',
+                        screenshotUrls: detail.screenshots
+                            .map((s) => s.url)
+                            .join('\n'),
                     });
 
                     if (detail.categories) {
@@ -160,10 +160,11 @@ export function SoftwareFormModal({
         setIsLoading(true);
 
         try {
-            const screenshotUrls = formData.screenshotUrls
+            const screenshots = formData.screenshotUrls
                 .split('\n')
                 .map((url) => url.trim())
-                .filter((url) => url.length > 0);
+                .filter((url) => url.length > 0)
+                .map((url) => ({ url }));
 
             const baseInput = {
                 ...(formData.slug && { slug: formData.slug }),
@@ -175,7 +176,7 @@ export function SoftwareFormModal({
                 ...(formData.websiteUrl && { websiteUrl: formData.websiteUrl }),
                 ...(formData.gitRepoUrl && { gitRepoUrl: formData.gitRepoUrl }),
                 ...(formData.logoUrl && { logoUrl: formData.logoUrl }),
-                ...(screenshotUrls.length > 0 && { screenshotUrls }),
+                ...(screenshots.length > 0 && { screenshots }),
                 ...(selectedCategoryIds.length > 0 && {
                     categoryIds: selectedCategoryIds,
                 }),

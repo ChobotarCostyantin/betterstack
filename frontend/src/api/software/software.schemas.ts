@@ -1,6 +1,12 @@
 import { z } from 'zod';
 import { CategoryListItemSchema } from '../categories/categories.schemas';
 
+export const ScreenshotSchema = z.object({
+    url: z.string().url(),
+    alt: z.string().optional(),
+});
+export type Screenshot = z.infer<typeof ScreenshotSchema>;
+
 export const SoftwareListItemSchema = z.object({
     id: z.number(),
     slug: z.string(),
@@ -35,7 +41,7 @@ export const SoftwareDetailSchema = z.object({
     websiteUrl: z.string().nullable(),
     gitRepoUrl: z.string().nullable(),
     logoUrl: z.string().nullable(),
-    screenshotUrls: z.array(z.string()),
+    screenshots: z.array(ScreenshotSchema),
     usageCount: z.number(),
     createdAt: z.string(),
     updatedAt: z.string(),
@@ -57,7 +63,6 @@ export const SoftwareComparisonSideSchema = z.object({
     websiteUrl: z.string().nullable(),
     gitRepoUrl: z.string().nullable(),
     logoUrl: z.string().nullable(),
-    screenshotUrls: z.array(z.string()),
     usageCount: z.number(),
     createdAt: z.string(),
     updatedAt: z.string(),
@@ -107,7 +112,7 @@ export const CreateSoftwareInputSchema = z.object({
     websiteUrl: z.string().url().optional(),
     gitRepoUrl: z.string().url().optional(),
     logoUrl: z.string().url().optional(),
-    screenshotUrls: z.array(z.string().url()).optional(),
+    screenshots: z.array(ScreenshotSchema).optional(),
 });
 export type CreateSoftwareInput = z.infer<typeof CreateSoftwareInputSchema>;
 

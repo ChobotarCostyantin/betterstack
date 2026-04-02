@@ -6,7 +6,20 @@ import {
     IsArray,
     IsNumber,
     IsUrl,
+    ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+
+export class ScreenshotItemDto {
+    @ApiProperty({ example: 'https://example.com/img1.png' })
+    @IsUrl()
+    url: string;
+
+    @ApiPropertyOptional({ example: 'Main dashboard view' })
+    @IsString()
+    @IsOptional()
+    alt?: string;
+}
 
 export class CreateSoftwareDto {
     @ApiProperty({
@@ -53,16 +66,12 @@ export class CreateSoftwareDto {
     @IsOptional()
     logoUrl?: string;
 
-    @ApiPropertyOptional({
-        example: [
-            'https://example.com/img1.png',
-            'https://example.com/img2.png',
-        ],
-    })
+    @ApiPropertyOptional({ type: [ScreenshotItemDto] })
     @IsArray()
-    @IsString({ each: true })
+    @ValidateNested({ each: true })
+    @Type(() => ScreenshotItemDto)
     @IsOptional()
-    screenshotUrls?: string[];
+    screenshots?: ScreenshotItemDto[];
 
     @ApiPropertyOptional({
         example: [1, 2, 3],
