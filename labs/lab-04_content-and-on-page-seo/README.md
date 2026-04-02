@@ -278,10 +278,8 @@ Vim вирізняється **modal editing** — системою режимі
 - terminal-based editor
 - code navigation
 - Neovim
-- portability
-- 
+- portability 
 
-## Таблиця вимог до тексту (п. 2.3)
 
 ## Таблиця вимог до SEO-тексту (п. 2.3)
 
