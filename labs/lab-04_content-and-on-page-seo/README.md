@@ -9,16 +9,18 @@
 Обрати одну сторінку зі свого проєкту (або будь-якого навчального сайту) для повного on-page аудиту.
 Заповнити таблицю поточного стану:
 
-| Елемент            | Поточне значення         | Відповідає нормі? | Проблема |
-|--------------------|--------------------------|-------------------|----------|
-| `<title>`          |                          | Так / Ні          |          |
-| `meta description` |                          | Так / Ні          |          |
-| `H1`               |                          | Так / Ні          |          |
-| Кількість H2       |                          | Так / Ні          |          |
-| URL                |                          | Так / Ні          |          |
-| Alt у зображень    | є / відсутній / частково | Так / Ні          |          |
-| Schema.org         | є / відсутня             | Так / Ні          |          |
-| Canonical          | є / відсутній            | Так / Ні          |          |
+https://betterstack.tech/article/vim
+
+| Елемент            | Поточне значення                                                                                         | Відповідає нормі? | Проблема                                                                                                                                                                                                                                                                                                                     |
+|--------------------|----------------------------------------------------------------------------------------------------------|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `<title>`          | `Vim \| betterstack`                                                                                     | Ні                | Заголовок генерується автоматично за шаблоном `${software.name} \| betterstack` (наприклад, `Vim \| betterstack`).Він занадто короткий і не містить уточнюючих ключових слів (таких як review, guide, text editor), через що втрачається цільовий пошуковий трафік.                                                                  |
+| `meta description` | `A highly configurable text editor built to make creating and changing any kind of text very efficient.` | Ні                | Поточний опис (104 символи) закороткий (норма 150–160) і не містить заклику до дії (CTA). Також він описує лише сам редактор, але не дає розуміння, що саме чекає на користувача на сторінці (наприклад, що це детальний огляд з плюсами, мінусами та альтернативами), через що сніппет виглядає менш привабливим для кліку. |
+| `H1`               | `Vim`                                                                                                    | Ні                | Не оптимізований, не містить уточнюючих LSI-слів (бракує контексту, що це саме огляд редактора).                                                                                                                                                                                                                             |
+| Кількість H2       | `3 (Overview, Pros and Cons, Alternatives)`                                                              | Так               | Структура є, але заголовки занадто загальні, їх варто розширити ключовими словами.                                                                                                                                                                                                                                           |
+| URL                | `/article/vim`                                                                                           | Так               | ЧПУ в нижньому регістрі, без зайвих параметрів, відповідає нормам.                                                                                                                                                                                                                                                           |
+| Alt у зображень    | є                                                                                                        | Так               | Описовий текст присутній (хоча можна зробити його ще більш детальним).                                                                                                                                                                                                                                                       |
+| Schema.org         | відсутня                                                                                                 | Ні                | У коді сторінки відсутня мікророзмітка JSON-LD (є лише OpenGraph теги).                                                                                                                                                                                                                                                      |
+| Canonical          | є                                                                                                        | Так               | Присутній, формується динамічно та правильно вказує на поточну сторінку.                                                                                                                                                                                                                                                     |
 
 Норми для перевірки:
 
@@ -39,35 +41,37 @@
 **Title:**
 
 ```
-До:    [вставити поточний title]
-Після: [вписати оптимізований варіант]
-Довжина: ___ символів
-Позиція ключового слова: перше слово / перші 3 слова / інше
+До:    `Vim | betterstack`
+Після: `Vim Review: Features, Pros & Alternatives | betterstack`
+Довжина: Динамічна (для Vim — 58 символів)
+Позиція ключового слова: перші 2 слова
 ```
 
 **Meta description:**
 
 ```
-До:    [вставити поточний або написати що відсутній]
-Після: [вписати оптимізований варіант]
-Довжина: ___ символів
-Є CTA (заклик до дії): Так / Ні
+До:    A highly configurable text editor built to make creating and changing any kind of text very efficient.`
+Після: `Explore our comprehensive Vim review. Learn about its features, pros, cons, and alternatives. A highly configurable text editor built to make creating and changing any kind of text very efficient.`
+Довжина: Динамічна (~130–160 символів, залежить від довжини shortDescription)
+Є CTA (заклик до дії): Так ("Explore our comprehensive review", "Learn about...")
 ```
 
 **H1:**
 
 ```
-До:    [вставити поточний]
-Після: [вписати оптимізований варіант]
-Містить цільовий запит: Так / Ні
+До:    Vim
+Після: Vim
+Містить цільовий запит: Частково (містить бренд/назву продукту). 
+*Примітка:* Для UI/UX залишаємо H1 коротким, а ключові слова ("review", "text editor") виносимо у Title та H2. 
+(Як альтернатива в коді можна зробити м'який суфікс: <h1>Vim Review</h1>, але оригінальний 'Vim' теж є нормою для каталогів).
 ```
 
 **URL:**
 
 ```
-До:    [вставити поточний URL]
-Після: [вписати оптимізований варіант]
-Зміни: [описати що виправлено]
+До:    /article/[slug]
+Після: /article/[slug]
+Зміни: Не потребує змін. Поточний URL відповідає вимогам (ЧПУ, нижній регістр, без спецсимволів).
 ```
 
 #### 1.3 - Оптимізація структури заголовків
@@ -77,35 +81,43 @@
 Після цього запропонувати виправлену структуру заголовків у форматі дерева:
 
 ```
-Приклад правильної структури:
-H1: Apple MacBook Pro M3 14 - огляд та характеристики
-  H2: Технічні характеристики
-    H3: Процесор та продуктивність
-    H3: Дисплей
-    H3: Автономність
-  H2: Для кого підходить
-    H3: Розробники
-    H3: Дизайнери
-  H2: Порівняння з конкурентами
-  H2: Висновок
+До:
+H1: Vim
+    H3: Categories
+  H2: Description
+  H2: Review
+    H3: Efficiency
+    H3: Configuration Example
+    H3: Written by 
+  H2: Screenshots
+  H2: Pros & Cons
+    H3: Pros of Vim 
+  H2: Alternatives to Vim 
 
-Заповнити власну структуру:
-H1: ___
-  H2: ___
-    H3: ___
-  H2: ___
-  ...
+Після:
+H1: Vim
+  H2: Categories
+  H2: Description
+  H2: Review
+    H3: Efficiency
+    H3: Configuration Example
+    H3: Written by 
+  H2: Screenshots
+  H2: Pros & Cons
+    H3: Pros of Vim 
+    H3: Cons of Vim
+  H2: Alternatives to Vim
 ```
 
-**Пояснення:** у 2–3 реченнях обґрунтувати чому саме така структура, які ключові слова закладено в H2–H3.
+**Пояснення:** Структуру приведено до семантичної норми: усунуто пропуск рівнів (тепер `Categories` — це H2, а не H3). У заголовки органічно вписані LSI-слова (наприклад, замість статичного `Alternatives` використано динамічне `Alternatives to Vim`, що значно покращує ранжування сторінки за запитами типу "Vim alternatives").
 
 #### 1.4 - Оптимізація зображень
 
-| Зображення   | Поточний alt | Поточний формат | Розмір файлу | Оптимізований alt | Рекомендований формат |
-|--------------|--------------|-----------------|--------------|-------------------|-----------------------|
-| ![Vim](https://www.vectorlogo.zone/logos/vim/vim-icon.svg) | Vim | `.svg`| 4.4 КБ | Vim text editor logo | `.svg` |
-| ![Screenshot 1](https://geo-jobe.com/wp-content/uploads/2023/05/image2.gif) | Screenshot 1 | `.gif` | 174 КБ | Vim interface showing code editing with syntax highlighting and version control markers | `.webp` |
-| ![Screenshot 2](https://www.vim.org/images/0xbabaf000l.png) | Screenshot 2 | `.png` | 146 КБ | Comic of a penguin rejecting Emacs as too heavy and Vim as too weird, then regretting choosing Notepad++ | `.webp` |
+| Зображення                                                                  | Поточний alt | Поточний формат | Розмір файлу | Оптимізований alt                                                                                        | Рекомендований формат |
+|-----------------------------------------------------------------------------|--------------|-----------------|--------------|----------------------------------------------------------------------------------------------------------|-----------------------|
+| ![Vim](https://www.vectorlogo.zone/logos/vim/vim-icon.svg)                  | Vim          | `.svg`          | 4.4 КБ       | Vim text editor logo                                                                                     | `.svg`                |
+| ![Screenshot 1](https://geo-jobe.com/wp-content/uploads/2023/05/image2.gif) | Screenshot 1 | `.gif`          | 174 КБ       | Vim interface showing code editing with syntax highlighting and version control markers                  | `.webp`               |
+| ![Screenshot 2](https://www.vim.org/images/0xbabaf000l.png)                 | Screenshot 2 | `.png`          | 146 КБ       | Comic of a penguin rejecting Emacs as too heavy and Vim as too weird, then regretting choosing Notepad++ | `.webp`               |
 
 Конвертація `image2.gif` через **Squoosh**:
 
@@ -131,34 +143,37 @@ H1: ___
 | FAQ-секція            | `FAQPage`        |
 | Хлібні крихти         | `BreadcrumbList` |
 
-Шаблон для заповнення (тип `Article` як приклад):
-
 ```json
 {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": "",
-    "description": "",
-    "author": {
-        "@type": "Person",
-        "name": "",
-        "url": ""
-    },
-    "publisher": {
-        "@type": "Organization",
-        "name": "",
-        "logo": {
-            "@type": "ImageObject",
-            "url": ""
-        }
-    },
-    "datePublished": "",
-    "dateModified": "",
-    "image": ""
+   "@context": "https://schema.org",
+   "@type": "Article",
+   "headline": "Vim Review, Features & Alternatives | betterstack",
+   "description": "Explore our comprehensive Vim review. Learn about its features, pros, cons, and alternatives. A highly configurable text editor built to make creating and changing any kind of text very efficient.",
+   "image": "https://betterstack.tech/assets/logo.svg",
+   "author": {
+      "@type": "Person",
+      "name": "Tesey",
+      "url": "https://betterstack.tech/profile/1"
+   },
+   "publisher": {
+      "@type": "Organization",
+      "name": "betterstack",
+      "logo": {
+         "@type": "ImageObject",
+         "url": "https://betterstack.tech/assets/logo.svg"
+      }
+   },
+   "datePublished": "2026-04-02T00:00+08:00",
+   "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://betterstack.tech/article/vim"
+   }
 }
 ```
 
 Після написання - перевірити розмітку у **Google Rich Results Test** та додати скріншот результату.
+
+![Google Rich Results Test](./media/google-rich-results-test.png)
 
 ---
 
