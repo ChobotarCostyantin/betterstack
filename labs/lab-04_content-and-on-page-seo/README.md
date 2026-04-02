@@ -83,7 +83,7 @@ https://betterstack.tech/article/vim
 ```
 До:
 H1: Vim
-    H3: Categories
+  H2: Categories
   H2: Description
   H2: Review
     H3: Efficiency
@@ -109,7 +109,7 @@ H1: Vim
   H2: Alternatives to Vim
 ```
 
-**Пояснення:** Структуру приведено до семантичної норми: усунуто пропуск рівнів (тепер `Categories` — це H2, а не H3). У заголовки органічно вписані LSI-слова (наприклад, замість статичного `Alternatives` використано динамічне `Alternatives to Vim`, що значно покращує ранжування сторінки за запитами типу "Vim alternatives").
+**Пояснення:** У заголовки органічно вписані LSI-слова (наприклад, замість статичного `Alternatives` використано динамічне `Alternatives to Vim`, що значно покращує ранжування сторінки за запитами типу "Vim alternatives").
 
 #### 1.4 - Оптимізація зображень
 
