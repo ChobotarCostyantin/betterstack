@@ -209,9 +209,9 @@ export default async function SoftwareArticlePage({
             </header>
 
             <section className="mb-8 sm:mb-10">
-                <h3 className="text-sm sm:text-md font-semibold uppercase tracking-wider text-gray-400 mb-3">
+                <h2 className="text-sm sm:text-md font-semibold uppercase tracking-wider text-gray-400 mb-3">
                     Categories
-                </h3>
+                </h2>
                 <div>
                     {categoryNames.length === 0 && (
                         <p className="text-base sm:text-lg font-medium">
