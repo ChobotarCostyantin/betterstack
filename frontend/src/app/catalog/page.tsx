@@ -12,15 +12,16 @@ import CategoryList from './_components/CategoryList';
 import CatalogSearchBar from './_components/CatalogSearchBar';
 import { CategoryListItem } from '@/src/api/categories/categories.schemas';
 import { Metadata } from 'next';
+import { absoluteUrl } from '@/src/lib/url';
+
+const canonical = absoluteUrl('/catalog');
 
 export const metadata: Metadata = {
     title: 'Catalog | betterstack',
     description: 'View and choose the best software.',
+    alternates: { canonical },
     openGraph: {
-        url: new URL(
-            '/catalog',
-            process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
-        ),
+        url: canonical,
         images: [
             {
                 url: '/opengraph-image',

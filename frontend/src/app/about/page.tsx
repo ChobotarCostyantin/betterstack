@@ -1,11 +1,13 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
 import Image from 'next/image';
+import { absoluteUrl } from '@/src/lib/url';
 
 export const metadata: Metadata = {
     title: 'About | BetterStack',
     description:
         'Information about the project, authors, and technology stack.',
+    alternates: { canonical: absoluteUrl('/about') },
 };
 
 const projectRepo = 'https://github.com/TeseySTD/betterstack';
