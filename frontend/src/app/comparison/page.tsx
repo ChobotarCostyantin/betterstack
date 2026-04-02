@@ -8,8 +8,98 @@ import SoftwareSelector from './_components/SoftwareSelector';
 import ComparisonDetails from './_components/ComparisonDetails';
 import ComparisonError from './_components/ComparisonError';
 import { Metadata } from 'next';
+import { absoluteUrl } from '@/src/lib/url';
+import { SoftwareDetail } from '@/src/api/software/software.schemas';
 
-function getComparisonUrl(first?: string, second?: string) {
+export async function generateMetadata({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}): Promise<Metadata> {
+    const { firstSoft, secondSoft } =
+        await resolveComparisongSearchParams(searchParams);
+
+    const defaultMeta: Metadata = {
+        title: 'Software Comparison | betterstack',
+        description: 'Compare software tools side-by-side in BetterStack.',
+    };
+
+    if (!firstSoft && !secondSoft) return defaultMeta;
+
+    const ogUrl = absoluteUrl('/comparison/comparison-og');
+    if (firstSoft) ogUrl.searchParams.set('firstSoft', firstSoft);
+    if (secondSoft) ogUrl.searchParams.set('secondSoft', secondSoft);
+
+    defaultMeta['openGraph'] = {
+        images: [{ url: ogUrl.toString(), width: 1200, height: 630 }],
+    };
+
+    try {
+        const serverClient = await createServerClient();
+
+        if (!firstSoft || !secondSoft) {
+            const activeSlug = firstSoft || secondSoft;
+            const soft = await getSoftwareBySlug(
+                serverClient,
+                activeSlug!,
+            ).catch(() => null);
+
+            return soft
+                ? getComparisonMetadataForSingleSoftware(soft)
+                : defaultMeta;
+        }
+
+        const [soft1, soft2] = await Promise.all([
+            getSoftwareBySlug(serverClient, firstSoft).catch(() => null),
+            getSoftwareBySlug(serverClient, secondSoft).catch(() => null),
+        ]);
+
+        if (!soft1 && !soft2) {
+            return defaultMeta;
+        }
+
+        if (!soft1 || !soft2) {
+            const activeSoft = soft1 || soft2;
+            return getComparisonMetadataForSingleSoftware(activeSoft!);
+        }
+
+        return {
+            ...defaultMeta,
+            title: `${soft1.name} vs ${soft2.name} | betterstack`,
+            description: `Detailed comparison between ${soft1.name} and ${soft2.name}. Compare pros, cons, and metrics.`,
+        };
+    } catch {
+        return {};
+    }
+}
+
+function getComparisonMetadataForSingleSoftware(
+    soft: SoftwareDetail,
+): Metadata {
+    return {
+        title: `Compare ${soft.name} | betterstack`,
+        description: `Find alternatives and compare ${soft.name} with other software.`,
+    };
+}
+
+async function resolveComparisongSearchParams(
+    searchParams: Promise<{ firstSoft?: string; secondSoft?: string }>,
+) {
+    const resolvedParams = await searchParams;
+
+    const firstSoft =
+        typeof resolvedParams?.firstSoft === 'string'
+            ? resolvedParams.firstSoft
+            : undefined;
+    const secondSoft =
+        typeof resolvedParams?.secondSoft === 'string'
+            ? resolvedParams.secondSoft
+            : undefined;
+
+    return { firstSoft, secondSoft };
+}
+
+function getComparisonUrl(first?: string, second?: string): string {
     const params = new URLSearchParams();
     if (first) params.set('firstSoft', first);
     if (second) params.set('secondSoft', second);
@@ -17,119 +107,13 @@ function getComparisonUrl(first?: string, second?: string) {
     return query ? `/comparison?${query}` : '/comparison';
 }
 
-export async function generateMetadata({
-    searchParams,
-}: {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}): Promise<Metadata> {
-    const resolvedParams = await searchParams;
-    const firstSoft =
-        typeof resolvedParams?.firstSoft === 'string'
-            ? resolvedParams.firstSoft
-            : undefined;
-    const secondSoft =
-        typeof resolvedParams?.secondSoft === 'string'
-            ? resolvedParams.secondSoft
-            : undefined;
-
-    const ogUrl = new URL(
-        '/comparison/comparison-og',
-        process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
-    );
-    if (firstSoft) ogUrl.searchParams.set('firstSoft', firstSoft as string);
-    if (secondSoft) ogUrl.searchParams.set('secondSoft', secondSoft as string);
-
-    if (!firstSoft && !secondSoft) {
-        return {
-            title: 'Software Comparison | betterstack',
-            description: 'Compare software tools side-by-side in BetterStack.',
-        };
-    }
-
-    const serverClient = await createServerClient();
-
-    try {
-        if (firstSoft && secondSoft) {
-            const [soft1, soft2] = await Promise.all([
-                getSoftwareBySlug(serverClient, firstSoft).catch(() => null),
-                getSoftwareBySlug(serverClient, secondSoft).catch(() => null),
-            ]);
-
-            if (soft1 && soft2) {
-                return {
-                    title: `${soft1.name} vs ${soft2.name} | betterstack`,
-                    description: `Detailed comparison between ${soft1.name} and ${soft2.name}. Compare pros, cons, and metrics.`,
-                    openGraph: {
-                        images: [
-                            {
-                                url: ogUrl.toString(),
-                                width: 1200,
-                                height: 630,
-                            },
-                        ],
-                    },
-                };
-            }
-        }
-
-        const activeSlug = firstSoft || secondSoft;
-        if (activeSlug) {
-            const soft = await getSoftwareBySlug(
-                serverClient,
-                activeSlug,
-            ).catch(() => null);
-            if (soft) {
-                return {
-                    title: `Compare ${soft.name} | betterstack`,
-                    description: `Find alternatives and compare ${soft.name} with other software.`,
-                    openGraph: {
-                        images: [
-                            {
-                                url: ogUrl.toString(),
-                                width: 1200,
-                                height: 630,
-                            },
-                        ],
-                    },
-                };
-            }
-        }
-    } catch {
-        return {
-            title: 'Comparison | betterstack',
-            description: 'Compare software in BetterStack',
-        };
-    }
-
-    return {
-        title: 'Comparison | betterstack',
-        description: 'Compare software in BetterStack',
-        openGraph: {
-            images: [
-                {
-                    url: ogUrl.toString(),
-                    width: 1200,
-                    height: 630,
-                },
-            ],
-        },
-    };
-}
-
 export default async function Comparison({
     searchParams,
 }: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-    const resolvedParams = await searchParams;
-    const firstSoft =
-        typeof resolvedParams?.firstSoft === 'string'
-            ? resolvedParams.firstSoft
-            : undefined;
-    const secondSoft =
-        typeof resolvedParams?.secondSoft === 'string'
-            ? resolvedParams.secondSoft
-            : undefined;
+    const { firstSoft, secondSoft } =
+        await resolveComparisongSearchParams(searchParams);
     const serverClient = await createServerClient();
 
     if (firstSoft && secondSoft && firstSoft === secondSoft) {
