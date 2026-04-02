@@ -30,6 +30,6 @@ export async function logout(client: KyInstance): Promise<void> {
 }
 
 export async function me(client: KyInstance): Promise<User> {
-    const raw = await client.get('auth/me').json();
+    const raw = await client.get('auth/me', { throwHttpErrors: false }).json();
     return unwrapResponse(UserSchema, raw);
 }
