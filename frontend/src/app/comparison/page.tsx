@@ -112,8 +112,8 @@ function getCanonicalUrl(first?: string, second?: string): URL {
     const [a, b] = first && second ? [first, second].sort() : [first, second];
     const url = absoluteUrl('/comparison');
 
-    a && url.searchParams.set('firstSoft', a);
-    b && url.searchParams.set('secondSoft', b);
+    if (a) url.searchParams.set('firstSoft', a);
+    if (b) url.searchParams.set('secondSoft', b);
 
     return url;
 }
@@ -121,8 +121,8 @@ function getCanonicalUrl(first?: string, second?: string): URL {
 function getComparisonUrl(first?: string, second?: string): string {
     const params = new URLSearchParams();
 
-    first && params.set('firstSoft', first);
-    second && params.set('secondSoft', second);
+    if (first) params.set('firstSoft', first);
+    if (second) params.set('secondSoft', second);
 
     return params.size ? `/comparison?${params}` : '/comparison';
 }
