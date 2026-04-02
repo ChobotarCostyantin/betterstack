@@ -144,7 +144,7 @@ export default async function Comparison({
             );
             software1 = comparison.softwareA;
             software2 = comparison.softwareB;
-        } catch (error) {
+        } catch {
             hasComparisonError = true;
             [software1, software2] = await Promise.all([
                 getSoftwareBySlug(serverClient, firstSoft).catch(() => null),

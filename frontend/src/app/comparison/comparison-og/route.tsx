@@ -52,6 +52,7 @@ export async function GET(request: Request) {
             }}
         >
             {software.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                     src={software.logoUrl}
                     alt={software.name}
