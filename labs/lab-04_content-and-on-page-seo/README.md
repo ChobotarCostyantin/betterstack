@@ -118,6 +118,8 @@ H1: ___
 Економія:          60% від початкового розміру
 ```
 
+![Squoosh image optimization showcase](./media/squoosh-optimization.png)
+
 #### 1.5 - Schema.org розмітка
 
 Написати JSON-LD розмітку для обраної сторінки. Тип обрати відповідно до контенту:
