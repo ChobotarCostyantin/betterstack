@@ -26,9 +26,6 @@ export class SoftwareComparisonSideDto {
     @ApiPropertyOptional()
     logoUrl: string | null;
 
-    @ApiProperty({ type: [String] })
-    screenshotUrls: string[];
-
     @ApiProperty()
     usageCount: number;
 
@@ -103,7 +100,4 @@ export class SoftwareComparisonDto {
 
     @ApiProperty({ type: [FactorComparisonItemDto] })
     factorsComparison: FactorComparisonItemDto[];
-
-    @ApiPropertyOptional({ nullable: true, type: String })
-    comparisonNote: string | null;
 }

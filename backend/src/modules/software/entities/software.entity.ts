@@ -11,7 +11,6 @@ import {
 import type { Category } from '@modules/categories/entities/category.entity';
 import { SoftwareFactor } from './software-factor.entity';
 import { SoftwareMetric } from './software-metric.entity';
-import { SoftwareComparisonNote } from './software-comparison-note.entity';
 
 @Entity('software')
 export class Software {
@@ -31,8 +30,6 @@ export class Software {
     shortDescription: string;
 
     @Column({ type: 'text', nullable: true })
-    fullDescription: string | null;
-
     @Column({ type: 'varchar', nullable: true })
     websiteUrl: string | null;
 
@@ -42,8 +39,8 @@ export class Software {
     @Column({ type: 'varchar', nullable: true })
     logoUrl: string | null;
 
-    @Column('text', { array: true, default: [] })
-    screenshotUrls: string[];
+    @Column({ type: 'jsonb', default: [] })
+    screenshots: { url: string; alt?: string }[];
 
     @Column({ type: 'int', default: 0 })
     usageCount: number;
@@ -67,10 +64,4 @@ export class Software {
 
     @OneToMany(() => SoftwareMetric, (sm) => sm.software)
     softwareMetrics: SoftwareMetric[];
-
-    @OneToMany(() => SoftwareComparisonNote, (note) => note.softwareA)
-    comparisonsAsA: SoftwareComparisonNote[];
-
-    @OneToMany(() => SoftwareComparisonNote, (note) => note.softwareB)
-    comparisonsAsB: SoftwareComparisonNote[];
 }

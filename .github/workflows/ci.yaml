@@ -1,6 +1,9 @@
 name: Run CI
 
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - "feat/labs"
 
 jobs:
   lint:

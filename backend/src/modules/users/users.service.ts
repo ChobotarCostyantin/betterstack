@@ -100,12 +100,12 @@ export class UsersService implements OnModuleInit {
         );
     }
 
-    async makeAdmin(id: number): Promise<UserDto> {
+    async updateRole(id: number, role: Role): Promise<UserDto> {
         const user = await this.userRepo.findOneBy({ id });
         if (!user) {
             throw new NotFoundException(`User with ID ${id} not found`);
         }
-        user.role = Role.ADMIN;
+        user.role = role;
         const updated = await this.userRepo.save(user);
         return UserDto.from(updated);
     }
@@ -155,8 +155,43 @@ export class UsersService implements OnModuleInit {
     async hasUserUsedSoftware(
         userId: number,
         softwareId: number,
-    ): Promise<boolean> {
-        return this.usageRepo.existsBy({ userId, softwareId });
+    ): Promise<{ isUsed: boolean }> {
+        const isUsed = await this.usageRepo.existsBy({ userId, softwareId });
+        return { isUsed };
+    }
+
+    async updateProfile(
+        userId: number,
+        dto: import('./dto/user.dto').UpdateUserProfileDto,
+    ): Promise<AuthResult> {
+        const user = await this.userRepo.findOneBy({ id: userId });
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+
+        if (dto.fullName !== undefined) user.fullName = dto.fullName;
+        if (dto.bio !== undefined) user.bio = dto.bio;
+        if (dto.avatarUrl !== undefined) user.avatarUrl = dto.avatarUrl;
+        if (dto.websiteUrl !== undefined) user.websiteUrl = dto.websiteUrl;
+
+        const updated = await this.userRepo.save(user);
+        return this.buildAuthResult(updated);
+    }
+
+    async findOne(id: number): Promise<UserDto> {
+        const user = await this.userRepo.findOneBy({ id });
+        if (!user) {
+            throw new NotFoundException(`User with ID ${id} not found`);
+        }
+        return UserDto.from(user);
+    }
+
+    async getUserSoftwareStack(userId: number): Promise<SoftwareUsage[]> {
+        return this.usageRepo.find({
+            where: { userId },
+            relations: ['software', 'software.categories'],
+            order: { createdAt: 'DESC' },
+        });
     }
 
     private buildAuthResult(user: User): AuthResult {
@@ -164,6 +199,9 @@ export class UsersService implements OnModuleInit {
             id: user.id,
             email: user.email,
             role: user.role,
+            fullName: user.fullName,
+            bio: user.bio,
+            avatarUrl: user.avatarUrl,
         });
         return { token, user: UserDto.from(user) };
     }

@@ -72,11 +72,14 @@ export class AuthController {
     @ApiOperation({ summary: 'Return the currently authenticated user' })
     @ApiOkResponse({ type: DataOf(UserDto) })
     me(@Req() req: AuthenticatedRequest): UserDto {
-        const { id, email, role } = req.user;
+        const { id, email, role, fullName, bio, avatarUrl } = req.user;
         const dto = new UserDto();
         dto.id = id;
         dto.email = email;
         dto.role = role;
+        dto.fullName = fullName;
+        dto.bio = bio;
+        dto.avatarUrl = avatarUrl;
         return dto;
     }
 }

@@ -1,6 +1,12 @@
 import { z } from 'zod';
 import { CategoryListItemSchema } from '../categories/categories.schemas';
 
+export const ScreenshotSchema = z.object({
+    url: z.string().url(),
+    alt: z.string().optional(),
+});
+export type Screenshot = z.infer<typeof ScreenshotSchema>;
+
 export const SoftwareListItemSchema = z.object({
     id: z.number(),
     slug: z.string(),
@@ -32,11 +38,10 @@ export const SoftwareDetailSchema = z.object({
     name: z.string(),
     developer: z.string(),
     shortDescription: z.string(),
-    fullDescription: z.string().nullable(),
     websiteUrl: z.string().nullable(),
     gitRepoUrl: z.string().nullable(),
     logoUrl: z.string().nullable(),
-    screenshotUrls: z.array(z.string()),
+    screenshots: z.array(ScreenshotSchema),
     usageCount: z.number(),
     createdAt: z.string(),
     updatedAt: z.string(),
@@ -58,7 +63,6 @@ export const SoftwareComparisonSideSchema = z.object({
     websiteUrl: z.string().nullable(),
     gitRepoUrl: z.string().nullable(),
     logoUrl: z.string().nullable(),
-    screenshotUrls: z.array(z.string()),
     usageCount: z.number(),
     createdAt: z.string(),
     updatedAt: z.string(),
@@ -97,7 +101,6 @@ export const SoftwareComparisonSchema = z.object({
     softwareB: SoftwareComparisonSideSchema,
     metricsComparison: z.array(MetricComparisonEntrySchema),
     factorsComparison: z.array(FactorComparisonEntrySchema),
-    comparisonNote: z.string().nullable(),
 });
 export type SoftwareComparison = z.infer<typeof SoftwareComparisonSchema>;
 
@@ -106,11 +109,10 @@ export const CreateSoftwareInputSchema = z.object({
     name: z.string().max(50),
     developer: z.string().optional(),
     shortDescription: z.string(),
-    fullDescription: z.string().optional(),
     websiteUrl: z.string().url().optional(),
     gitRepoUrl: z.string().url().optional(),
     logoUrl: z.string().url().optional(),
-    screenshotUrls: z.array(z.string().url()).optional(),
+    screenshots: z.array(ScreenshotSchema).optional(),
 });
 export type CreateSoftwareInput = z.infer<typeof CreateSoftwareInputSchema>;
 

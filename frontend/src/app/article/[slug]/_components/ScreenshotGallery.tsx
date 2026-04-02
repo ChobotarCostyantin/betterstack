@@ -20,6 +20,7 @@ export default function ScreenshotGallery({
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
+    const [isScrollable, setIsScrollable] = useState(false);
     const [isLoadingFullscreen, setIsLoadingFullscreen] = useState(true);
 
     const mounted = useSyncExternalStore(
@@ -34,18 +35,26 @@ export default function ScreenshotGallery({
         if (!carouselRef.current) return;
         const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
 
-        setCanScrollLeft(scrollLeft > 0);
-        setCanScrollRight(Math.ceil(scrollLeft + clientWidth) < scrollWidth);
+        setIsScrollable(scrollWidth > Math.ceil(clientWidth) + 1);
+        setCanScrollLeft(scrollLeft > 2);
+        setCanScrollRight(
+            Math.ceil(scrollLeft + clientWidth) < scrollWidth - 2,
+        );
     };
 
     useEffect(() => {
-        updateScrollState();
-
+        const timeoutId = setTimeout(updateScrollState, 100);
         const ref = carouselRef.current;
-        if (ref) ref.addEventListener('scroll', updateScrollState);
+
+        if (ref) {
+            ref.addEventListener('scroll', updateScrollState, {
+                passive: true,
+            });
+        }
         window.addEventListener('resize', updateScrollState);
 
         return () => {
+            clearTimeout(timeoutId);
             if (ref) ref.removeEventListener('scroll', updateScrollState);
             window.removeEventListener('resize', updateScrollState);
         };
@@ -60,11 +69,7 @@ export default function ScreenshotGallery({
     }, [selectedImage]);
 
     useEffect(() => {
-        if (selectedImage) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
+        document.body.style.overflow = selectedImage ? 'hidden' : 'unset';
         return () => {
             document.body.style.overflow = 'unset';
         };
@@ -73,18 +78,25 @@ export default function ScreenshotGallery({
     if (!screenshots || screenshots.length === 0) return null;
 
     const scroll = (direction: 'left' | 'right') => {
-        if (carouselRef.current) {
-            const firstChild = carouselRef.current
-                .firstElementChild as HTMLElement | null;
-            const itemWidth = firstChild?.offsetWidth || 0;
-            const gap = 16;
-            const scrollAmount = itemWidth + gap;
+        if (!carouselRef.current) return;
+        const container = carouselRef.current;
+        const firstChild = container.firstElementChild as HTMLElement;
+        if (!firstChild) return;
 
-            carouselRef.current.scrollBy({
-                left: direction === 'left' ? -scrollAmount : scrollAmount,
-                behavior: 'smooth',
-            });
-        }
+        const containerStyle = window.getComputedStyle(container);
+        const gap = parseFloat(containerStyle.gap) || 0;
+        const itemWidth = firstChild.offsetWidth + gap;
+
+        const visibleItems = Math.max(
+            1,
+            Math.floor(container.clientWidth / itemWidth),
+        );
+        const scrollAmount = itemWidth * visibleItems;
+
+        container.scrollBy({
+            left: direction === 'left' ? -scrollAmount : scrollAmount,
+            behavior: 'smooth',
+        });
     };
 
     const handleImageSelect = (url: string) => {
@@ -104,21 +116,22 @@ export default function ScreenshotGallery({
             </h2>
 
             <div className="relative group">
-                <button
-                    onClick={(e) => {
-                        e.preventDefault();
-                        scroll('left');
-                    }}
-                    disabled={!canScrollLeft}
-                    className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-zinc-800/80 text-zinc-200 rounded-full md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-zinc-700 hover:text-white hover:scale-110 shadow-lg backdrop-blur-sm disabled:opacity-0 disabled:pointer-events-none"
-                    aria-label="Previous Screenshot"
-                >
-                    <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-                </button>
+                {isScrollable && canScrollLeft && (
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            scroll('left');
+                        }}
+                        className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-zinc-800/80 text-zinc-200 rounded-full md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-zinc-700 hover:text-white hover:scale-110 shadow-lg backdrop-blur-sm"
+                        aria-label="Previous Screenshot"
+                    >
+                        <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </button>
+                )}
 
                 <div
                     ref={carouselRef}
-                    className="flex gap-3 sm:gap-4 overflow-x-auto snap-x snap-mandatory pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden items-center"
+                    className="flex gap-3 sm:gap-4 overflow-x-auto snap-x snap-mandatory pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden items-center scroll-smooth"
                 >
                     {screenshots.map((url, index) => (
                         <ScreenshotItem
@@ -130,17 +143,18 @@ export default function ScreenshotGallery({
                     ))}
                 </div>
 
-                <button
-                    onClick={(e) => {
-                        e.preventDefault();
-                        scroll('right');
-                    }}
-                    disabled={!canScrollRight}
-                    className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-zinc-800/80 text-zinc-200 rounded-full md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-zinc-700 hover:text-white hover:scale-110 shadow-lg backdrop-blur-sm disabled:opacity-0 disabled:pointer-events-none"
-                    aria-label="Next Screenshot"
-                >
-                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-                </button>
+                {isScrollable && canScrollRight && (
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            scroll('right');
+                        }}
+                        className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-zinc-800/80 text-zinc-200 rounded-full md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-zinc-700 hover:text-white hover:scale-110 shadow-lg backdrop-blur-sm"
+                        aria-label="Next Screenshot"
+                    >
+                        <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </button>
+                )}
             </div>
 
             {selectedImage &&
@@ -148,17 +162,17 @@ export default function ScreenshotGallery({
                 typeof document !== 'undefined' &&
                 createPortal(
                     <div
-                        className="fixed inset-0 z-9999 bg-black/95 flex items-center justify-center p-2 sm:p-4 md:p-12 cursor-zoom-out backdrop-blur-md"
+                        className="fixed inset-0 z-9999 bg-black/95 flex items-center justify-center p-4 md:p-8 cursor-zoom-out backdrop-blur-md"
                         onClick={closeFullscreen}
                     >
                         <div
-                            className="relative flex items-center justify-center cursor-default max-w-full max-h-full"
+                            className="relative w-full h-full max-w-7xl flex items-center justify-center cursor-default"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {!isLoadingFullscreen && (
                                 <button
                                     onClick={closeFullscreen}
-                                    className="absolute top-2 right-2 sm:-top-4 sm:-right-4 md:-top-5 md:-right-5 z-10000 p-1.5 md:p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer bg-zinc-900/80 sm:bg-zinc-900 border border-zinc-700 shadow-xl rounded-full backdrop-blur-sm sm:backdrop-blur-none"
+                                    className="absolute top-0 right-0 z-10000 p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer bg-zinc-900/80 border border-zinc-700 shadow-xl rounded-full backdrop-blur-sm"
                                     aria-label="Close"
                                 >
                                     <X className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -174,9 +188,8 @@ export default function ScreenshotGallery({
                             <Image
                                 src={selectedImage}
                                 alt="Screenshot Fullscreen"
-                                width={1920}
-                                height={1080}
-                                className={`object-contain w-auto h-auto max-w-[95vw] sm:max-w-full max-h-[85vh] sm:max-h-[90vh] rounded-lg shadow-2xl transition-opacity duration-300 ${
+                                fill
+                                className={`object-contain transition-opacity duration-300 ${
                                     isLoadingFullscreen
                                         ? 'opacity-0'
                                         : 'opacity-100'

@@ -8,7 +8,6 @@ import { Repository } from 'typeorm';
 
 import { Software } from '../entities/software.entity';
 import { SoftwareFactor } from '../entities/software-factor.entity';
-import { SoftwareComparisonNote } from '../entities/software-comparison-note.entity';
 import { PaginatedResponseDto } from '@common/dto/paginated-response.dto';
 import {
     SoftwareListItemDto,
@@ -29,8 +28,6 @@ export class SoftwareQueryService {
     constructor(
         @InjectRepository(Software)
         private readonly repo: Repository<Software>,
-        @InjectRepository(SoftwareComparisonNote)
-        private readonly comparisonNoteRepo: Repository<SoftwareComparisonNote>,
     ) {}
 
     private toListItem(sw: Software): SoftwareListItemDto {
@@ -75,7 +72,6 @@ export class SoftwareQueryService {
             websiteUrl: sw.websiteUrl,
             gitRepoUrl: sw.gitRepoUrl,
             logoUrl: sw.logoUrl,
-            screenshotUrls: sw.screenshotUrls,
             usageCount: sw.usageCount,
             createdAt: sw.createdAt,
             updatedAt: sw.updatedAt,
@@ -166,11 +162,10 @@ export class SoftwareQueryService {
             name: sw.name,
             developer: sw.developer,
             shortDescription: sw.shortDescription,
-            fullDescription: sw.fullDescription,
             websiteUrl: sw.websiteUrl,
             gitRepoUrl: sw.gitRepoUrl,
             logoUrl: sw.logoUrl,
-            screenshotUrls: sw.screenshotUrls,
+            screenshots: sw.screenshots,
             usageCount: sw.usageCount,
             createdAt: sw.createdAt,
             updatedAt: sw.updatedAt,
@@ -231,13 +226,6 @@ export class SoftwareQueryService {
                 'Software are not comparable. At least one category must be in common',
             );
         }
-
-        const note = await this.comparisonNoteRepo.findOne({
-            where: [
-                { softwareAId: swA.id, softwareBId: swB.id },
-                { softwareAId: swB.id, softwareBId: swA.id },
-            ],
-        });
 
         const aMetrics = new Map(
             (swA.softwareMetrics ?? []).map((sm) => [sm.metricId, sm]),
@@ -321,7 +309,6 @@ export class SoftwareQueryService {
             softwareB: this.toComparisonSide(swB),
             metricsComparison,
             factorsComparison,
-            comparisonNote: note?.note ?? null,
         };
     }
 

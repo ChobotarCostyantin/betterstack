@@ -1,5 +1,6 @@
 require('dotenv/config');
 const { DataSource } = require('typeorm');
+const path = require('path');
 
 const dataSource = new DataSource({
     type: 'postgres',
@@ -9,8 +10,8 @@ const dataSource = new DataSource({
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
 
-    entities: [__dirname + '/../dist/modules/**/*.entity.js'],
-    migrations: [__dirname + '/migrations/*.js'],
+    entities: [path.join(__dirname, '..', 'dist', '**', '*.entity.js')],
+    migrations: [path.join(__dirname, 'migrations', '*.js')],
 
     synchronize: false,
 });

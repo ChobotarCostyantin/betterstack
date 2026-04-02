@@ -16,6 +16,19 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
     title: 'Catalog | betterstack',
     description: 'View and choose the best software.',
+    openGraph: {
+        url: new URL(
+            '/catalog',
+            process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
+        ),
+        images: [
+            {
+                url: '/opengraph-image',
+                width: 1200,
+                height: 630,
+            },
+        ],
+    },
 };
 
 export default async function Catalog({

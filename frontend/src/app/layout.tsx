@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
     title: 'betterstack',
     description: 'SEO project',
+    metadataBase: new URL(
+        process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
+    ),
 };
 
 export default function RootLayout({

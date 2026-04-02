@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { forbidden, useRouter } from 'next/navigation';
+import { forbidden } from 'next/navigation';
 import { Plus } from 'lucide-react';
 
 import { useAdminAuth } from './_hooks/useAdminAuth';
@@ -14,7 +14,6 @@ import { CriteriaFormModal } from './_components/CriteriaFormModal';
 import type { Tab, TableRecord } from './types';
 
 export default function Admin() {
-    const router = useRouter();
     const status = useAdminAuth();
     const [activeTab, setActiveTab] = useState<Tab>('software');
 

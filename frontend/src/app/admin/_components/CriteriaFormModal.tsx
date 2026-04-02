@@ -122,13 +122,10 @@ export function CriteriaFormModal({
                             negativeVariant: formData.negativeVariant,
                         }),
                     };
-                    const result = await updateFactor(
-                        browserClient,
-                        Number(item.id),
-                        input,
-                    );
+                    await updateFactor(browserClient, Number(item.id), input);
                     onSuccess({
-                        ...result,
+                        ...item,
+                        ...input,
                         type: 'Factor',
                     } as unknown as TableRecord);
                 } else {
@@ -148,13 +145,10 @@ export function CriteriaFormModal({
                         ...(formData.name && { name: formData.name }),
                         higherIsBetter: formData.higherIsBetter,
                     };
-                    const result = await updateMetric(
-                        browserClient,
-                        Number(item.id),
-                        input,
-                    );
+                    await updateMetric(browserClient, Number(item.id), input);
                     onSuccess({
-                        ...result,
+                        ...item,
+                        ...input,
                         type: 'Metric',
                     } as unknown as TableRecord);
                 } else {

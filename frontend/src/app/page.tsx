@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
-import SearchBar from '@/src/app/home/_components/SearchBar';
+import SearchBar from './_components/SearchBar';
 import { createServerClient } from '@/src/lib/api/server.client';
 import { getMostUsedSoftware } from '@/src/api/software/software.api';
 import SoftwareCard from '@/src/components/SoftwareCard';
@@ -9,6 +9,19 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
     title: 'Home | betterstack',
     description: 'View and choose the best software.',
+    openGraph: {
+        url: new URL(
+            '/',
+            process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
+        ),
+        images: [
+            {
+                url: '/opengraph-image',
+                width: 1200,
+                height: 630,
+            },
+        ],
+    },
 };
 
 export default async function Home() {
@@ -52,7 +65,7 @@ export default async function Home() {
                             className="relative flex items-center gap-x-2 px-6 py-3 bg-zinc-900 text-zinc-300 hover:text-white rounded-full border border-zinc-800 transition-all duration-300"
                         >
                             <span>View all software</span>
-                            <ChevronDown className="w-5 h-5  transition-transform duration-300" />
+                            <ChevronDown className="w-5 h-5 transition-transform duration-300" />
                         </Link>
                     </div>
                 </div>

@@ -1,9 +1,9 @@
-import { Edit, Trash2, BadgeInfoIcon, UserPlus, Loader2 } from 'lucide-react';
+import { Edit, Trash2, BadgeInfoIcon, Loader2 } from 'lucide-react';
 import type { TableRecord, Tab } from '../types';
 import { useRouter } from 'next/navigation';
 import { useState, UIEvent, Dispatch, SetStateAction } from 'react';
 import { DeleteConfirmModal } from './DeleteConfirmModal';
-import { MakeUserAdminModal } from '@/src/app/admin/_components/MakeUserAdminModal';
+import { UserRoleFormModal } from '@/src/app/admin/_components/UserRoleFormModal';
 
 interface DataTableProps {
     data: TableRecord[];
@@ -186,15 +186,13 @@ export function DataTable({
                                         </button>
                                     </>
                                 ) : (
-                                    row['role'] === 'user' && (
-                                        <button
-                                            onClick={() => setPickedItem(row)}
-                                            className="p-1.5 text-zinc-400 hover:text-zinc-300 hover:bg-zinc-400/10 rounded-md transition-colors"
-                                            title="Upgrade"
-                                        >
-                                            <UserPlus size={16} />
-                                        </button>
-                                    )
+                                    <button
+                                        onClick={() => setPickedItem(row)}
+                                        className="p-1.5 text-zinc-400 hover:text-zinc-300 hover:bg-zinc-400/10 rounded-md transition-colors"
+                                        title="Edit Role"
+                                    >
+                                        <Edit size={16} />
+                                    </button>
                                 )}
                             </td>
                         </tr>
@@ -218,7 +216,7 @@ export function DataTable({
                 setData={setData}
             />
 
-            <MakeUserAdminModal
+            <UserRoleFormModal
                 isOpen={!!pickedItem && activeTab === 'user'}
                 onClose={() => setPickedItem(null)}
                 pickedItem={pickedItem}

@@ -5,6 +5,19 @@ import Link from 'next/link';
 export const metadata: Metadata = {
     title: 'Register | betterstack',
     description: 'Sign in to your BetterStack account',
+    openGraph: {
+        url: new URL(
+            '/register',
+            process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
+        ),
+        images: [
+            {
+                url: '/opengraph-image',
+                width: 1200,
+                height: 630,
+            },
+        ],
+    },
 };
 
 export default function LoginPage() {

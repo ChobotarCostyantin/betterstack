@@ -29,7 +29,7 @@ export default function NotFound() {
             </div>
 
             <Link
-                href="/home"
+                href="/"
                 className="relative z-10 px-6 py-3 rounded-xl bg-zinc-200 text-[#09090b] font-medium hover:bg-white transition-all shadow-[0_0_20px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)]"
             >
                 Return to the main page

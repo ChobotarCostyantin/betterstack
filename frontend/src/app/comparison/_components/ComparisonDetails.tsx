@@ -54,13 +54,8 @@ const getMetricClasses = (isWinner: boolean, isTie: boolean) => {
 export default function ComparisonDetails({
     comparison,
 }: ComparisonDetailsProps) {
-    const {
-        softwareA,
-        softwareB,
-        metricsComparison,
-        factorsComparison,
-        comparisonNote,
-    } = comparison;
+    const { softwareA, softwareB, metricsComparison, factorsComparison } =
+        comparison;
 
     const hasAnyComparison =
         metricsComparison.length > 0 || factorsComparison.length > 0;
@@ -71,12 +66,6 @@ export default function ComparisonDetails({
                 <h3 className="text-2xl font-bold text-white text-center">
                     Comparison Details
                 </h3>
-
-                {comparisonNote && (
-                    <div className="mt-6 p-4 bg-zinc-800/40 border border-zinc-700/50 rounded-xl text-zinc-300 text-center text-sm leading-relaxed max-w-3xl mx-auto backdrop-blur-sm">
-                        {comparisonNote}
-                    </div>
-                )}
             </div>
 
             {hasAnyComparison && (
