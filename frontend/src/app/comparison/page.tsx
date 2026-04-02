@@ -29,6 +29,7 @@ export async function generateMetadata({
     if (!firstSoft && !secondSoft) return defaultMeta;
 
     const ogUrl = absoluteUrl('/comparison/comparison-og');
+
     if (firstSoft) ogUrl.searchParams.set('firstSoft', firstSoft);
     if (secondSoft) ogUrl.searchParams.set('secondSoft', secondSoft);
 
@@ -47,7 +48,10 @@ export async function generateMetadata({
             ).catch(() => null);
 
             return soft
-                ? getComparisonMetadataForSingleSoftware(soft)
+                ? {
+                      ...defaultMeta,
+                      ...getComparisonMetadataForSingleSoftware(soft),
+                  }
                 : defaultMeta;
         }
 
@@ -62,7 +66,10 @@ export async function generateMetadata({
 
         if (!soft1 || !soft2) {
             const activeSoft = soft1 || soft2;
-            return getComparisonMetadataForSingleSoftware(activeSoft!);
+            return {
+                ...defaultMeta,
+                ...getComparisonMetadataForSingleSoftware(activeSoft!),
+            };
         }
 
         return {
@@ -104,17 +111,20 @@ function getComparisonMetadataForSingleSoftware(
 function getCanonicalUrl(first?: string, second?: string): URL {
     const [a, b] = first && second ? [first, second].sort() : [first, second];
     const url = absoluteUrl('/comparison');
-    if (a) url.searchParams.set('firstSoft', a);
-    if (b) url.searchParams.set('secondSoft', b);
+
+    a && url.searchParams.set('firstSoft', a);
+    b && url.searchParams.set('secondSoft', b);
+
     return url;
 }
 
 function getComparisonUrl(first?: string, second?: string): string {
     const params = new URLSearchParams();
-    if (first) params.set('firstSoft', first);
-    if (second) params.set('secondSoft', second);
-    const query = params.toString();
-    return query ? `/comparison?${query}` : '/comparison';
+
+    first && params.set('firstSoft', first);
+    second && params.set('secondSoft', second);
+
+    return params.size ? `/comparison?${params}` : '/comparison';
 }
 
 export default async function Comparison({
