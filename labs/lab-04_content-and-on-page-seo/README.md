@@ -328,25 +328,23 @@ Vim вирізняється **modal editing** — системою режимі
 
 #### 3.2 - Перевірка canonical та дублів
 
-Перевірити правильність canonical на обраній сторінці:
-
-```
-1. Відкрити DevTools (F12) → Elements → Ctrl+F → шукати "canonical"
-   Знайдений canonical: ___
-
-2. Перевірити сценарії дублів - чи всі ці варіанти ведуть на правильний canonical:
-   Основний URL:        https://site.ua/articles/назва-статті
-   З UTM-параметром:    https://site.ua/articles/назва-статті?utm_source=telegram
-   З сортуванням:       https://site.ua/articles/назва-статті?ref=main
-
-   Canonical у всіх трьох однаковий: Так / Ні
-```
-
-Якщо canonical відсутній або некоректний - написати правильний варіант тегу:
+`<link rel="canonical" ... />` налаштований для усіх сторінок націлених на SEO.
+У випадку із сторінкою із описом Vim, значення завжди наступне
 
 ```html
+<link rel="canonical" href="https://betterstack.tech/article/vim">
+```
 
-<link rel="canonical" href="https://site.ua/articles/[правильний-url]"/>
+Для уникнення можливих дублів при use-case порівняння двох Софтів ("postgres vs redis" = "redis vs postgres"), slugs у canonical URL сортуються, тож для сторінок
+
+- `/comparison?firstSoft=redis&secondSoft=postgresql`
+- `/comparison?firstSoft=postgresql&secondSoft=redis`
+- `/comparison?secondSoft=redis&firstSoft=postgresql`
+- `/comparison?secondSoft=postgresql&firstSoft=redis`
+
+Canonical URL буде наступним:
+```html
+<link rel="canonical" href="https://betterstack.tech/comparison?firstSoft=postgresql&secondSoft=redis">
 ```
 
 #### 3.3 - Перевірка Search Console (або симуляція)
