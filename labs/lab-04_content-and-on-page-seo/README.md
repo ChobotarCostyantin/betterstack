@@ -349,28 +349,30 @@ Canonical URL буде наступним:
 
 #### 3.3 - Перевірка Search Console (або симуляція)
 
-Якщо сторінка вже є в індексі Google - перевірити у Google Search Console:
+Результати пошуку `site:betterstack.tech`:
+![Google search by site result](./media/google-search-by-site.png)
 
-| Запит | Покази | Кліки | CTR | Середня позиція |
-|-------|--------|-------|-----|-----------------|
-|       |        |       |     |                 |
-|       |        |       |     |                 |
-|       |        |       |     |                 |
+При пошуку за ключовим словом "vim overview", Google пропонує такі 3 сторінки першими у видачі:
 
-Якщо сторінка не індексується (навчальний проєкт) - виконати симуляцію вручну:
+**[Getting started with Vim: The basics](https://opensource.com/article/19/3/getting-started-vim)**
 
-```
-1. Відкрити Google, ввести: site:yourdomain.ua
-   Результат: сторінка є в індексі / відсутня
+- Структура `title`: Getting started with Vim: The basics | Opensource.com
+- Довжина `description`: 68 символів
+- Виділені слова у сніппеті: "Vim"
 
-2. Ввести цільовий запит у Google.
-   Знайти перші 3 результати і порівняти:
-   - Яка в них структура title?
-   - Яка довжина description?
-   - Які слова Google підсвічує жирним у сніппеті?
+**[Classic SysAdmin: Vim 101: A Beginner’s Guide to Vim](https://www.linuxfoundation.org/blog/blog/classic-sysadmin-vim-101-a-beginners-guide-to-vim)**
 
-   Висновок: чи відповідає ваш title і description тому патерну що показує Google?
-```
+- Структура `title`: Classic SysAdmin: Vim 101: A Beginner’s Guide to Vim - Linux Foundation
+- Довжина `description`: 90 символів, останній символ -- пробіл
+- Виділені слова у сніппеті: "Vim is the editor of choice for many developers and power users"
+
+**[Vim Cheat Sheet](https://vim.rtorr.com/)**
+
+- Структура `title`: Vim Cheat Sheet
+- Довжина `description`: 235 символів
+- Виділені слова у сніппеті: "Vim", 3 рази
+
+Висновок: загалом, наші `title` і `description` відповідають патернам що показує Google
 
 #### 3.4 - Виявлення та вирішення keyword cannibalization
 
