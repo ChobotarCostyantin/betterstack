@@ -6,39 +6,40 @@
 
 #### 1.1 - Інвентаризація сторінок
 
-Скласти повний список публічних сторінок свого сайту у Google Sheets (аркуш **"Pages Inventory"**):
+Було складено повний список із 59 публічних сторінок сайту (у Google Sheets). Orphan pages були такими, що відносилися
+до >1 сторінки каталогу. Проблему було усунуто шляхом перетворенням компоненту пагінації на серверний компонент із використанням посилань.
 
-| URL                           | Тип сторінки | Назва            | Вхідні посилання (кількість) | Вихідні посилання (кількість) | Статус |
-|-------------------------------|--------------|------------------|------------------------------|-------------------------------|--------|
-| `/`                           | home         | Головна          | -                            |                               |        |
-| `/categories/javascript`      | category     | JavaScript       |                              |                               |        |
-| `/articles/react-hooks-guide` | article      | React Hooks гайд |                              |                               |        |
-| `/about`                      | static       | Про нас          |                              |                               |        |
-| ...                           |              |                  |                              |                               |        |
-
-Для підрахунку вхідних та вихідних посилань - переглянути вихідний код кожної сторінки або використати DevTools.
-
-#### 1.2 - Виявлення orphan pages
-
-**Orphan page** - сторінка на яку не веде жодне внутрішнє посилання. Google може її не знайти навіть якщо вона є в
-sitemap.
-
-Перевірити кожну сторінку з інвентарю:
-
-```bash
-# Перевірити чи є посилання на конкретну сторінку
-# на головній та в категоріях
-curl https://твій-домен | grep "/articles/твій-slug"
-curl https://твій-домен/categories/javascript | grep "/articles/твій-slug"
-```
-
-Заповнити у таблиці колонку "Статус":
+За допомогою консольний утиліт знаходили вихідні посилання на сторінці:
 
 ```
-linked     - є мінімум одне вхідне посилання
-orphan     - жодного вхідного посилання
-nav-only   - посилання тільки з навігації (не контекстне)
+$ curl -s https://betterstack.tech/article/python | htmlq -a href a | sort -u
+/
+/about
+/article/go
+/article/html
+/article/rust
+/article/typescript
+/catalog
+/comparison
+/comparison?firstSoft=python&secondSoft=go
+/comparison?firstSoft=python&secondSoft=html
+/comparison?firstSoft=python&secondSoft=rust
+/comparison?firstSoft=python&secondSoft=typescript
+https://docker.com/
+https://github.com/C0ldarm
+https://github.com/ChobotarCostyantin
+https://github.com/python/cpython
+https://github.com/staleread
+https://github.com/TeseySTD
+https://nestjs.com/
+https://nextjs.org/
+https://tailwindcss.com/
+https://typeorm.io/
+https://www.python.org/
+https://www.typescriptlang.org/
 ```
+
+Nav-only сторінками є сторінки порівняння, про нас та головна сторінка. Сторінка каталогу згадується у /about тож вважається linked
 
 #### 1.3 - Аналіз анкорів
 
