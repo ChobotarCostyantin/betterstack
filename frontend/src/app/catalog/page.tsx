@@ -137,6 +137,7 @@ export default async function Catalog({
                             <Pagination
                                 currentPage={currentPage}
                                 totalPages={totalPages}
+                                searchParams={resolvedParams}
                             />
                         </>
                     ) : (
