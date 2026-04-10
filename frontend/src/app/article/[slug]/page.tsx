@@ -13,7 +13,7 @@ import SoftwareAlternatives from './_components/SoftwareAlternatives';
 import UseSoftwareButton from './_components/UseSoftwareButton';
 import SoftwareReviewSection from './_components/SoftwareReviewSection';
 import { notFound } from 'next/navigation';
-import { GlobeIcon, Users } from 'lucide-react';
+import { GlobeIcon, Users, ChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import { absoluteUrl } from '@/src/lib/url';
 
@@ -72,7 +72,7 @@ export default async function SoftwareArticlePage({
         throw err;
     }
 
-    let isAuthenticated = false;
+    let isAuthenticated: boolean;
     let isUsedByCurrentUser = false;
     let currentUser = null;
 
@@ -117,7 +117,41 @@ export default async function SoftwareArticlePage({
     const categoryNames = software.categories.map((c) => c.name);
 
     return (
-        <article className="max-w-4xl mx-auto px-4 py-6 sm:p-6 md:py-10">
+        <article className="max-w-4xl mx-auto px-4 py-6 sm:p-6">
+            {/* Breadcrumbs */}
+            <nav
+                aria-label="Breadcrumb"
+                className="mb-6 text-sm font-medium text-zinc-400"
+            >
+                <ol className="flex items-center gap-2">
+                    <li>
+                        <Link
+                            href="/"
+                            className="hover:text-zinc-100 transition-colors"
+                        >
+                            Home
+                        </Link>
+                    </li>
+                    <li>
+                        <ChevronRight className="w-4 h-4 text-zinc-600 shrink-0" />
+                    </li>
+                    <li>
+                        <Link
+                            href="/catalog"
+                            className="hover:text-zinc-100 transition-colors"
+                        >
+                            Catalog
+                        </Link>
+                    </li>
+                    <li>
+                        <ChevronRight className="w-4 h-4 text-zinc-600 shrink-0" />
+                    </li>
+                    <li className="text-zinc-100 truncate" aria-current="page">
+                        {software.name}
+                    </li>
+                </ol>
+            </nav>
+
             <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 sm:gap-6 mb-8">
                 <div className="flex items-center gap-4 sm:gap-6">
                     {software.logoUrl && (
