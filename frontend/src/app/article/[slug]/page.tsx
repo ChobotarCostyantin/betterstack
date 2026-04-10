@@ -118,7 +118,7 @@ export default async function SoftwareArticlePage({
 
     return (
         <article className="max-w-4xl mx-auto px-4 py-6 sm:p-6">
-            {/* Встав цей блок з хлібними крихтами */}
+            {/* Breadcrumbs */}
             <nav
                 aria-label="Breadcrumb"
                 className="mb-6 text-sm font-medium text-zinc-400"
@@ -151,7 +151,6 @@ export default async function SoftwareArticlePage({
                     </li>
                 </ol>
             </nav>
-            {/* Кінець блоку хлібних крихт */}
 
             <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 sm:gap-6 mb-8">
                 <div className="flex items-center gap-4 sm:gap-6">
