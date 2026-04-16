@@ -48,12 +48,16 @@ export default async function Catalog({
             : 1;
     const searchQuery =
         typeof resolvedParams.q === 'string' ? resolvedParams.q : undefined;
+    const currentCatPage =
+        typeof resolvedParams.catPage === 'string'
+            ? parseInt(resolvedParams.catPage, 10) || 1
+            : 1;
 
     const serverClient = await createServerClient();
 
     let software: SoftwareListItem[] = [];
     let initialCategories: CategoryListItem[] = [];
-    let initialCategoriesTotalPages = 1;
+    let hasMoreCategories = false;
     let totalPages = 1;
     let categoryIds: number[] | undefined = undefined;
     let categoryNotFound = false;
@@ -61,10 +65,11 @@ export default async function Catalog({
     try {
         const categoriesRes = await listCategories(serverClient, {
             page: 1,
-            perPage: 3,
+            perPage: currentCatPage * 5,
         });
         initialCategories = categoriesRes.data ?? [];
-        initialCategoriesTotalPages = categoriesRes.meta?.totalPages || 1;
+        hasMoreCategories =
+            currentCatPage * 5 < (categoriesRes.meta?.total ?? 0);
 
         if (currentCategorySlug) {
             try {
@@ -115,9 +120,11 @@ export default async function Catalog({
                             Categories
                         </h2>
                         <CategoryList
-                            initialCategories={initialCategories}
+                            categories={initialCategories}
                             currentCategorySlug={currentCategorySlug}
-                            totalPages={initialCategoriesTotalPages}
+                            hasMoreCategories={hasMoreCategories}
+                            currentCatPage={currentCatPage}
+                            searchParams={resolvedParams}
                         />
                     </div>
                 </aside>
