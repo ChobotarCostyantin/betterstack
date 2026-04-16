@@ -1,4 +1,4 @@
-import { me } from '@/src/api/auth/auth.api';
+import { me } from '@/src/api/auth/auth.api.server';
 import { getUserById } from '@/src/api/users/users.api';
 import { createServerClient } from '@/src/lib/api/server.client'; // Використовуємо серверний клієнт
 import Image from 'next/image';

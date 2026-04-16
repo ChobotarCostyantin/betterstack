@@ -1,6 +1,6 @@
 import { createServerClient } from '@/src/lib/api/server.client';
 import { getSoftwareBySlug } from '@/src/api/software/software.api';
-import { me } from '@/src/api/auth/auth.api';
+import { me } from '@/src/api/auth/auth.api.server';
 import { hasUserUsedSoftware } from '@/src/api/users/users.api';
 import { getSoftwareReviewBySlug } from '@/src/api/reviews/reviews.api';
 import { HTTPError } from 'ky';

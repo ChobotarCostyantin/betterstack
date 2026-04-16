@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import '../styles/globals.css';
 import React from 'react';
 import { createServerClient } from '../lib/api/server.client';
-import { me } from '../api/auth/auth.api';
+import { me } from '../api/auth/auth.api.server';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
