@@ -39,7 +39,7 @@ export default function AdminClient() {
         isFetchingNextPage,
         hasMore,
         loadMore,
-    } = useAdminData(activeTab, status === 'authorized');
+    } = useAdminData(activeTab);
 
     // Handle opening add modals
     const openSoftwareModal = () => {
