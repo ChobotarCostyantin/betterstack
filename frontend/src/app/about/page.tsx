@@ -38,7 +38,8 @@ export default function AboutPage() {
                     </div>
 
                     <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-8 pb-2 px-2 bg-linear-to-b from-zinc-200 to-zinc-400/30 bg-clip-text text-transparent">
-                        The Ultimate Tech <br /> Stack Directory
+                        The Ultimate Tech{' '}
+                        <span className="block">Stack Directory</span>
                     </h1>
 
                     <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground leading-relaxed mb-10">
