@@ -22,7 +22,12 @@
 
 #### 1.1 - Crawl та інвентаризація технічного стану
 
-За допомогою [LibreCrawl](https://librecrawl.com/) було проведено crawling сайту. Результати аналізу занесені до Google таблиці
+За допомогою [LibreCrawl](https://librecrawl.com/) було проведено crawling сайту. Результати аналізу занесені до Google таблиці. Було проаналізовано 44 сторінки.
+
+**Рекомендації на покращення E-E-A-T**
+- ✍️ Add Author Information. Only 0 out of 44 pages have author information. Add author bylines with credentials to demonstrate expertise
+- 📊 Implement Structured Data. 0 pages have schema markup
+- 📝 Improve Content Depth. 1 pages have sufficient content (300+ words). Create comprehensive, in-depth content to demonstrate expertise
 
 #### 1.2 - Перевірка технічних файлів і протоколу
 
