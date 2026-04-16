@@ -35,41 +35,26 @@
 
 #### 1.2 - Перевірка технічних файлів і протоколу
 
-Перевірити:
-
-1. `https://ваш-домен/robots.txt`
-2. `https://ваш-домен/sitemap.xml` (або sitemap index)
-3. Перенаправлення `http -> https`
-4. Наявність mixed content
-
-Заповнити таблицю:
+Було перевірено доступність `robots.txt` та `sitemap.xml` та канонічність домену.
 
 | Перевірка | Статус (OK / Problem) | Деталі проблеми | Пріоритет |
-|-----------|------------------------|-----------------|-----------|
-| robots.txt доступний |                        |                 |           |
-| Немає `Disallow: /` на продакшені |                        |                 |           |
-| sitemap.xml доступний |                        |                 |           |
-| У sitemap тільки 200 + canonical URL |                        |                 |           |
-| Єдина канонічна версія домену (HTTPS, www/non-www) |                        |                 |           |
-| Немає mixed content |                        |                 |           |
+|----------|------------------------|-----------------|-----------|
+| доступність robots.txt доступний | Problem | Не вдалося підтвердити доступність robots.txt автоматично. Він відсутній | High |
+| Немає Disallow: / на продакшені | Problem | robots.txt відсутній | High |
+| sitemap.xml доступний | Problem | Sitemap.xml відсутній | High |
+| У sitemap тільки 200 + canonical URL | Problem | Sitemap.xml відсутній | High |
+| Єдина канонічна версія домену (HTTPS, www/non-www) | OK | У crawl baseUrl = https://betterstack.tech (без www) |  |
+| Переспрямування на HTTPS | OK | Завжди переспрямовує на HTTPS версію сторінки |  |
 
 #### 1.3 - Canonical, редіректи, статус-коди, Schema
 
-Для ключових шаблонів сторінок перевірити:
-
-- Чи canonical вказує на 200-сторінку без редіректу
-- Чи немає redirect chain (A -> B -> C)
-- Чи немає масових 4xx/5xx
-- Чи валідна Schema.org розмітка після виправлень (Rich Results Test)
-
-Таблиця фіксації:
-
 | Тип проблеми | URL | Що знайдено | Ризик (High/Med/Low) | Рішення |
-|--------------|-----|-------------|----------------------|---------|
-| canonical    |     |             |                      |         |
-| redirects    |     |             |                      |         |
-| status codes |     |             |                      |         |
-| schema       |     |             |                      |         |
+|-------------|-----|-------------|----------------------|---------|
+| status codes | https://betterstack.tech/article/python | У crawl: status_code=500, meta robots = noindex, meta_description="The requested software could not be found.", але на неї посилаються (typescript/html/rust/go + comparison). | Med | Збільшити ресурси сервера, щоб уникати 500 помилок у даному випадку |
+| status codes | https://betterstack.tech/catalog?page=2 | У crawl: status_code=200, але H3="Nothing found." (порожній лістинг). | Med | Перевірити пагінацію/параметри/бекенд |
+| status codes | https://betterstack.tech/catalog?page=3 | У crawl: status_code=200, але H3="Nothing found." (порожній лістинг). | Med | Аналогічно: виправити пагінацію або закрити від індексації/прибрати з навігації. |
+| canonical | https://betterstack.tech/catalog?page=2 | Canonical вказує на першу сторінку пагінації: https://betterstack.tech/catalog | High | Вказувати номер сторінки у canonical |
+| schema | (усі URL зі звіту) | У crawl поля json_ld та schema_org всюди порожні. Тобто структуровані дані або відсутні, або не витягнулися. | Low | Додати Schema: WebSite + SearchAction (home), Organization, BreadcrumbList (catalog/article), Article (article/*), ProfilePage (profile/*) |
 
 ---
 
