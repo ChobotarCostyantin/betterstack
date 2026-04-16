@@ -6,7 +6,6 @@ import {
     type LoginInput,
     type AuthResponse,
 } from './auth.schemas';
-import { cookies } from 'next/headers';
 
 export async function register(
     client: KyInstance,
