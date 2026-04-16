@@ -107,3 +107,11 @@ export async function getMyStack(
     const raw = await client.get('users/me/software').json();
     return unwrapResponse(SoftwareListItemSchema.array(), raw);
 }
+
+export async function getUserStack(
+    client: KyInstance,
+    userId: number,
+): Promise<SoftwareListItem[]> {
+    const raw = await client.get(`users/${userId}/software`).json();
+    return unwrapResponse(SoftwareListItemSchema.array(), raw);
+}
