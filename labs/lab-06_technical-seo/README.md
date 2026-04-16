@@ -29,6 +29,10 @@
 - 📊 Implement Structured Data. 0 pages have schema markup
 - 📝 Improve Content Depth. 1 pages have sufficient content (300+ words). Create comprehensive, in-depth content to demonstrate expertise
 
+**EEAT аналіз сторінок**
+
+<img width="1481" height="679" alt="image" src="https://github.com/user-attachments/assets/c1d43b46-acc9-4de4-b8c2-d0788c1d86f3" />
+
 #### 1.2 - Перевірка технічних файлів і протоколу
 
 Перевірити:
