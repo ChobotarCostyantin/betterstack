@@ -6,8 +6,8 @@ import { getSoftwareReviewBySlug } from '@/src/api/reviews/reviews.api';
 import { HTTPError } from 'ky';
 import Image from 'next/image';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import CategoryTags from '@/src/components/CategoryTags';
-import ScreenshotGallery from './_components/ScreenshotGallery';
 import ProsAndCons from './_components/ProsAndCons';
 import SoftwareAlternatives from './_components/SoftwareAlternatives';
 import UseSoftwareButton from './_components/UseSoftwareButton';
@@ -17,6 +17,11 @@ import { GlobeIcon, Users, ChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import { absoluteUrl } from '@/src/lib/url';
 import { SoftwareApplication, WithContext } from 'schema-dts';
+
+const ScreenshotGallery = dynamic(
+    () => import('./_components/ScreenshotGallery'),
+    { ssr: true },
+);
 
 export async function generateMetadata({
     params,
@@ -193,6 +198,7 @@ export default async function SoftwareArticlePage({
                                 src={software.logoUrl}
                                 alt={software.name}
                                 fill
+                                sizes="(max-width: 640px) 64px, 96px"
                                 className="object-contain"
                             />
                         </div>
