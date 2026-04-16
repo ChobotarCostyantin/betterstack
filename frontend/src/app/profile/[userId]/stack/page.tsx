@@ -85,7 +85,7 @@ export default function StackPage() {
             <div className="flex flex-wrap gap-5">
                 {stack.map((item) => (
                     <div key={item.id} className="relative group/card">
-                        <SoftwareCard item={item} />
+                        <SoftwareCard className="w-full h-full" item={item} />
                         <button
                             onClick={(e) => {
                                 e.preventDefault();

@@ -9,16 +9,22 @@ import { Users } from 'lucide-react';
 
 interface FeaturedCardProps {
     item: SoftwareListItem;
+    className?: string;
 }
 
-export default function SoftwareCard({ item }: FeaturedCardProps) {
+export default function SoftwareCard({ item, className }: FeaturedCardProps) {
     const [isImageLoading, setIsImageLoading] = useState(true);
     const [imageError, setImageError] = useState(false);
 
     const hasLogo = item.logoUrl && item.logoUrl.trim() !== '';
 
     return (
-        <div className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-11px)] min-h-45">
+        <div
+            className={
+                className ||
+                'w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-11px)] min-h-45'
+            }
+        >
             <Link
                 href={`/article/${item.slug}`}
                 className="relative flex flex-col h-full p-8 rounded-2xl bg-[#111114] border border-zinc-800 hover:border-zinc-600 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-zinc-900/50 transition-all duration-300 group overflow-hidden z-0"
