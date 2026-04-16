@@ -78,7 +78,7 @@ export default async function SoftwareArticlePage({
 
     try {
         const user = await me(client);
-        isAuthenticated = true;
+        isAuthenticated = user != null;
         currentUser = user;
     } catch {
         isAuthenticated = false;

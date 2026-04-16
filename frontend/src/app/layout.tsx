@@ -4,6 +4,8 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/globals.css';
 import React from 'react';
+import { createServerClient } from '../lib/api/server.client';
+import { me } from '../api/auth/auth.api';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -23,17 +25,19 @@ export const metadata: Metadata = {
     ),
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const serverClient = await createServerClient();
+    const user = await me(serverClient);
     return (
         <html lang="en" suppressHydrationWarning>
             <body
                 className={`${geistSans.variable} ${geistMono.variable} flex flex-col min-h-screen antialiased`}
             >
-                <Header />
+                <Header user={user} />
 
                 <main className="flex-1">{children}</main>
 

@@ -1,15 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { me, logout } from '@/src/api/auth/auth.api';
+import { logout } from '@/src/api/auth/auth.api';
 import { updateProfile } from '@/src/api/users/users.api';
 import { browserClient } from '@/src/lib/api/browser.client';
 import type { User } from '@/src/api/auth/auth.schemas';
 import { Save, Loader2, Trash2 } from 'lucide-react';
-import { HTTPError } from 'ky';
 
-export default function SettingsPage() {
+export default function SettingsClient({ initialUser }: { initialUser: User }) {
     const router = useRouter();
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
@@ -20,36 +19,10 @@ export default function SettingsPage() {
     } | null>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-    const [fullName, setFullName] = useState('');
-    const [bio, setBio] = useState('');
-    const [avatarUrl, setAvatarUrl] = useState('');
-    const [websiteUrl, setWebsiteUrl] = useState('');
-
-    useEffect(() => {
-        async function fetchUser() {
-            try {
-                const u = await me(browserClient);
-                setUser(u);
-                setFullName(u.fullName || '');
-                setBio(u.bio || '');
-                setAvatarUrl(u.avatarUrl || '');
-                setWebsiteUrl(u.websiteUrl || '');
-            } catch (error: unknown) {
-                if (error instanceof HTTPError) {
-                    if (error.response.status === 401) {
-                        router.push('/login');
-                    }
-                } else if (error instanceof Error) {
-                    console.error('Error:', error.message);
-                } else {
-                    console.error('Unexpected error:', error);
-                }
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchUser();
-    }, [router]);
+    const [fullName, setFullName] = useState(initialUser.fullName || '');
+    const [bio, setBio] = useState(initialUser.bio || '');
+    const [avatarUrl, setAvatarUrl] = useState(initialUser.avatarUrl || '');
+    const [websiteUrl, setWebsiteUrl] = useState(initialUser.websiteUrl || '');
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();

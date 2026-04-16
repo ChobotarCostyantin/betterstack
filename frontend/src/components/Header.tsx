@@ -9,25 +9,28 @@ import {
     Home,
     BookOpen,
     ArrowLeftRight,
-    User,
+    User as UserIcon,
     LogOut,
     Shield,
     Info,
 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { me, logout } from '@/src/api/auth/auth.api';
+import { logout } from '@/src/api/auth/auth.api';
 import { browserClient } from '@/src/lib/api/browser.client';
-import { set } from 'zod';
+import type { User } from '@/src/api/auth/auth.schemas';
 
-export default function Header() {
+interface HeaderProps {
+    user: User | null;
+}
+
+export default function Header({ user }: HeaderProps) {
     const router = useRouter();
-    const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [userId, setUserId] = useState<string | null>(null);
+    const isLoggedIn = !!user;
+    const isAdmin = user?.role === 'admin';
+    const userId = user?.id?.toString();
+
     useEffect(() => {
         if (isMenuOpen) {
             document.body.style.overflow = 'hidden';
@@ -39,31 +42,9 @@ export default function Header() {
         };
     }, [isMenuOpen]);
 
-    useEffect(() => {
-        async function checkAuth() {
-            try {
-                const user = await me(browserClient);
-                setUserId(user.id.toString());
-                setIsLoggedIn(true);
-                setIsAdmin(user.role === 'admin');
-            } catch {
-                setUserId(null);
-                setIsLoggedIn(false);
-                setIsAdmin(false);
-            } finally {
-                setIsLoading(false);
-            }
-        }
-
-        checkAuth();
-    }, [pathname]);
-
     const handleLogout = async () => {
         try {
             await logout(browserClient);
-            setUserId(null);
-            setIsLoggedIn(false);
-            setIsAdmin(false);
             setIsMenuOpen(false);
             router.push('/');
             router.refresh();
@@ -97,27 +78,26 @@ export default function Header() {
 
                         {isAdmin && <NavLink href="/admin">Admin</NavLink>}
 
-                        {!isLoading &&
-                            (isLoggedIn ? (
-                                <>
-                                    <NavLink href={`/profile/${userId}`}>
-                                        Profile
-                                    </NavLink>
+                        {isLoggedIn ? (
+                            <>
+                                <NavLink href={`/profile/${userId}`}>
+                                    Profile
+                                </NavLink>
 
-                                    <button
-                                        onClick={handleLogout}
-                                        className="text-base font-medium transition-colors duration-300 hover:text-gray-400 relative group cursor-pointer"
-                                    >
-                                        Sign Out
-                                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gray-400 transition-all duration-300 group-hover:w-full"></span>
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    <NavLink href="/login">Login</NavLink>
-                                    <NavLink href="/register">Sign up</NavLink>
-                                </>
-                            ))}
+                                <button
+                                    onClick={handleLogout}
+                                    className="text-base font-medium transition-colors duration-300 hover:text-gray-400 relative group cursor-pointer"
+                                >
+                                    Sign Out
+                                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gray-400 transition-all duration-300 group-hover:w-full"></span>
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <NavLink href="/login">Login</NavLink>
+                                <NavLink href="/register">Sign up</NavLink>
+                            </>
+                        )}
 
                         <NavLink href="/about">About</NavLink>
                     </div>
@@ -131,6 +111,7 @@ export default function Header() {
                 </nav>
             </header>
 
+            {/* Mobile menu overlay */}
             <div
                 className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-50 md:hidden transition-opacity duration-500 ease-in-out ${
                     isMenuOpen
@@ -140,6 +121,7 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(false)}
             />
 
+            {/* Mobile menu */}
             <div
                 className={`fixed top-0 right-0 h-dvh w-70 bg-[#09090b] border-l border-zinc-800 z-60 transform transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden flex flex-col ${
                     isMenuOpen ? 'translate-x-0' : 'translate-x-full'
@@ -191,46 +173,42 @@ export default function Header() {
                         </MobileNavLink>
                     )}
 
-                    {!isLoading &&
-                        (isLoggedIn ? (
-                            <>
-                                <MobileNavLink
-                                    href={`/profile/${userId}`}
-                                    onClick={() => setIsMenuOpen(false)}
-                                >
-                                    <User size={22} className="text-zinc-400" />
-                                    <span>Profile</span>
-                                </MobileNavLink>
+                    {isLoggedIn ? (
+                        <>
+                            <MobileNavLink
+                                href={`/profile/${userId}`}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                <UserIcon size={22} className="text-zinc-400" />
+                                <span>Profile</span>
+                            </MobileNavLink>
 
-                                <button
-                                    onClick={handleLogout}
-                                    className="flex items-center gap-x-3 text-lg font-medium transition-colors px-3 py-3 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800/50 w-full text-left cursor-pointer"
-                                >
-                                    <LogOut
-                                        size={22}
-                                        className="text-zinc-400"
-                                    />
-                                    <span>Sign Out</span>
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <MobileNavLink
-                                    href="/login"
-                                    onClick={() => setIsMenuOpen(false)}
-                                >
-                                    <User size={22} className="text-zinc-400" />
-                                    <span>Login</span>
-                                </MobileNavLink>
-                                <MobileNavLink
-                                    href="/register"
-                                    onClick={() => setIsMenuOpen(false)}
-                                >
-                                    <User size={22} className="text-zinc-400" />
-                                    <span>Sign up</span>
-                                </MobileNavLink>
-                            </>
-                        ))}
+                            <button
+                                onClick={handleLogout}
+                                className="flex items-center gap-x-3 text-lg font-medium transition-colors px-3 py-3 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800/50 w-full text-left cursor-pointer"
+                            >
+                                <LogOut size={22} className="text-zinc-400" />
+                                <span>Sign Out</span>
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <MobileNavLink
+                                href="/login"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                <UserIcon size={22} className="text-zinc-400" />
+                                <span>Login</span>
+                            </MobileNavLink>
+                            <MobileNavLink
+                                href="/register"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                <UserIcon size={22} className="text-zinc-400" />
+                                <span>Sign up</span>
+                            </MobileNavLink>
+                        </>
+                    )}
 
                     <MobileNavLink
                         href="/about"
