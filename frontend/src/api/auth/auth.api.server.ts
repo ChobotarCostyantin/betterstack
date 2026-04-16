@@ -6,7 +6,7 @@ import { unwrapResponse } from '../common/common.utils';
 export async function me(client: KyInstance): Promise<User | null> {
     const cookieStore = await cookies();
 
-    const hasAuthCookie = cookieStore.has('access_token');
+    const hasAuthCookie = cookieStore.has('access-token');
 
     if (!hasAuthCookie) {
         return null;
