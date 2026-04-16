@@ -16,6 +16,7 @@ import { notFound } from 'next/navigation';
 import { GlobeIcon, Users, ChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import { absoluteUrl } from '@/src/lib/url';
+import { SoftwareApplication, WithContext } from 'schema-dts';
 
 export async function generateMetadata({
     params,
@@ -116,9 +117,41 @@ export default async function SoftwareArticlePage({
 
     const categoryNames = software.categories.map((c) => c.name);
 
+    const jsonLd: WithContext<SoftwareApplication> = {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: software.name,
+        description: software.shortDescription || undefined,
+        url: absoluteUrl(`/article/${slugObject.slug}`).toString(),
+        applicationCategory:
+            software.categories[0]?.name || 'BusinessApplication',
+        operatingSystem: 'All',
+        image: software.logoUrl || undefined,
+        author: software.developer
+            ? {
+                  '@type': 'Organization',
+                  name: software.developer,
+              }
+            : undefined,
+        review: review?.author
+            ? {
+                  '@type': 'Review',
+                  author: {
+                      '@type': 'Person',
+                      name: review.author.fullName || 'Anonymous',
+                  },
+                  reviewBody: review.content,
+              }
+            : undefined,
+    };
+
     return (
         <article className="max-w-4xl mx-auto px-4 py-6 sm:p-6">
-            {/* Breadcrumbs */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+
             <nav
                 aria-label="Breadcrumb"
                 className="mb-6 text-sm font-medium text-zinc-400"
