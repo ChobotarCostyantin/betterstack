@@ -11,7 +11,6 @@ import { Save, Loader2, Trash2 } from 'lucide-react';
 export default function SettingsClient({ initialUser }: { initialUser: User }) {
     const router = useRouter();
     const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState<{
         type: 'success' | 'error';
@@ -68,16 +67,6 @@ export default function SettingsClient({ initialUser }: { initialUser: User }) {
             setMessage({ type: 'error', text: 'Something went wrong.' });
         }
     };
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-6 h-6 animate-spin text-zinc-500" />
-            </div>
-        );
-    }
-
-    if (!user) return null;
 
     return (
         <div className="space-y-8">
