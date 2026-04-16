@@ -14,23 +14,37 @@ import { CategoryListItem } from '@/src/api/categories/categories.schemas';
 import { Metadata } from 'next';
 import { absoluteUrl } from '@/src/lib/url';
 
-const canonical = absoluteUrl('/catalog');
+export async function generateMetadata({
+    searchParams,
+}: {
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+    const params = await searchParams;
 
-export const metadata: Metadata = {
-    title: 'Catalog | betterstack',
-    description: 'View and choose the best software.',
-    alternates: { canonical },
-    openGraph: {
-        url: canonical,
-        images: [
-            {
-                url: '/opengraph-image',
-                width: 1200,
-                height: 630,
-            },
-        ],
-    },
-};
+    const canonicalParams = new URLSearchParams();
+    if (typeof params.category === 'string')
+        canonicalParams.set('category', params.category);
+    if (typeof params.q === 'string') canonicalParams.set('q', params.q);
+    if (typeof params.page === 'string') {
+        const page = parseInt(params.page, 10);
+        if (page > 1) canonicalParams.set('page', String(page));
+    }
+
+    const canonicalPath = canonicalParams.toString()
+        ? `/catalog?${canonicalParams.toString()}`
+        : '/catalog';
+    const canonical = absoluteUrl(canonicalPath);
+
+    return {
+        title: 'Catalog | betterstack',
+        description: 'View and choose the best software.',
+        alternates: { canonical },
+        openGraph: {
+            url: canonical,
+            images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
+        },
+    };
+}
 
 export default async function Catalog({
     searchParams,
