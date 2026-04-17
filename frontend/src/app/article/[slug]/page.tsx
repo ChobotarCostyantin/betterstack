@@ -6,7 +6,6 @@ import { getSoftwareReviewBySlug } from '@/src/api/reviews/reviews.api';
 import { HTTPError } from 'ky';
 import Image from 'next/image';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import CategoryTags from '@/src/components/CategoryTags';
 import UseSoftwareButton from './_components/UseSoftwareButton';
 import { notFound } from 'next/navigation';
@@ -15,17 +14,10 @@ import { Metadata } from 'next';
 import { absoluteUrl } from '@/src/lib/url';
 import { SoftwareApplication, WithContext } from 'schema-dts';
 import { safeJsonLdStringify } from '@/src/lib/utils';
-
-const ProsAndCons = dynamic(() => import('./_components/ProsAndCons'));
-const SoftwareAlternatives = dynamic(
-    () => import('./_components/SoftwareAlternatives'),
-);
-const SoftwareReviewSection = dynamic(
-    () => import('./_components/SoftwareReviewSection'),
-);
-const ScreenshotGallery = dynamic(
-    () => import('./_components/ScreenshotGallery'),
-);
+import SoftwareReviewSection from '@/src/app/article/[slug]/_components/SoftwareReviewSection';
+import ProsAndCons from '@/src/app/article/[slug]/_components/ProsAndCons';
+import ScreenshotGallery from '@/src/app/article/[slug]/_components/ScreenshotGallery';
+import SoftwareAlternatives from '@/src/app/article/[slug]/_components/SoftwareAlternatives';
 
 export async function generateMetadata({
     params,
