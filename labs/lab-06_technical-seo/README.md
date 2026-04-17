@@ -221,30 +221,44 @@ Sitemap: https://ваш-домен/sitemap.xml
 Якщо у вашого домену немає достатніх даних (новий сайт, немає live URL, 0-2 backlinks), дозволено режим
 **"конкурентний benchmark"**: взяти 2-3 релевантних конкурентів і зібрати агреговані метрики по ніші.
 
-| Показник | Значення | Висновок                                                       |
-|----------|----------|----------------------------------------------------------------|
-| Кількість referring domains | 24       | Профіль малий, потрібне стабільне розширення якісними донорами |
-| Кількість backlinks |          |                                                                |
-| Частка dofollow / nofollow |          |                                                                |
-| Частка branded анкорів |          |                                                                |
-| Частка exact-match анкорів |          |                                                                |
-| Нові/втрачені посилання за 30 днів |          |                                                                |
+
+| Показник                          | Значення          | Висновок                                                                 |
+|-----------------------------------|-------------------|--------------------------------------------------------------------------|
+| Кількість referring domains       | 23                | Дуже малий профіль, майже повністю складається зі спамних доменів       |
+| Кількість backlinks               | 23                | Всі 23 посилання — спамні, низької якості                               |
+| Частка dofollow / nofollow        | 0% / 100%         | 100% nofollow — посилання не передають вагу, тільки створюють ризик     |
+| Частка branded анкорів            | ~8%               | Переважна більшість анкорів — довгі комерційні exact-match              |
+| Частка exact-match анкорів        | ~92%              | Критично висока частка точних комерційних анкорів — сильний спам-сигнал |
+| Нові/втрачені посилання за 30 днів| +23 / N/A         | Різкий спамний пік за короткий період — високий ризик пенальті          |
 
 #### 5.2 - Якість донорів і анкорний профіль
 
-Проаналізувати мінімум **15 зовнішніх посилань** і класифікувати:
+**Проаналізовано 15 зовнішніх посилань (спам-лінки)**
 
-| Донор           | URL сторінки-донору | Тип (blog/forum/media/directory) | Анкор | Dofollow/Nofollow | Якість (Good/Review/Risky) |
-|-----------------|----------------------|----------------------------------|-------|-------------------|-----------------------------|
-| dev.example.org | https://dev.example.org/frontend/performance-guide | blog | детальний гайд по оптимізації React | Dofollow | Good |
-| ...             |                      |                                  |       |                   |                             |
+| Донор                  | URL сторінки-донору                                                                 | Тип          | Анкор                                                                 | Dofollow/Nofollow | Якість  |
+|------------------------|-------------------------------------------------------------------------------------|--------------|-----------------------------------------------------------------------|-------------------|---------|
+| seogeko.shop          | https://seogeko.shop/premium-seo-backlinks-to-boost-website-betterstack-tech...     | blog        | Premium SEO Backlinks betterstack.tech Provides High-Quality Authority Backlinks, Professional Guest Posting, and Advanced Link Building Services to Boost Google Rankings, Drive Targeted Organic Traffic, and Strengthen Website Authority in Gambling, Casino, Crypto, and Competitive Markets | NF                | Risky  |
+| seogeko.shop          | https://seogeko.shop/premium-seo-backlinks-to-boost-website-betterstack-tech...     | blog        | Premium SEO Backlinks betterstack.tech Provides High-Quality Authority Backlinks, Professional Guest Posting, and Advanced Link Building Services to Boost Google Rankings, Drive Targeted Organic Traffic, and Strengthen Website Authority in Gambling, Casino, Crypto, and Competitive Markets | NF                | Risky  |
+| serpzilla.com         | https://serpzilla.com/premium-guest-post-betterstack-tech-stack-directory...        | blog        | High DA Guest Post Backlinks betterstack.tech Tech Stack Comparison Tool – Boost Your SEO Rankings Fast, Buy Premium Authority Links, Professional Link Building Services for Developer Tools, Web Development and SaaS Niche | NF                | Risky  |
+| serpzilla.com         | https://serpzilla.com/premium-guest-post-betterstack-tech-stack-directory...        | blog        | High DA Guest Post Backlinks betterstack.tech Tech Stack Comparison Tool – Boost Your SEO Rankings Fast, Buy Premium Authority Links, Professional Link Building Services for Developer Tools, Web Development and SaaS Niche | NF                | Risky  |
+| serpzilla.com         | https://serpzilla.com/premium-guest-post-betterstack-tech-stack-directory...        | blog        | High DA Guest Post Backlinks betterstack.tech Tech Stack Comparison Tool – Boost Your SEO Rankings Fast, Buy Premium Authority Links, Professional Link Building Services for Developer Tools, Web Development and SaaS Niche | NF                | Risky  |
+| vefogix.com           | https://vefogix.com/premium-backlinks-betterstack-tech-developer-tools...           | directory   | Buy Premium Backlinks betterstack.tech – Tech Stack Directory & Comparison Platform, High Authority Links, Guest Posting Services to Skyrocket Google Rankings and Domain Authority in Programming and Dev Tools Market | NF                | Risky  |
+| vefogix.com           | https://vefogix.com/premium-backlinks-betterstack-tech-developer-tools...           | directory   | Buy Premium Backlinks betterstack.tech – Tech Stack Directory & Comparison Platform, High Authority Links, Guest Posting Services to Skyrocket Google Rankings and Domain Authority in Programming and Dev Tools Market | NF                | Risky  |
+| web20ranker.com       | https://web20ranker.com/guest-post-betterstack-tech-authority-links...              | blog        | Premium Guest Posting Service betterstack.tech – High Authority Backlinks for Developer Tools, Tech Stack Directory, Unbiased Reviews, Boost SEO Rankings with Professional Link Building and Contextual Links | NF                | Risky  |
+| web20ranker.com       | https://web20ranker.com/guest-post-betterstack-tech-authority-links...              | blog        | Premium Guest Posting Service betterstack.tech – High Authority Backlinks for Developer Tools, Tech Stack Directory, Unbiased Reviews, Boost SEO Rankings with Professional Link Building and Contextual Links | NF                | Risky  |
+| badassbacklinks.com   | https://badassbacklinks.com/premium-seo-links-betterstack-tech...                   | blog        | Buy High Authority Backlinks betterstack.tech – Tech Stack Directory & Unbiased Reviews, Premium SEO Services, Guest Posts to Increase Domain Rating, Organic Traffic and Google Visibility in Web Development Niche | NF                | Risky  |
+| badassbacklinks.com   | https://badassbacklinks.com/premium-seo-links-betterstack-tech...                   | blog        | Buy High Authority Backlinks betterstack.tech – Tech Stack Directory & Unbiased Reviews, Premium SEO Services, Guest Posts to Increase Domain Rating, Organic Traffic and Google Visibility in Web Development Niche | NF                | Risky  |
+| legiit.com            | https://legiit.com/premium-backlinks-betterstack-tech-stack-comparison...           | blog        | High Quality SEO Backlinks betterstack.tech – Boost Domain Authority in Tech Niche, Premium Guest Posts, Authority Links for Tech Stack Directory, Comparison Tools and Developer Resources | NF                | Risky  |
+| legiit.com            | https://legiit.com/premium-backlinks-betterstack-tech-stack-comparison...           | blog        | High Quality SEO Backlinks betterstack.tech – Boost Domain Authority in Tech Niche, Premium Guest Posts, Authority Links for Tech Stack Directory, Comparison Tools and Developer Resources | NF                | Risky  |
+| seobacklinkpro.shop   | https://seobacklinkpro.shop/premium-guest-post-betterstack-tech...                  | blog        | Premium SEO Backlinks betterstack.tech – Professional Link Building for Web Development Tools, Tech Stack Directory, High DA Guest Posts to Drive Massive Organic Traffic and Skyrocket Rankings | NF                | Risky  |
+| seobacklinkpro.shop   | https://seobacklinkpro.shop/premium-guest-post-betterstack-tech...                  | blog        | Premium SEO Backlinks betterstack.tech – Professional Link Building for Web Development Tools, Tech Stack Directory, High DA Guest Posts to Drive Massive Organic Traffic and Skyrocket Rankings | NF                | Risky  |
 
-Окремо сформувати короткий список ризиків:
+### Ризики від виявлених спам-посилань
 
-- Потенційно спамні домени
-- Підозрілий ріст exact-match анкорів
-- Нерівномірна link velocity
-- Низька тематична релевантність донорів
+- **Потенційно спамні домени** — 15 посилань з сервісів масового продажу backlinks (seogeko.shop, serpzilla.com, vefogix.com тощо)
+- **Підозрілий ріст exact-match анкорів** — довгі комерційні анкори з ключовими словами «Premium SEO Backlinks betterstack.tech», «High Authority Backlinks» тощо
+- **Нерівномірна link velocity** — можливе масове розміщення кількох посилань за короткий період
+- **Низька тематична релевантність донорів** — донори не мають відношення до веб-розробки, tech stack directory або dev tools
 
 #### 5.3 - Якщо власний анкорний профіль порожній
 
