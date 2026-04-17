@@ -21,6 +21,9 @@ export default function ProsAndCons({
         return null;
     }
 
+    const hasPros = factors?.positive && factors.positive.length > 0;
+    const hasCons = factors?.negative && factors.negative.length > 0;
+
     return (
         <section className="mb-8 sm:mb-12">
             <div className="flex items-center gap-4 mb-6">
@@ -31,15 +34,15 @@ export default function ProsAndCons({
             </div>
 
             <div className="flex flex-col md:flex-row justify-center gap-4 sm:gap-6">
-                {/* Pros */}
-                {factors.positive && factors.positive.length > 0 && (
-                    <div className="w-full md:w-[calc(50%-12px)] flex flex-col gap-4 p-4 sm:p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800">
-                        <h3 className="text-base sm:text-lg font-semibold text-zinc-200 flex items-center justify-center gap-2">
-                            <ThumbsUpIcon className="text-zinc-500 shrink-0 w-5 h-5" />
-                            Pros of {softwareName}
-                        </h3>
+                <div className="w-full md:w-[calc(50%-12px)] flex flex-col gap-4 p-4 sm:p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800">
+                    <h3 className="text-base sm:text-lg font-semibold text-zinc-200 flex items-center justify-center gap-2">
+                        <ThumbsUpIcon className="text-zinc-500 shrink-0 w-5 h-5" />
+                        Pros of {softwareName}
+                    </h3>
+
+                    {hasPros ? (
                         <ul className="flex flex-col gap-3">
-                            {factors.positive.map((factor) => (
+                            {factors.positive!.map((factor) => (
                                 <li
                                     key={factor.factorId}
                                     className="flex items-start gap-3"
@@ -56,18 +59,23 @@ export default function ProsAndCons({
                                 </li>
                             ))}
                         </ul>
-                    </div>
-                )}
+                    ) : (
+                        <div className="text-sm sm:text-base text-zinc-500 italic leading-relaxed">
+                            No pros added yet
+                        </div>
+                    )}
+                </div>
 
-                {/* Cons */}
-                {factors.negative && factors.negative.length > 0 && (
-                    <div className="w-full md:w-[calc(50%-12px)] flex flex-col gap-4 p-4 sm:p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800">
-                        <h3 className="text-base sm:text-lg font-semibold text-zinc-200 flex items-center justify-center gap-2">
-                            <ThumbsDownIcon className="text-zinc-500 shrink-0 w-5 h-5" />
-                            Cons of {softwareName}
-                        </h3>
+                {/* Cons Block */}
+                <div className="w-full md:w-[calc(50%-12px)] flex flex-col gap-4 p-4 sm:p-5 rounded-2xl bg-zinc-900/50 border border-zinc-800">
+                    <h3 className="text-base sm:text-lg font-semibold text-zinc-200 flex items-center justify-center gap-2">
+                        <ThumbsDownIcon className="text-zinc-500 shrink-0 w-5 h-5" />
+                        Cons of {softwareName}
+                    </h3>
+
+                    {hasCons ? (
                         <ul className="flex flex-col gap-3">
-                            {factors.negative.map((factor) => (
+                            {factors.negative!.map((factor) => (
                                 <li
                                     key={factor.factorId}
                                     className="flex items-start gap-3"
@@ -84,8 +92,12 @@ export default function ProsAndCons({
                                 </li>
                             ))}
                         </ul>
-                    </div>
-                )}
+                    ) : (
+                        <div className="flex-1 flex items-center justify-center text-sm sm:text-base text-zinc-500 italic leading-relaxed">
+                            No cons added yet
+                        </div>
+                    )}
+                </div>
             </div>
         </section>
     );

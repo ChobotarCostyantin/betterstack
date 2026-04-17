@@ -7,11 +7,13 @@ export const ScreenshotItem = ({
     alt,
     index,
     onClick,
+    priority = false,
 }: {
     url: string;
     alt?: string;
     index: number;
     onClick: () => void;
+    priority?: boolean;
 }) => {
     const [hasError, setHasError] = useState(false);
 
@@ -41,8 +43,9 @@ export const ScreenshotItem = ({
                 src={url}
                 alt={alt || `Screenshot ${index + 1}`}
                 fill
+                priority={priority}
                 className="object-contain transition-transform duration-500 group-hover/item:scale-105"
-                sizes="(max-width: 768px) 350px, 400px"
+                sizes="(max-width: 640px) 300px, (max-width: 768px) 350px, 400px"
                 onError={() => setHasError(true)}
             />
         </div>

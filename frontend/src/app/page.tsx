@@ -5,7 +5,9 @@ import { createServerClient } from '@/src/lib/api/server.client';
 import { getMostUsedSoftware } from '@/src/api/software/software.api';
 import SoftwareCard from '@/src/components/SoftwareCard';
 import { Metadata } from 'next';
+import { WebSite, WithContext } from 'schema-dts';
 import { absoluteUrl } from '../lib/url';
+import { safeJsonLdStringify } from '@/src/lib/utils';
 
 const canonical = absoluteUrl('/');
 
@@ -29,8 +31,24 @@ export default async function Home() {
     const client = await createServerClient();
     const featuredSoftware = await getMostUsedSoftware(client, 3);
 
+    const jsonLd: WithContext<WebSite> = {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'betterstack',
+        url: absoluteUrl('/').toString(),
+        description:
+            'Search through our database of software, libraries, and tools.',
+    };
+
     return (
         <div className="flex flex-col items-center min-h-[70vh] px-4 pt-32 pb-16">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: safeJsonLdStringify(jsonLd),
+                }}
+            />
+
             <div className="text-center mb-10 w-full">
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-4">
                     Find the perfect{' '}

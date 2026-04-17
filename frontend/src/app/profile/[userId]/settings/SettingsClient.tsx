@@ -44,7 +44,7 @@ export default function SettingsClient({ initialUser }: { initialUser: User }) {
                 text: 'Profile updated successfully!',
             });
             setTimeout(() => {
-                router.push('/profile');
+                router.push(`/profile/${initialUser.id}`);
             }, 1000);
         } catch (error) {
             console.error('[SETTINGS] 🔴 Update failed:', error);
