@@ -148,6 +148,12 @@ export default async function SoftwareArticlePage({
                   author: {
                       '@type': 'Person',
                       name: review.author.fullName || 'Anonymous',
+                      description: review.author.bio || undefined,
+                      image: review.author.avatarUrl || undefined,
+                      url: absoluteUrl(
+                          `/profile/${review.author.userId}`,
+                      ).toString(),
+                      sameAs: review.author.websiteUrl || undefined,
                   },
                   reviewBody: review.content,
               }
