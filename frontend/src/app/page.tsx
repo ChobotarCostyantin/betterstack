@@ -7,6 +7,7 @@ import SoftwareCard from '@/src/components/SoftwareCard';
 import { Metadata } from 'next';
 import { WebSite, WithContext } from 'schema-dts';
 import { absoluteUrl } from '../lib/url';
+import { safeJsonLdStringify } from '@/src/lib/utils';
 
 const canonical = absoluteUrl('/');
 
@@ -43,7 +44,9 @@ export default async function Home() {
         <div className="flex flex-col items-center min-h-[70vh] px-4 pt-32 pb-16">
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{
+                    __html: safeJsonLdStringify(jsonLd),
+                }}
             />
 
             <div className="text-center mb-10 w-full">
