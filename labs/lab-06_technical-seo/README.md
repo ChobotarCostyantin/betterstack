@@ -233,7 +233,7 @@ Sitemap: https://ваш-домен/sitemap.xml
 
 #### 5.2 - Якість донорів і анкорний профіль
 
-**Проаналізовано 15 зовнішніх посилань (спам-лінки)**
+**Проаналізовано 16 зовнішніх посилань**
 
 | Донор                  | URL сторінки-донору                                                                 | Тип          | Анкор                                                                 | Dofollow/Nofollow | Якість  |
 |------------------------|-------------------------------------------------------------------------------------|--------------|-----------------------------------------------------------------------|-------------------|---------|
@@ -252,7 +252,7 @@ Sitemap: https://ваш-домен/sitemap.xml
 | legiit.com            | https://legiit.com/premium-backlinks-betterstack-tech-stack-comparison...           | blog        | High Quality SEO Backlinks betterstack.tech – Boost Domain Authority in Tech Niche, Premium Guest Posts, Authority Links for Tech Stack Directory, Comparison Tools and Developer Resources | NF                | Risky  |
 | seobacklinkpro.shop   | https://seobacklinkpro.shop/premium-guest-post-betterstack-tech...                  | blog        | Premium SEO Backlinks betterstack.tech – Professional Link Building for Web Development Tools, Tech Stack Directory, High DA Guest Posts to Drive Massive Organic Traffic and Skyrocket Rankings | NF                | Risky  |
 | seobacklinkpro.shop   | https://seobacklinkpro.shop/premium-guest-post-betterstack-tech...                  | blog        | Premium SEO Backlinks betterstack.tech – Professional Link Building for Web Development Tools, Tech Stack Directory, High DA Guest Posts to Drive Massive Organic Traffic and Skyrocket Rankings | NF                | Risky  |
-
+| stackvarta.pp.ua      | https://stackvarta.pp.ua/...                                                        | TODO        | TODO                                                                  | Dofollow          | TODO   |
 ### Ризики від виявлених спам-посилань
 
 - **Потенційно спамні домени** — 15 посилань з сервісів масового продажу backlinks (seogeko.shop, serpzilla.com, vefogix.com тощо)
