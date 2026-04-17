@@ -355,9 +355,7 @@ export default async function SoftwareArticlePage({
             </section>
 
             <div className="mb-8 sm:mb-12">
-                <ScreenshotGallery
-                    screenshots={software.screenshots.map((s) => s.url)}
-                />
+                <ScreenshotGallery screenshots={software.screenshots} />
             </div>
 
             <ProsAndCons

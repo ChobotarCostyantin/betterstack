@@ -14,23 +14,37 @@ import { CategoryListItem } from '@/src/api/categories/categories.schemas';
 import { Metadata } from 'next';
 import { absoluteUrl } from '@/src/lib/url';
 
-const canonical = absoluteUrl('/catalog');
+export async function generateMetadata({
+    searchParams,
+}: {
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+    const params = await searchParams;
 
-export const metadata: Metadata = {
-    title: 'Catalog | betterstack',
-    description: 'View and choose the best software.',
-    alternates: { canonical },
-    openGraph: {
-        url: canonical,
-        images: [
-            {
-                url: '/opengraph-image',
-                width: 1200,
-                height: 630,
-            },
-        ],
-    },
-};
+    const canonicalParams = new URLSearchParams();
+    if (typeof params.category === 'string')
+        canonicalParams.set('category', params.category);
+    if (typeof params.q === 'string') canonicalParams.set('q', params.q);
+    if (typeof params.page === 'string') {
+        const page = parseInt(params.page, 10);
+        if (page > 1) canonicalParams.set('page', String(page));
+    }
+
+    const canonicalPath = canonicalParams.toString()
+        ? `/catalog?${canonicalParams.toString()}`
+        : '/catalog';
+    const canonical = absoluteUrl(canonicalPath);
+
+    return {
+        title: 'Catalog | betterstack',
+        description: 'View and choose the best software.',
+        alternates: { canonical },
+        openGraph: {
+            url: canonical,
+            images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
+        },
+    };
+}
 
 export default async function Catalog({
     searchParams,
@@ -48,12 +62,16 @@ export default async function Catalog({
             : 1;
     const searchQuery =
         typeof resolvedParams.q === 'string' ? resolvedParams.q : undefined;
+    const currentCatPage =
+        typeof resolvedParams.catPage === 'string'
+            ? parseInt(resolvedParams.catPage, 10) || 1
+            : 1;
 
     const serverClient = await createServerClient();
 
     let software: SoftwareListItem[] = [];
     let initialCategories: CategoryListItem[] = [];
-    let initialCategoriesTotalPages = 1;
+    let hasMoreCategories = false;
     let totalPages = 1;
     let categoryIds: number[] | undefined = undefined;
     let categoryNotFound = false;
@@ -61,10 +79,11 @@ export default async function Catalog({
     try {
         const categoriesRes = await listCategories(serverClient, {
             page: 1,
-            perPage: 3,
+            perPage: currentCatPage * 5,
         });
         initialCategories = categoriesRes.data ?? [];
-        initialCategoriesTotalPages = categoriesRes.meta?.totalPages || 1;
+        hasMoreCategories =
+            currentCatPage * 5 < (categoriesRes.meta?.total ?? 0);
 
         if (currentCategorySlug) {
             try {
@@ -115,9 +134,11 @@ export default async function Catalog({
                             Categories
                         </h2>
                         <CategoryList
-                            initialCategories={initialCategories}
+                            categories={initialCategories}
                             currentCategorySlug={currentCategorySlug}
-                            totalPages={initialCategoriesTotalPages}
+                            hasMoreCategories={hasMoreCategories}
+                            currentCatPage={currentCatPage}
+                            searchParams={resolvedParams}
                         />
                     </div>
                 </aside>
