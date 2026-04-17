@@ -5,7 +5,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { User, Layers, Settings, LogOut } from 'lucide-react';
 import { logout } from '@/src/api/auth/auth.api';
 import { browserClient } from '@/src/lib/api/browser.client';
-import React from 'react';
 
 interface ProfileSidebarProps {
     userId: string;
@@ -37,7 +36,7 @@ export default function ProfileSidebar({
             show: true,
         },
         {
-            name: 'My Stack',
+            name: 'Tech Stack',
             href: `/profile/${userId}/stack`,
             icon: <Layers className="w-5 h-5" />,
             show: true,

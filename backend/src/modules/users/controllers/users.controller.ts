@@ -88,6 +88,22 @@ export class UsersController {
         }));
     }
 
+    @Get(':userId/software')
+    @ApiOperation({ summary: "Get a user's public software stack" })
+    @ApiOkResponse()
+    async getUserStack(@Param('userId', ParseIntPipe) userId: number) {
+        const usages = await this.usersService.getUserSoftwareStack(userId);
+        return usages.map((u) => ({
+            id: u.software.id,
+            slug: u.software.slug,
+            name: u.software.name,
+            logoUrl: u.software.logoUrl,
+            shortDescription: u.software.shortDescription,
+            usageCount: u.software.usageCount,
+            categories: (u.software.categories ?? []).map((c) => c.name),
+        }));
+    }
+
     @Get(':userId')
     @ApiOperation({ summary: 'Get user by ID' })
     @ApiOkResponse({ type: DataOf(UserDto) })

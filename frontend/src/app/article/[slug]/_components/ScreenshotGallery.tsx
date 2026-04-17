@@ -5,9 +5,10 @@ import { createPortal } from 'react-dom';
 import { ChevronLeft, ChevronRight, X, Loader2 } from 'lucide-react';
 import { ScreenshotItem } from './ScreenshotItem';
 import Image from 'next/image';
+import type { Screenshot } from '@/src/api/software/software.schemas';
 
 interface ScreenshotGalleryProps {
-    screenshots?: string[];
+    screenshots?: Screenshot[];
 }
 
 function subscribe() {
@@ -17,7 +18,7 @@ function subscribe() {
 export default function ScreenshotGallery({
     screenshots,
 }: ScreenshotGalleryProps) {
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [selectedImage, setSelectedImage] = useState<Screenshot | null>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
     const [isScrollable, setIsScrollable] = useState(false);
@@ -99,9 +100,9 @@ export default function ScreenshotGallery({
         });
     };
 
-    const handleImageSelect = (url: string) => {
+    const handleImageSelect = (screenshot: Screenshot) => {
         setIsLoadingFullscreen(true);
-        setSelectedImage(url);
+        setSelectedImage(screenshot);
     };
 
     const closeFullscreen = () => {
@@ -133,13 +134,14 @@ export default function ScreenshotGallery({
                     ref={carouselRef}
                     className="flex gap-3 sm:gap-4 overflow-x-auto snap-x snap-mandatory pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden items-center scroll-smooth"
                 >
-                    {screenshots.map((url, index) => (
+                    {screenshots.map((screenshot, index) => (
                         <ScreenshotItem
-                            key={`${url}-${index}`}
-                            url={url}
+                            key={`${screenshot.url}-${index}`}
+                            url={screenshot.url}
+                            alt={screenshot.alt}
                             index={index}
                             priority={index < 2}
-                            onClick={() => handleImageSelect(url)}
+                            onClick={() => handleImageSelect(screenshot)}
                         />
                     ))}
                 </div>
@@ -187,8 +189,10 @@ export default function ScreenshotGallery({
                             )}
 
                             <Image
-                                src={selectedImage}
-                                alt="Screenshot Fullscreen"
+                                src={selectedImage.url}
+                                alt={
+                                    selectedImage.alt || 'Screenshot Fullscreen'
+                                }
                                 fill
                                 className={`object-contain transition-opacity duration-300 ${
                                     isLoadingFullscreen
