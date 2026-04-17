@@ -238,28 +238,28 @@
 
 Обрано 3 конкурентів : https://stackshare.io/ , https://www.slant.co/ , https://alternativeto.net/ у вашій ніші і провести gap-аналіз (через безкоштовні дані інструментів):
 
-| Донорський домен                    | Є у конкурента 1 (StackShare) | Є у конкурента 2 (Slant.co) | Є у конкурента 3 (AlternativeTo) | Є у нас | Пріоритет |
-|-------------------------------------|-------------------------------|-----------------------------|----------------------------------|---------|-----------|
-| python.org                          | Так                          | Так                         | Так                             | Так    | High     |
-| github.com/python/cpython           | Ні                           | Ні                          | Ні                              | Так    | Low      |
-| typescriptlang.org                  | Так                          | Так                         | Так                             | Так    | High     |
-| go.dev                              | Так                          | Так                         | Так                             | Так    | High     |
-| github.com/topics/html              | Ні                           | Ні                          | Ні                              | Так    | Low      |
-| rust-lang.org                       | Так                          | Ні                          | Так                             | Так    | High     |
-| mongodb.com                         | Так                          | Так                         | Так                             | Так    | High     |
-| postgresql.org                      | Так                          | Так                         | Так                             | Так    | High     |
-| github.com/postgres/postgres        | Ні                           | Ні                          | Ні                              | Так    | Low      |
-| redis.io                            | Так                          | Так                         | Так                             | Так    | High     |
-| mysql.com                           | Так                          | Так                         | Так                             | Так    | High     |
-| github.com/redis/redis              | Ні                           | Ні                          | Ні                              | Так    | Low      |
-| vim.org                             | Так                          | Так                         | Так                             | Так    | High     |
-| github.com/vim/vim                  | Ні                           | Ні                          | Ні                              | Так    | Low      |
-| jetbrains.com/rider                 | Так                          | Ні                          | Так                             | Так    | High     |
-| code.visualstudio.com               | Так                          | Так                         | Так                             | Так    | High     |
-| github.com/microsoft/vscode         | Ні                           | Ні                          | Ні                              | Так    | Low      |
-| github.com/microsoft/TypeScript     | Ні                           | Ні                          | Ні                              | Так    | Low      |
-| github.com/golang/go                | Ні                           | Ні                          | Ні                              | Так    | Low      |
-| github.com/rust-lang/rust           | Ні                           | Ні                          | Ні                              | Так    | Low      |
+| Донорський домен          | Є у конкурента 1 (StackShare) | Є у конкурента 2 (Slant.co) | Є у конкурента 3 (AlternativeTo) | Є у нас (BetterStack.tech) | Пріоритет |
+|---------------------------|-------------------------------|-----------------------------|----------------------------------|-----------------------------|-----------|
+| g2.com                    | Так                          | Ні                          | Так                             | Ні                          | High     |
+| capterra.com              | Так                          | Ні                          | Так                             | Ні                          | High     |
+| producthunt.com           | Так                          | Ні                          | Так                             | Ні                          | High     |
+| saashub.com               | Так                          | Ні                          | Так                             | Ні                          | High     |
+| betalist.com              | Так                          | Ні                          | Так                             | Ні                          | High     |
+| dev.to                    | Так                          | Ні                          | Так                             | Ні                          | High     |
+| hackernoon.com            | Так                          | Ні                          | Так                             | Ні                          | High     |
+| medium.com                | Так                          | Ні                          | Так                             | Ні                          | High     |
+| news.ycombinator.com      | Так                          | Ні                          | Так                             | Ні                          | High     |
+| reddit.com                | Так                          | Ні                          | Так                             | Ні                          | High     |
+| sourceforge.net           | Так                          | Ні                          | Так                             | Ні                          | High     |
+| getapp.com                | Так                          | Ні                          | Так                             | Ні                          | High     |
+| trustradius.com           | Так                          | Ні                          | Так                             | Ні                          | High     |
+| softwareadvice.com        | Так                          | Ні                          | Так                             | Ні                          | High     |
+| pcmag.com                 | Так                          | Ні                          | Так                             | Ні                          | High     |
+| techradar.com             | Так                          | Ні                          | Так                             | Ні                          | High     |
+| makeuseof.com             | Так                          | Ні                          | Так                             | Ні                          | High     |
+| crunchbase.com            | Так                          | Ні                          | Так                             | Ні                          | High     |
+| venturebeat.com           | Так                          | Ні                          | Так                             | Ні                          | High     |
+| techcrunch.com            | Так                          | Ні                          | Так                             | Ні                          | High     | Так    | Low      |
 
 **Мінімальна вимога:** знайти **20 доменів-можливостей** (prospects) і розставити пріоритети.
 
