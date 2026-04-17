@@ -27,6 +27,8 @@ export const metadata: Metadata = {
     },
 };
 
+export const revalidate = 3600;
+
 export default async function Home() {
     const client = await createServerClient();
     const featuredSoftware = await getMostUsedSoftware(client, 3);

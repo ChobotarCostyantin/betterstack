@@ -6,6 +6,7 @@ export default function Logo({ className = '', ...props }: LogoProps) {
     return (
         <svg
             width="45"
+            height="45"
             viewBox="0 0 513 551"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
