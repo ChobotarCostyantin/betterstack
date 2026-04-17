@@ -4,10 +4,12 @@ import Image from 'next/image';
 
 export const ScreenshotItem = ({
     url,
+    alt,
     index,
     onClick,
 }: {
     url: string;
+    alt?: string;
     index: number;
     onClick: () => void;
 }) => {
@@ -37,7 +39,7 @@ export const ScreenshotItem = ({
         >
             <Image
                 src={url}
-                alt={`Screenshot ${index + 1}`}
+                alt={alt || `Screenshot ${index + 1}`}
                 fill
                 className="object-contain transition-transform duration-500 group-hover/item:scale-105"
                 sizes="(max-width: 768px) 350px, 400px"
