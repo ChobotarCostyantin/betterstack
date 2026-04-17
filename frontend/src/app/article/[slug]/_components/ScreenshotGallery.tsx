@@ -140,7 +140,6 @@ export default function ScreenshotGallery({
                             url={screenshot.url}
                             alt={screenshot.alt}
                             index={index}
-                            priority={index < 2}
                             onClick={() => handleImageSelect(screenshot)}
                         />
                     ))}
