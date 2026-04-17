@@ -17,6 +17,7 @@ import { GlobeIcon, Users, ChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import { absoluteUrl } from '@/src/lib/url';
 import { SoftwareApplication, WithContext } from 'schema-dts';
+import { safeJsonLdStringify } from '@/src/lib/utils';
 
 const ScreenshotGallery = dynamic(
     () => import('./_components/ScreenshotGallery'),
@@ -154,7 +155,9 @@ export default async function SoftwareArticlePage({
         <article className="max-w-4xl mx-auto px-4 py-6 sm:p-6">
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{
+                    __html: safeJsonLdStringify(jsonLd),
+                }}
             />
 
             <nav
