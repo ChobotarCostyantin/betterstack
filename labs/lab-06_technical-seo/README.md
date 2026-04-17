@@ -161,23 +161,23 @@ Sitemap: https://ваш-домен/sitemap.xml
 
 Для кожного URL зняти показники з PageSpeed Insights (Mobile + Desktop):
 
-| URL                  | Device | Performance | LCP | INP | CLS | TTFB | FCP | Статус CWV |
-|----------------------|--------|-------------|-----|-----|-----|------|-----|------------|
-| https://example.com/ | Mobile | 58 | 3.9s | 280ms | 0.18 | 1.1s | 2.1s | Needs Improvement |
-| https://example.com/ | Desktop|             |     |     |     |      |     |            |
-| https://example.com/category/frontend | Mobile |             |     |     |     |      |     |            |
-| https://example.com/category/frontend | Desktop|             |     |     |     |      |     |            |
+| URL                                  | Device  | Performance | LCP  | INP | CLS | TTFB | FCP  | Статус CWV        |
+|--------------------------------------|---------|-------------|------|-----|-----|------|------|-------------------|
+| https://betterstack.tech/            | Mobile  | 98          | 2.7s | N/A | 0   | N/A  | 0.9s | Needs Improvement |
+| https://betterstack.tech/            | Desktop | 100         | 0.6s | N/A | 0   | N/A  | 0.2s | Passed            |
+| https://betterstack.tech/article/vim | Mobile  | 97          | 3.3s | N/A | 0   | N/A  | 0.9s | Needs Improvement |
+| https://betterstack.tech/article/vim | Desktop | 100         | 0.5s | N/A | 0   | N/A  | 0.3s | Passed            |
 
 #### 3.2 - Аналіз причин
 
 Для кожного URL виписати топ-2 проблеми з розділів **Opportunities** та **Diagnostics**:
 
-| URL | Проблема | Яку метрику псує | Потенційний вплив | Пріоритет |
-|-----|----------|------------------|-------------------|-----------|
-| https://example.com/ | Невикористаний JavaScript | INP, TBT | Затримка реакції інтерфейсу | High |
-| https://example.com/ | Зображення у форматі PNG без оптимізації | LCP | Повільний рендер hero-блоку | High |
-| https://example.com/category/frontend |          |                  |                   |           |
-| https://example.com/category/frontend |          |                  |                   |           |
+| URL                                  | Проблема                                   | Яку метрику псує | Потенційний вплив  | Пріоритет |
+|--------------------------------------|--------------------------------------------|------------------|--------------------|-----------|
+| https://betterstack.tech/            | Устарівший код JavaScript                  | LCP, FCP         | Повільний рендер   | High      |
+| https://betterstack.tech/            | Невикористаний код JavaScript              | LCP, FCP         | Білий екран        | High      |
+| https://betterstack.tech/article/vim | Розмір зображень більше розміру контейнера | LCP, FCP         | Довге завантаження | Medium    |
+| https://betterstack.tech/article/vim | Невикористаний код JavaScript              | LCP, FCP         | Зависання кліків   | High      |
 
 > Орієнтири Core Web Vitals: `LCP <= 2.5s`, `INP <= 200ms`, `CLS <= 0.1` (зелена зона).
 
@@ -204,11 +204,11 @@ Sitemap: https://ваш-домен/sitemap.xml
 
 Таблиця результатів:
 
-| Метрика | Було | Стало | Delta | Досягнуто цілі? |
-|---------|------|-------|-------|-----------------|
-| LCP     |      |       |       |                 |
-| INP     |      |       |       |                 |
-| CLS     |      |       |       |                 |
+| Метрика | Було | Стало | Delta | Досягнуто цілі?         |
+|---------|------|-------|-------|-------------------------|
+| LCP     | 2.7s | 1.9s  | -0.8s | Так                     |
+| INP     | N/A  | N/A   | N/A   | N/A                     |
+| CLS     | 0    | 0     | 0     | Не потребує оптимізації |
 
 ---
 
