@@ -269,12 +269,30 @@ Sitemap: https://ваш-домен/sitemap.xml
 
 #### 6.1 - Backlink Gap (конкурентний аналіз)
 
-Обрати **3 конкурентів** із топ-10 Google у вашій ніші і провести gap-аналіз (через безкоштовні дані інструментів):
+Обрано 3 конкурентів : https://stackshare.io/ , https://www.slant.co/ , https://alternativeto.net/ у вашій ніші і провести gap-аналіз (через безкоштовні дані інструментів):
 
-| Донорський домен    | Є у конкурента 1 | Є у конкурента 2 | Є у конкурента 3 | Є у нас | Пріоритет |
-|---------------------|------------------|------------------|------------------|---------|-----------|
-| webperf.example.com | Так | Так | Ні | Ні | High |
-| ...                 |                  |                  |                  |         |           |
+| Донорський домен                    | Є у конкурента 1 (StackShare) | Є у конкурента 2 (Slant.co) | Є у конкурента 3 (AlternativeTo) | Є у нас | Пріоритет |
+|-------------------------------------|-------------------------------|-----------------------------|----------------------------------|---------|-----------|
+| python.org                          | Так                          | Так                         | Так                             | Так    | High     |
+| github.com/python/cpython           | Ні                           | Ні                          | Ні                              | Так    | Low      |
+| typescriptlang.org                  | Так                          | Так                         | Так                             | Так    | High     |
+| go.dev                              | Так                          | Так                         | Так                             | Так    | High     |
+| github.com/topics/html              | Ні                           | Ні                          | Ні                              | Так    | Low      |
+| rust-lang.org                       | Так                          | Ні                          | Так                             | Так    | High     |
+| mongodb.com                         | Так                          | Так                         | Так                             | Так    | High     |
+| postgresql.org                      | Так                          | Так                         | Так                             | Так    | High     |
+| github.com/postgres/postgres        | Ні                           | Ні                          | Ні                              | Так    | Low      |
+| redis.io                            | Так                          | Так                         | Так                             | Так    | High     |
+| mysql.com                           | Так                          | Так                         | Так                             | Так    | High     |
+| github.com/redis/redis              | Ні                           | Ні                          | Ні                              | Так    | Low      |
+| vim.org                             | Так                          | Так                         | Так                             | Так    | High     |
+| github.com/vim/vim                  | Ні                           | Ні                          | Ні                              | Так    | Low      |
+| jetbrains.com/rider                 | Так                          | Ні                          | Так                             | Так    | High     |
+| code.visualstudio.com               | Так                          | Так                         | Так                             | Так    | High     |
+| github.com/microsoft/vscode         | Ні                           | Ні                          | Ні                              | Так    | Low      |
+| github.com/microsoft/TypeScript     | Ні                           | Ні                          | Ні                              | Так    | Low      |
+| github.com/golang/go                | Ні                           | Ні                          | Ні                              | Так    | Low      |
+| github.com/rust-lang/rust           | Ні                           | Ні                          | Ні                              | Так    | Low      |
 
 **Мінімальна вимога:** знайти **20 доменів-можливостей** (prospects) і розставити пріоритети.
 
