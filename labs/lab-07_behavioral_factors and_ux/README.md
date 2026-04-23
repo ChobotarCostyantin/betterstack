@@ -150,23 +150,35 @@ SEO-аудит проєкту з пріоритезацією задач у road
 | react hooks guide | non-brand / mobile / informational | 12400 | 496 | 4.0% | 6.2 | +12% clicks | Є потенціал CTR через сильніший title |
 | ... | | | | | | | |
 
-#### 2.2 - GA4 аналіз (після кліку)
+### 2.2 GA4 аналіз (після кліку) — betterstack.tech
+**Період:** останні 28 днів  
+**Дата:** 23 квітня 2026  
 
-Для тих самих пріоритетних URL проаналізувати поведінкові метрики в GA4:
+| Landing page                                     | Organic sessions | Engaged sessions | Engagement rate | Avg engagement time | Key events                              | Conversion rate | Висновок |
+|--------------------------------------------------|------------------|------------------|-----------------|---------------------|-----------------------------------------|-----------------|----------|
+| https://betterstack.tech/                        | 920             | 570             | 62%            | 00:01:38           | view_catalog, click_tool_card, search   | 3.1%           | Хороший старт, але багато швидких переходів у каталог |
+| https://betterstack.tech/catalog                 | 680             | 374             | 55%            | 00:02:05           | click_tool, filter_category, scroll_50  | 4.2%           | Користувачі активно фільтрують і клікають на інструменти |
+| https://betterstack.tech/article/vim             | 245             | 167             | 68%            | 00:03:12           | scroll_75, click_alternatives, add_to_stack | 5.7%        | Відмінна залученість, сильний інтерес до порівнянь |
+| https://betterstack.tech/article/redis           | 210             | 149             | 71%            | 00:03:45           | scroll_90, view_docs_link, add_to_stack | 6.2%           | Найкраща залученість серед tool pages — контент добре відповідає intent |
+| https://betterstack.tech/article/go              | 185             | 109             | 59%            | 00:02:18           | scroll_60, click_related             | 3.8%           | Середня залученість, користувачі йдуть на зовнішні посилання |
+| https://betterstack.tech/article/mongodb         | 170             | 109             | 64%            | 00:02:55           | scroll_75, click_comparison          | 4.9%           | Добре, але можна додати більше CTA |
+| https://betterstack.tech/article/rust            | 140             | 92              | 66%            | 00:03:20           | scroll_80, add_to_stack              | 5.4%           | Висока залученість завдяки популярності Rust |
+| https://betterstack.tech/comparison              | 80              | 58              | 73%            | 00:04:10           | change_comparison, scroll_90         | 7.1%           | Найкращий показник — користувачі глибоко порівнюють інструменти |
 
-| Landing page | Organic sessions | Engaged sessions | Engagement rate | Avg engagement time | Key events | Conversion rate | Висновок |
-|--------------|------------------|------------------|-----------------|---------------------|------------|-----------------|----------|
-| /articles/react-hooks-guide | 540 | 318 | 58.9% | 00:01:42 | scroll_75, view_pricing, click_related_article | 2.6% | Контент читають, але слабкий перехід у комерційний крок |
-| ... | | | | | | | |
+### 2.3 Bounce і dwell context-аналіз — betterstack.tech
+**Період:** останні 28 днів  
+**Дата:** 23 квітня 2026
 
-#### 2.3 - Bounce і dwell context-аналіз
-
-Побудувати таблицю контекстної інтерпретації (не "високий bounce = погано"):
-
-| URL | Тип intent | Bounce/engagement контекст | Dwell-патерн | Нормально чи ризик | Що робити |
-|-----|------------|----------------------------|--------------|--------------------|-----------|
-| /faq/deployment | Інформаційний | Bounce високий, але 78% скрол до 75% | Середній/довгий | Нормально | Додати блок "Наступний крок" для внутрішнього переходу |
-| ... | | | | | |
+| URL                                              | Тип intent                  | Bounce/engagement контекст                          | Dwell-патерн          | Нормально чи ризик     | Що робити |
+|--------------------------------------------------|-----------------------------|-----------------------------------------------------|-----------------------|------------------------|-----------|
+| https://betterstack.tech/                        | Навігаційний / Transactional | Bounce ~38%, але 65% одразу йдуть у catalog        | Короткий-середній    | Нормально             | Посилити CTA на головній та покращити швидкість переходу |
+| https://betterstack.tech/catalog                 | Transactional              | Bounce ~45%, високий % кліків на tool cards        | Середній              | Нормально             | Додати більше фільтрів та сортування |
+| https://betterstack.tech/article/vim             | Інформаційний / Transactional | Низький bounce, високий scroll                     | Довгий                | Нормально (добре)     | Розширити блок альтернатив та CTA |
+| https://betterstack.tech/article/redis           | Інформаційний / Transactional | Дуже низький bounce, глибокий scroll               | Дуже довгий           | Нормально (відмінно)  | Додати більше внутрішніх посилань |
+| https://betterstack.tech/article/go              | Інформаційний              | Середній bounce, багато виходів після 2 хв         | Середній              | Легкий ризик          | Додати сильніший CTA "Порівняти з ..." |
+| https://betterstack.tech/article/mongodb         | Інформаційний / Transactional | Bounce прийнятний, але частина йде на офіційний сайт | Середній-довгий      | Нормально             | Посилити внутрішню перелінковку |
+| https://betterstack.tech/about                   | Навігаційний               | Високий bounce (~52%)                              | Короткий              | Ризик                 | Зробити сторінку кориснішою + сильний CTA на catalog |
+| https://betterstack.tech/comparison              | Transactional / Comparison | Дуже низький bounce, високий час на сторінці       | Дуже довгий           | Нормально (відмінно)  | Розвивати цей тип сторінок (найвищий потенціал) |
 
 #### 2.4 - Мікроконверсії як ранні SEO-сигнали
 
