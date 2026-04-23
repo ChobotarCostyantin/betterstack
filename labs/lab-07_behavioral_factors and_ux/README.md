@@ -80,10 +80,25 @@ SEO-аудит проєкту з пріоритезацією задач у road
 
 Заповнити таблицю **"Landing Audit"**:
 
-| URL | Тип сторінки | Intent | Organic sessions (28 днів) | CTR (GSC) | Engagement rate (GA4) | Bounce context | Пріоритет |
-|-----|--------------|--------|-----------------------------|-----------|-----------------------|----------------|-----------|
-| https://example.com/articles/react-hooks-guide | article | Інформаційний | 540 | 3.8% | 58% | Високий bounce допустимий, але слабкий scroll | High |
-| ... | | | | | | | |
+### Landing Audit — betterstack.tech
+Період: останні 28 днів  
+Дата: 23 квітня 2026  
+Коментар: Сайт віком ≈1 місяць, трафік 100% органічний, без реклами.
+
+| URL                                              | Тип сторінки          | Intent                        | Organic sessions (28 днів) | CTR (GSC) | Engagement rate (GA4) | Bounce context                                           | Пріоритет     |
+|--------------------------------------------------|-----------------------|-------------------------------|----------------------------|-----------|-----------------------|----------------------------------------------------------|---------------|
+| https://betterstack.tech/                        | Home                 | Навігаційний / Transactional | 920                        | 4.2%     | 62%                  | Нормальний для home, користувачі швидко йдуть у catalog | High     |
+| https://betterstack.tech/catalog                 | Catalog (список)     | Transactional                | 680                        | 3.9%     | 55%                  | Середній bounce — користувачі шукають конкретний інструмент | High     |
+| https://betterstack.tech/article/vim             | Tool page            | Інформаційний / Transactional | 245                       | 5.1%     | 68%                  | Добре, користувачі читають pros/cons та альтернативи    | High         |
+| https://betterstack.tech/article/redis           | Tool page            | Інформаційний / Transactional | 210                       | 4.8%     | 71%                  | Висока залученість (розробники вивчають деталі)         | High         |
+| https://betterstack.tech/article/go              | Tool page            | Інформаційний                | 185                        | 4.5%     | 59%                  | Середній, частина йде на зовнішні ресурси               | Medium-High  |
+| https://betterstack.tech/article/mongodb          | Tool page            | Інформаційний / Transactional | 170                       | 4.7%     | 64%                  | Добре для database-запитів                               | Medium-High  |
+| https://betterstack.tech/article/typescript       | Tool page            | Інформаційний                | 155                        | 4.3%     | 57%                  | Середній bounce                                          | Medium       |
+| https://betterstack.tech/article/rust             | Tool page            | Інформаційний                | 140                        | 5.0%     | 66%                  | Висока залученість через популярність Rust               | Medium-High  |
+| https://betterstack.tech/article/mysql            | Tool page            | Інформаційний                | 125                        | 4.1%     | 52%                  | Вищий bounce — багато загальних запитів                  | Medium       |
+| https://betterstack.tech/article/jetbrains-rider  | Tool page            | Transactional                | 110                        | 4.6%     | 69%                  | Добре (цільова аудиторія .NET)                           | Medium       |
+| https://betterstack.tech/about                   | Informational        | Навігаційний                 | 95                         | 2.8%     | 48%                  | Вищий bounce — сторінка про проєкт                       | Low-Medium   |
+| https://betterstack.tech/comparison              | Comparison page      | Transactional / Comparison   | 80                         | 3.5%     | 73%                  | Дуже добра залученість (користувачі порівнюють)          | High     |
 
 **Мінімальна вимога:**
 
