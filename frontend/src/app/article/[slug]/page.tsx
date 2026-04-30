@@ -19,6 +19,7 @@ import { Metadata } from 'next';
 import { absoluteUrl } from '@/src/lib/url';
 import { SoftwareApplication, WithContext } from 'schema-dts';
 import { safeJsonLdStringify } from '@/src/lib/utils';
+import { AnalyticsEvent } from '@/src/api/common/analytics.enums';
 
 export async function generateMetadata({
     params,
@@ -251,7 +252,7 @@ export default async function SoftwareArticlePage({
                     {software.gitRepoUrl && (
                         <TrackedLink
                             href={software.gitRepoUrl}
-                            eventName="click_tool_github"
+                            eventName={AnalyticsEvent.CLICK_TOOL_GITHUB}
                             eventParams={{
                                 software_id: software.id,
                                 software_name: software.name,
@@ -270,7 +271,7 @@ export default async function SoftwareArticlePage({
                     {software.websiteUrl && (
                         <TrackedLink
                             href={software.websiteUrl}
-                            eventName="click_tool_website"
+                            eventName={AnalyticsEvent.CLICK_TOOL_WEBSITE}
                             eventParams={{
                                 software_id: software.id,
                                 software_name: software.name,

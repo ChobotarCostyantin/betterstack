@@ -2,6 +2,7 @@ import { createServerClient } from '@/src/lib/api/server.client';
 import { getSoftwareAlternatives } from '@/src/api/software/software.api';
 import Image from 'next/image';
 import TrackedLink from './TrackedLink';
+import { AnalyticsEvent } from '@/src/api/common/analytics.enums';
 
 interface SoftwareAlternativesProps {
     slug: string;
@@ -47,7 +48,7 @@ export default async function SoftwareAlternatives({
                     >
                         <TrackedLink
                             href={`/article/${alt.slug}`}
-                            eventName="click_related_article"
+                            eventName={AnalyticsEvent.CLICK_RELATED_ARTICLE}
                             eventParams={{
                                 current_slug: slug,
                                 target_slug: alt.slug,
@@ -86,7 +87,7 @@ export default async function SoftwareAlternatives({
 
                         <TrackedLink
                             href={`/comparison?firstSoft=${slug}&secondSoft=${alt.slug}`}
-                            eventName="click_comparison"
+                            eventName={AnalyticsEvent.CLICK_COMPARISON}
                             eventParams={{
                                 current_slug: slug,
                                 target_slug: alt.slug,

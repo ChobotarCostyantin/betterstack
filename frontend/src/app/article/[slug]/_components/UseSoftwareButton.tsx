@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { sendGTMEvent } from '@next/third-parties/google';
 import { browserClient } from '@/src/lib/api/browser.client';
+import { AnalyticsEvent } from '@/src/api/common/analytics.enums';
 import {
     markSoftwareAsUsed,
     markSoftwareAsUnused,
@@ -37,7 +38,7 @@ export default function UseSoftwareButton({
                 await markSoftwareAsUsed(browserClient, softwareId);
                 setIsUsed(true);
                 sendGTMEvent({
-                    event: 'add_to_stack',
+                    event: AnalyticsEvent.ADD_TO_STACK,
                     software_id: softwareId,
                     software_name: softwareName,
                 });

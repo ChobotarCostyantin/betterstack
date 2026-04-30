@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { sendGTMEvent } from '@next/third-parties/google';
 import { usePathname } from 'next/navigation';
+import { AnalyticsEvent } from '../api/common/analytics.enums';
 
 export default function ScrollTracker() {
     const tracked75 = useRef(false);
@@ -33,7 +34,7 @@ export default function ScrollTracker() {
 
             if (scrollPercentage >= 75) {
                 sendGTMEvent({
-                    event: 'scroll_75',
+                    event: AnalyticsEvent.SCROLL_75,
                     page_path: pathname,
                 });
                 tracked75.current = true;

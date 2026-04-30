@@ -3,12 +3,13 @@
 import { sendGTMEvent } from '@next/third-parties/google';
 import Link from 'next/link';
 import React from 'react';
+import { AnalyticsEvent } from '@/src/api/common/analytics.enums';
 
 interface TrackedLinkProps {
     href: string;
     children: React.ReactNode;
     className?: string;
-    eventName: string;
+    eventName: AnalyticsEvent;
     eventParams?: Record<string, string | number | boolean | undefined>;
 }
 

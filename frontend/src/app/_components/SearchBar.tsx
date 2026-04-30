@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { sendGTMEvent } from '@next/third-parties/google';
 import { browserClient } from '@/src/lib/api/browser.client';
 import { listSoftware } from '@/src/api/software/software.api';
+import { AnalyticsEvent } from '@/src/api/common/analytics.enums';
 import type { SoftwareListItem } from '@/src/api/software/software.schemas';
 import SearchResultItem from './SearchResultItem';
 import { Search } from 'lucide-react';
@@ -46,7 +47,7 @@ export default function LiveSearchBar() {
                 setResults(data.data);
                 if (data.data.length) {
                     sendGTMEvent({
-                        event: 'view_search_results',
+                        event: AnalyticsEvent.VIEW_SEARCH_RESULTS,
                         search_term: query,
                         results_count: data.data.length,
                     });
