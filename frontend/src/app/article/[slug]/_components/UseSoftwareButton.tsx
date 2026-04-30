@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { sendGTMEvent } from '@next/third-parties/google';
 import { browserClient } from '@/src/lib/api/browser.client';
+import { AnalyticsEvent } from '@/src/api/common/analytics.enums';
 import {
     markSoftwareAsUsed,
     markSoftwareAsUnused,
@@ -12,11 +14,13 @@ import { useRouter } from 'next/navigation';
 interface UseSoftwareButtonProps {
     softwareId: number;
     initialIsUsed?: boolean;
+    softwareName?: string;
 }
 
 export default function UseSoftwareButton({
     softwareId,
     initialIsUsed = false,
+    softwareName = 'Unknown',
 }: UseSoftwareButtonProps) {
     const [isUsed, setIsUsed] = useState(initialIsUsed);
     const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +37,11 @@ export default function UseSoftwareButton({
             } else {
                 await markSoftwareAsUsed(browserClient, softwareId);
                 setIsUsed(true);
+                sendGTMEvent({
+                    event: AnalyticsEvent.ADD_TO_STACK,
+                    software_id: softwareId,
+                    software_name: softwareName,
+                });
             }
             router.refresh();
         } catch (error) {

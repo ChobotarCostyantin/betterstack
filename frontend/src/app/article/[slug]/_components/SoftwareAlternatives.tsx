@@ -1,7 +1,8 @@
 import { createServerClient } from '@/src/lib/api/server.client';
 import { getSoftwareAlternatives } from '@/src/api/software/software.api';
 import Image from 'next/image';
-import Link from 'next/link';
+import TrackedLink from './TrackedLink';
+import { AnalyticsEvent } from '@/src/api/common/analytics.enums';
 
 interface SoftwareAlternativesProps {
     slug: string;
@@ -45,8 +46,13 @@ export default async function SoftwareAlternatives({
                         key={alt.id}
                         className="flex items-center justify-between p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800 hover:bg-zinc-800/60 transition-colors group"
                     >
-                        <Link
+                        <TrackedLink
                             href={`/article/${alt.slug}`}
+                            eventName={AnalyticsEvent.CLICK_RELATED_ARTICLE}
+                            eventParams={{
+                                current_slug: slug,
+                                target_slug: alt.slug,
+                            }}
                             className="flex items-center gap-4 flex-1 min-w-0"
                         >
                             {alt.logoUrl ? (
@@ -77,14 +83,19 @@ export default async function SoftwareAlternatives({
                                     </span>
                                 )}
                             </div>
-                        </Link>
+                        </TrackedLink>
 
-                        <Link
+                        <TrackedLink
                             href={`/comparison?firstSoft=${slug}&secondSoft=${alt.slug}`}
+                            eventName={AnalyticsEvent.CLICK_COMPARISON}
+                            eventParams={{
+                                current_slug: slug,
+                                target_slug: alt.slug,
+                            }}
                             className="shrink-0 px-3 py-1.5 text-xs font-medium text-zinc-400 bg-zinc-500/10 hover:bg-zinc-500/20 border border-zinc-500/20 rounded-lg transition-colors"
                         >
                             Compare
-                        </Link>
+                        </TrackedLink>
                     </div>
                 ))}
             </div>
