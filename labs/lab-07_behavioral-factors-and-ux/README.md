@@ -250,19 +250,22 @@
 
 #### 4.1 - Інтегрований audit backlog (Issue -> Evidence -> Impact -> Effort)
 
-Скласти підсумковий backlog мінімум із **12 задач**, що охоплює:
+Підсумковий беклог містить 12 пріоритетних задач, що базуються на виявлених «вузьких місцях» у воронці залучення та утримання користувачів.
 
-- UX/поведінкові проблеми
-- контент/intent-match
-- технічні обмеження
-- аналітичні прогалини GA4/GSC
-
-Таблиця **"Final SEO Audit"**:
-
-| Issue                                       | Evidence                          | Impact (traffic/lead/revenue)                | Effort | Owner         | Deadline   | Success criteria            |
-|---------------------------------------------|-----------------------------------|----------------------------------------------|--------|---------------|------------|-----------------------------|
-| Низький CTR на 8 пріоритетних non-brand URL | GSC: CTR 2.1-2.8% при позиції 4-6 | +180-260 кліків/міс після оновлення сніпетів | M      | SEO + Content | 2026-05-05 | CTR +0.8 п.п. через 4 тижні |
-| ...                                         |                                   |                                              |        |               |            |                             |
+| Issue (Проблема) | Evidence (Докази) | Impact (Вплив) | Effort | Owner | Deadline | Success criteria |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Критична помилка в канонічних URL** | UX Audit 1.3 (#2): Параметр `?q=` у тегу canonical | High (Indexing/Duplicate content) | M | Tech (Коля) | 05.05.2026 | Очищення індексу від дублів пошуку |
+| **Неоптимізований Title головної сторінки** | UX Audit 1.3 (#1): Назва "Home \| betterstack" | High (CTR / Rankings) | S | SEO (Ти) | 01.05.2026 | Зростання CTR головної у GSC на 1% |
+| **Горизонтальний скрол у порівняннях (Mobile)** | UX Audit 1.3 (#8): Помилки відображення таблиць | High (Mobile Rankings / UX) | M | Tech (Коля) | 10.05.2026 | Відсутність помилок у GSC Mobile Usability |
+| **Слабкий інтент-матч на сторінках без оглядів** | GA4 (2.2): Нижчий ER на сторінках типу /article/go (59%) | High (Dwell time / Trust) | L | Content (Влад) | 20.05.2026 | Engagement Rate > 65% для цих URL |
+| **Низька видимість за non-brand запитами** | GSC (2.1): Позиції 24-42 для "jetbrains rider" | High (Traffic) | M | SEO + Content | 15.05.2026 | Вихід топ-запитів у ТОП-10 |
+| **Низька залученість на сторінці /about** | GA4 (2.3): Bounce ~52%, короткий dwell-time | Medium (Navigation) | S | UX (Костя) | 05.05.2026 | Engagement Rate > 60% |
+| **Відсутність мікророзмітки Breadcrumbs** | UX Audit 1.3 (#9): Валідатор Rich Results | Medium (CTR) | S | Tech (Коля) | 03.05.2026 | Відображення Breadcrumbs у сніпеті Google |
+| **Тупиковий стан "Nothing found" у каталозі** | UX Audit 1.3 (#3): Скриншоти порожнього лістингу | Medium (Bounce rate) | S | UX (Костя) | 07.05.2026 | Bounce rate на /catalog < 40% |
+| **Відсутність сигналів свіжості (Last Updated)** | UX Audit 1.3 (#6): Відсутність дат у UI | Medium (E-E-A-T / CTR) | S | Tech + Content | 12.05.2026 | Поява дати у сніпеті Google |
+| **Розрив у Breadcrumbs (пропуск категорії)** | UX Audit 1.3 (#4): `Home > Catalog > [Software]` | Medium (Link Juice) | M | Tech (Коля) | 15.05.2026 | Коректна ієрархія в GSC |
+| **Низька конверсія в клік CTA на сторінках категорій** | GA4 (3.4): Зниження Pages per session (-7.7%) | Medium (Conversion) | M | UX + SEO | 25.05.2026 | Зростання Pages per session до 2.8 |
+| **Невідповідність Meta Description інтенту** | UX Audit 1.3 (#12): Рандомні сніпети у видачі | Low-Medium (CTR) | S | Content (Влад) | 10.05.2026 | Сніпети відповідають заданим Description |
 
 #### 4.2 - Пріоритезація за матрицею Impact/Effort
 
