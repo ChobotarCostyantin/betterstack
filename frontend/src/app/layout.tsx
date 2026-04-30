@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { GoogleTagManager } from '@next/third-parties/google';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import ScrollTracker from '../components/ScrollTracker';
 import '../styles/globals.css';
 import React from 'react';
 import { createServerClient } from '../lib/api/server.client';
@@ -39,6 +41,8 @@ export default async function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} flex flex-col min-h-screen antialiased`}
             >
+                <GoogleTagManager gtmId="GTM-K8BJMGSF" />
+                <ScrollTracker />
                 <Header user={user} />
 
                 <main className="flex-1">{children}</main>

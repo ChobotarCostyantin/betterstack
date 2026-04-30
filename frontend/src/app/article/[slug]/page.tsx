@@ -8,16 +8,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import CategoryTags from '@/src/components/CategoryTags';
 import UseSoftwareButton from './_components/UseSoftwareButton';
+import TrackedLink from './_components/TrackedLink';
+import SoftwareReviewSection from './_components/SoftwareReviewSection';
+import ProsAndCons from './_components/ProsAndCons';
+import ScreenshotGallery from './_components/ScreenshotGallery';
+import SoftwareAlternatives from './_components/SoftwareAlternatives';
 import { notFound } from 'next/navigation';
 import { GlobeIcon, Users, ChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import { absoluteUrl } from '@/src/lib/url';
 import { SoftwareApplication, WithContext } from 'schema-dts';
 import { safeJsonLdStringify } from '@/src/lib/utils';
-import SoftwareReviewSection from '@/src/app/article/[slug]/_components/SoftwareReviewSection';
-import ProsAndCons from '@/src/app/article/[slug]/_components/ProsAndCons';
-import ScreenshotGallery from '@/src/app/article/[slug]/_components/ScreenshotGallery';
-import SoftwareAlternatives from '@/src/app/article/[slug]/_components/SoftwareAlternatives';
 
 export async function generateMetadata({
     params,
@@ -248,10 +249,13 @@ export default async function SoftwareArticlePage({
                 {/* Icons & Actions*/}
                 <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-2 sm:mt-0">
                     {software.gitRepoUrl && (
-                        <Link
+                        <TrackedLink
                             href={software.gitRepoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            eventName="click_tool_github"
+                            eventParams={{
+                                software_id: software.id,
+                                software_name: software.name,
+                            }}
                             className="flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-zinc-900/80 border border-zinc-800 hover:bg-zinc-800 transition-all duration-300 shrink-0"
                         >
                             <Image
@@ -261,26 +265,30 @@ export default async function SoftwareArticlePage({
                                 height={24}
                                 className="w-5 h-5 sm:w-6 sm:h-6 object-contain opacity-90"
                             />
-                        </Link>
+                        </TrackedLink>
                     )}
                     {software.websiteUrl && (
-                        <Link
+                        <TrackedLink
                             href={software.websiteUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            eventName="click_tool_website"
+                            eventParams={{
+                                software_id: software.id,
+                                software_name: software.name,
+                            }}
                             className="flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-zinc-900/80 border border-zinc-800 hover:bg-zinc-800 transition-all duration-300 shrink-0"
                         >
                             <GlobeIcon
                                 className="w-5 h-5 sm:w-6 sm:h-6 text-zinc-300"
                                 strokeWidth={1.5}
                             />
-                        </Link>
+                        </TrackedLink>
                     )}
 
                     {isAuthenticated && (
                         <UseSoftwareButton
                             softwareId={software.id}
                             initialIsUsed={isUsedByCurrentUser}
+                            softwareName={software.name}
                         />
                     )}
                 </div>
