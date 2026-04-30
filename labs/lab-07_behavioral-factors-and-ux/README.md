@@ -108,8 +108,19 @@
 
 | Query/URL | Сегмент | Impressions | Clicks | CTR | Avg position | Тренд (MoM) | Висновок |
 |-----------|---------|-------------|--------|-----|--------------|-------------|----------|
-| react hooks guide | non-brand / mobile / informational | 12400 | 496 | 4.0% | 6.2 | +12% clicks | Є потенціал CTR через сильніший title |
-| ... | | | | | | | |
+| "better stack" "jetbrains" | brand / desktop / transactional | 10 | 0 | 0% | 12.4 | New | Початок брендового трафіку |
+| jetbrains rider | non-brand / desktop / commercial | 9 | 0 | 0% | 24.1 | Stable | Висока конкуренція у видачі |
+| jetbrains rider ide | non-brand / desktop / commercial | 6 | 0 | 0% | 28.5 | Stable | Потрібно покращити сніпет |
+| rider jetbrains | non-brand / desktop / transactional | 6 | 0 | 0% | 31.2 | New | Запит на порівняння або огляд |
+| betterstak | brand / mobile / navigational | 3 | 0 | 0% | 1.2 | New | Друкарська помилка (typo) |
+| razorconsole | non-brand / desktop / informational | 3 | 0 | 0% | 45.0 | Stable | Слабкий зв'язок із контентом |
+| what is jetbrains rider | non-brand / mobile / informational | 3 | 0 | 0% | 15.8 | New | Інформаційний інтент задоволено |
+| rider ide | non-brand / mobile / commercial | 2 | 0 | 0% | 42.3 | Stable | Низька видимість на мобільних |
+| betterstack nestjs | brand / desktop / informational | 1 | 0 | 0% | 8.5 | New | Точковий інтерес до стеку |
+| betterstack cli | brand / desktop / informational | 1 | 0 | 0% | 5.2 | New | Пошук інструментарію проекту |
+| intellij rider | non-brand / desktop / commercial | 1 | 0 | 0% | 34.0 | New | Користувачі шукають альтернативи |
+| rider intellij | non-brand / desktop / commercial | 1 | 0 | 0% | 38.4 | New | Низька релевантність сторінки |
+| betterstach | brand / mobile / navigational | 1 | 0 | 0% | 1.5 | New | Ще одна помилка в бренд-запиті |
 
 ### 2.2 GA4 аналіз (після кліку) — betterstack.tech
 **Період:** останні 28 днів  
@@ -185,8 +196,14 @@
 
 | Event name | Trigger | Parameters | Бізнес/SEO сенс | Перевірка в DebugView |
 |------------|---------|------------|------------------|-----------------------|
-| click_cta_primary | Клік по головній кнопці hero | page_type, intent_type, cta_label | Чи рухається користувач до цілі після входу з органіки | Event видно з параметрами |
-| ... | | | | |
+| view_search_results | Успішний пошук у LiveSearchBar | search_term, results_count | Аналіз інтересу до конкретних інструментів | Event видно при вводі >2 символів |
+| click_tool_website | Клік по GlobeIcon у хедері статті | software_id, software_name | Перехід на сайт розробника (CTA) | Подія з URL сайту |
+| click_tool_github | Клік по лого GitHub у хедері статті | software_id, software_name | Перехід до репозиторію (CTA) | Подія з GitHub URL |
+| add_to_stack | Натискання "I used this" | software_id, software_name | Мікроконверсія: користувач додав софт у стек | Подія при успішному toggle |
+| click_related_article | Клік по картці альтернативного софту | current_slug, target_slug | Аналіз внутрішнього перелінкування | Перехід на іншу статтю |
+| click_comparison | Клік по кнопці "Compare" | current_slug, target_slug | Намір порівняти інструменти (High Intent) | Перехід на сторінку порівняння |
+| scroll_75 | Скрол сторінки на 75% | page_path | Підтвердження якості контенту | Спрацьовує автоматично при скролі |
+
 
 #### 3.3 - Налаштування conversions і аудиторій
 
@@ -200,8 +217,11 @@
 
 | Тип | Назва | Умова | Навіщо |
 |-----|-------|-------|--------|
-| Conversion | form_submit | event_name = form_submit | Оцінка внеску SEO у ліди |
-| ... | | | |
+| Conversion | add_to_stack | event_name = add_to_stack | Найвища лояльність (користувач додав софт у свій стек) |
+| Conversion | click_tool_website | event_name = click_tool_website | Цільова дія — перехід на сайт інструменту |
+| Audience | Organic Engaged Users | session_medium = organic AND (engagement_time > 10s OR scroll_75 triggered) | Аналіз ядра лояльної органічної аудиторії |
+| Audience | Organic Non-Engaged | session_medium = organic AND engagement_time < 5s | Виявлення проблем релевантності/UX на вході |
+| Audience | Organic Returning Users | session_medium = organic AND user_type = 'returning' | Оцінка здатності контенту повертати користувачів |
 
 #### 3.4 - Щотижневий GA4 SEO report
 
