@@ -57,10 +57,17 @@ export default function AboutPage() {
                         </Link>
 
                         <Link
+                            href="/comparison"
+                            className="px-8 py-4 rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:scale-[1.02] active:scale-[0.98] transition-all font-bold"
+                        >
+                            Compare Tools
+                        </Link>
+
+                        <Link
                             href={projectRepo}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all font-bold"
+                            className="group inline-flex items-center gap-2 px-6 py-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all font-bold"
                         >
                             <Image
                                 src="/github-logo.svg"
@@ -69,7 +76,6 @@ export default function AboutPage() {
                                 height={20}
                                 className="not-dark:invert opacity-70 group-hover:opacity-100 transition-opacity"
                             />
-                            Source Code
                         </Link>
                     </div>
                 </div>
@@ -119,20 +125,65 @@ export default function AboutPage() {
                         </ul>
                     </div>
 
-                    <div className="relative group">
-                        <div className="absolute -inset-1 bg-linear-to-r from-zinc-500 to-gray-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000" />
-                        <div className="relative p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950 aspect-video flex items-center justify-center">
+                    <Link
+                        href="/comparison"
+                        className="relative group block cursor-pointer"
+                    >
+                        <div className="absolute -inset-1 bg-linear-to-r from-blue-500 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000" />
+                        <div className="relative p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950 aspect-video flex flex-col items-center justify-center transition-transform group-hover:scale-[1.02]">
                             <div className="text-center space-y-4">
-                                {/* Here you can insert a screenshot of the site or an icon */}
-                                <div className="text-5xl md:text-6xl font-black opacity-10 uppercase tracking-tighter">
-                                    Interface
+                                <div className="text-3xl md:text-4xl font-black text-zinc-800 dark:text-zinc-200 uppercase tracking-tighter">
+                                    Live Comparison
                                 </div>
-                                <p className="text-sm font-medium text-zinc-500">
-                                    Optimized for Developers
+                                <p className="text-sm font-medium text-zinc-500 flex items-center justify-center gap-2">
+                                    Try the tool now{' '}
+                                    <span className="group-hover:translate-x-1 transition-transform">
+                                        →
+                                    </span>
                                 </p>
                             </div>
                         </div>
-                    </div>
+                    </Link>
+                </div>
+            </section>
+
+            <section className="mb-24 px-4 max-w-3xl mx-auto">
+                <h2 className="text-3xl font-bold tracking-tight mb-8 text-center">
+                    Technical Integrity
+                </h2>
+                <div className="space-y-4">
+                    <details className="group border border-zinc-200 dark:border-zinc-800 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 p-6 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+                        <summary className="font-bold text-lg flex justify-between items-center outline-none">
+                            SEO & Core Web Vitals
+                            <span className="transition group-open:rotate-180 text-zinc-500">
+                                ▼
+                            </span>
+                        </summary>
+                        <p className="mt-4 text-muted-foreground leading-relaxed">
+                            Every tool in our directory is evaluated not just on
+                            features, but on real-world performance. We analyze
+                            rendering strategies, LCP/CLS metrics, and
+                            structured data implementation (Schema.org) to
+                            ensure your chosen stack can achieve maximum search
+                            visibility.
+                        </p>
+                    </details>
+
+                    <details className="group border border-zinc-200 dark:border-zinc-800 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 p-6 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+                        <summary className="font-bold text-lg flex justify-between items-center outline-none">
+                            Architecture & Micro-segmentation
+                            <span className="transition group-open:rotate-180 text-zinc-500">
+                                ▼
+                            </span>
+                        </summary>
+                        <p className="mt-4 text-muted-foreground leading-relaxed">
+                            Our database is built with precise
+                            micro-segmentation. We categorize software by exact
+                            use-cases, API integrations, and component
+                            architecture so that your search intent directly
+                            matches the technical solutions we provide.
+                        </p>
+                    </details>
                 </div>
             </section>
 
@@ -183,6 +234,22 @@ export default function AboutPage() {
                             </span>
                         </Link>
                     ))}
+                </div>
+            </section>
+
+            <section className="mb-24 mt-16 px-4">
+                <div className="relative p-10 md:p-16 rounded-3xl bg-zinc-900 overflow-hidden text-center">
+                    <div className="relative z-10">
+                        <h2 className="text-3xl md:text-4xl font-bold text-zinc-100 mb-6 tracking-tight">
+                            Ready to optimize your stack?
+                        </h2>
+                        <Link
+                            href="/catalog"
+                            className="inline-flex px-8 py-4 rounded-2xl bg-white text-zinc-900 font-bold hover:scale-105 transition-transform shadow-2xl"
+                        >
+                            Start Exploring
+                        </Link>
+                    </div>
                 </div>
             </section>
         </main>

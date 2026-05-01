@@ -17,7 +17,7 @@ import { notFound } from 'next/navigation';
 import { GlobeIcon, Users, ChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import { absoluteUrl } from '@/src/lib/url';
-import { SoftwareApplication, WithContext } from 'schema-dts';
+import { BreadcrumbList, SoftwareApplication, WithContext } from 'schema-dts';
 import { safeJsonLdStringify } from '@/src/lib/utils';
 import { AnalyticsEvent } from '@/src/api/common/analytics.enums';
 
@@ -154,12 +154,44 @@ export default async function SoftwareArticlePage({
             : undefined,
     };
 
+    const breadcrumbJsonLd: WithContext<BreadcrumbList> = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: absoluteUrl('/').toString(),
+            },
+            {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Catalog',
+                item: absoluteUrl('/catalog').toString(),
+            },
+            {
+                '@type': 'ListItem',
+                position: 3,
+                name: software.name,
+                item: absoluteUrl(`/article/${slugObject.slug}`).toString(),
+            },
+        ],
+    };
+
     return (
         <article className="max-w-4xl mx-auto px-4 py-6 sm:p-6">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: safeJsonLdStringify(jsonLd),
+                }}
+            />
+
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: safeJsonLdStringify(breadcrumbJsonLd),
                 }}
             />
 

@@ -12,8 +12,9 @@ import { safeJsonLdStringify } from '@/src/lib/utils';
 const canonical = absoluteUrl('/');
 
 export const metadata: Metadata = {
-    title: 'Home | betterstack',
-    description: 'View and choose the best software.',
+    title: 'Top Software Comparisons & Reviews | betterstack',
+    description:
+        'Discover the best software for your needs. Compare features, read expert reviews, and find top-rated tools for developers and businesses on betterstack.',
     alternates: { canonical },
     openGraph: {
         url: canonical,
