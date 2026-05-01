@@ -123,8 +123,7 @@
 | betterstach                | brand / mobile / navigational       | 1           | 0      | 0%  | 1.5          | New         | Ще одна помилка в бренд-запиті   |
 
 #### 2.2 GA4 аналіз (після кліку) — betterstack.tech
-**Період:** останні 28 днів  
-**Дата:** 23 квітня 2026  
+**Період:** останні 2 дні 
 
 ![GA4 Engagement Events](./data/ga4_engagement_events.png)
 
