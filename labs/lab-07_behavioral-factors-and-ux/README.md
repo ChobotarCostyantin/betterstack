@@ -5,15 +5,15 @@
 
 ## Інструменти
 
-| Інструмент | Для чого | Посилання |
-|------------|----------|-----------|
-| Google Search Console | Аналіз показів, кліків, CTR, позицій, індексації | search.google.com/search-console |
-| Google Analytics 4 (GA4) | Аналіз поведінки після кліку: engagement, події, конверсії | analytics.google.com |
-| Google Tag Manager | Налаштування SEO-подій без деплою коду | tagmanager.google.com |
-| Google Looker Studio | Єдиний SEO-дашборд (GSC + GA4) | lookerstudio.google.com |
-| Microsoft Clarity | Heatmaps, записи сесій, rage/dead clicks | clarity.microsoft.com |
-| Lighthouse / PageSpeed Insights | Технічні UX-обмеження first screen | developer.chrome.com/docs/lighthouse, pagespeed.web.dev |
-| Google Sheets | Таблиці аудиту, backlog і roadmap | sheets.google.com |
+| Інструмент                      | Для чого                                                   | Посилання                                               |
+|---------------------------------|------------------------------------------------------------|---------------------------------------------------------|
+| Google Search Console           | Аналіз показів, кліків, CTR, позицій, індексації           | search.google.com/search-console                        |
+| Google Analytics 4 (GA4)        | Аналіз поведінки після кліку: engagement, події, конверсії | analytics.google.com                                    |
+| Google Tag Manager              | Налаштування SEO-подій без деплою коду                     | tagmanager.google.com                                   |
+| Google Looker Studio            | Єдиний SEO-дашборд (GSC + GA4)                             | lookerstudio.google.com                                 |
+| Microsoft Clarity               | Heatmaps, записи сесій, rage/dead clicks                   | clarity.microsoft.com                                   |
+| Lighthouse / PageSpeed Insights | Технічні UX-обмеження first screen                         | developer.chrome.com/docs/lighthouse, pagespeed.web.dev |
+| Google Sheets                   | Таблиці аудиту, backlog і roadmap                          | sheets.google.com                                       |
 
 ---
 
@@ -106,51 +106,51 @@
 
 Таблиця **"Behavior KPI (GSC)"**:
 
-| Query/URL | Сегмент | Impressions | Clicks | CTR | Avg position | Тренд (MoM) | Висновок |
-|-----------|---------|-------------|--------|-----|--------------|-------------|----------|
-| "better stack" "jetbrains" | brand / desktop / transactional | 10 | 0 | 0% | 12.4 | New | Початок брендового трафіку |
-| jetbrains rider | non-brand / desktop / commercial | 9 | 0 | 0% | 24.1 | Stable | Висока конкуренція у видачі |
-| jetbrains rider ide | non-brand / desktop / commercial | 6 | 0 | 0% | 28.5 | Stable | Потрібно покращити сніпет |
-| rider jetbrains | non-brand / desktop / transactional | 6 | 0 | 0% | 31.2 | New | Запит на порівняння або огляд |
-| betterstak | brand / mobile / navigational | 3 | 0 | 0% | 1.2 | New | Друкарська помилка (typo) |
-| razorconsole | non-brand / desktop / informational | 3 | 0 | 0% | 45.0 | Stable | Слабкий зв'язок із контентом |
-| what is jetbrains rider | non-brand / mobile / informational | 3 | 0 | 0% | 15.8 | New | Інформаційний інтент задоволено |
-| rider ide | non-brand / mobile / commercial | 2 | 0 | 0% | 42.3 | Stable | Низька видимість на мобільних |
-| betterstack nestjs | brand / desktop / informational | 1 | 0 | 0% | 8.5 | New | Точковий інтерес до стеку |
-| betterstack cli | brand / desktop / informational | 1 | 0 | 0% | 5.2 | New | Пошук інструментарію проекту |
-| intellij rider | non-brand / desktop / commercial | 1 | 0 | 0% | 34.0 | New | Користувачі шукають альтернативи |
-| rider intellij | non-brand / desktop / commercial | 1 | 0 | 0% | 38.4 | New | Низька релевантність сторінки |
-| betterstach | brand / mobile / navigational | 1 | 0 | 0% | 1.5 | New | Ще одна помилка в бренд-запиті |
+| Query/URL                  | Сегмент                             | Impressions | Clicks | CTR | Avg position | Тренд (MoM) | Висновок                         |
+|----------------------------|-------------------------------------|-------------|--------|-----|--------------|-------------|----------------------------------|
+| "better stack" "jetbrains" | brand / desktop / transactional     | 10          | 0      | 0%  | 12.4         | New         | Початок брендового трафіку       |
+| jetbrains rider            | non-brand / desktop / commercial    | 9           | 0      | 0%  | 24.1         | Stable      | Висока конкуренція у видачі      |
+| jetbrains rider ide        | non-brand / desktop / commercial    | 6           | 0      | 0%  | 28.5         | Stable      | Потрібно покращити сніпет        |
+| rider jetbrains            | non-brand / desktop / transactional | 6           | 0      | 0%  | 31.2         | New         | Запит на порівняння або огляд    |
+| betterstak                 | brand / mobile / navigational       | 3           | 0      | 0%  | 1.2          | New         | Друкарська помилка (typo)        |
+| razorconsole               | non-brand / desktop / informational | 3           | 0      | 0%  | 45.0         | Stable      | Слабкий зв'язок із контентом     |
+| what is jetbrains rider    | non-brand / mobile / informational  | 3           | 0      | 0%  | 15.8         | New         | Інформаційний інтент задоволено  |
+| rider ide                  | non-brand / mobile / commercial     | 2           | 0      | 0%  | 42.3         | Stable      | Низька видимість на мобільних    |
+| betterstack nestjs         | brand / desktop / informational     | 1           | 0      | 0%  | 8.5          | New         | Точковий інтерес до стеку        |
+| betterstack cli            | brand / desktop / informational     | 1           | 0      | 0%  | 5.2          | New         | Пошук інструментарію проекту     |
+| intellij rider             | non-brand / desktop / commercial    | 1           | 0      | 0%  | 34.0         | New         | Користувачі шукають альтернативи |
+| rider intellij             | non-brand / desktop / commercial    | 1           | 0      | 0%  | 38.4         | New         | Низька релевантність сторінки    |
+| betterstach                | brand / mobile / navigational       | 1           | 0      | 0%  | 1.5          | New         | Ще одна помилка в бренд-запиті   |
 
 #### 2.2 GA4 аналіз (після кліку) — betterstack.tech
 **Період:** останні 28 днів  
 **Дата:** 23 квітня 2026  
 
-| Landing page                                     | Organic sessions | Engaged sessions | Engagement rate | Avg engagement time | Key events                              | Conversion rate | Висновок |
-|--------------------------------------------------|------------------|------------------|-----------------|---------------------|-----------------------------------------|-----------------|----------|
-| https://betterstack.tech/                        | 920             | 570             | 62%            | 00:01:38           | view_catalog, click_tool_card, search   | 3.1%           | Хороший старт, але багато швидких переходів у каталог |
-| https://betterstack.tech/catalog                 | 680             | 374             | 55%            | 00:02:05           | click_tool, filter_category, scroll_50  | 4.2%           | Користувачі активно фільтрують і клікають на інструменти |
-| https://betterstack.tech/article/vim             | 245             | 167             | 68%            | 00:03:12           | scroll_75, click_alternatives, add_to_stack | 5.7%        | Відмінна залученість, сильний інтерес до порівнянь |
-| https://betterstack.tech/article/redis           | 210             | 149             | 71%            | 00:03:45           | scroll_90, view_docs_link, add_to_stack | 6.2%           | Найкраща залученість серед tool pages — контент добре відповідає intent |
-| https://betterstack.tech/article/go              | 185             | 109             | 59%            | 00:02:18           | scroll_60, click_related             | 3.8%           | Середня залученість, користувачі йдуть на зовнішні посилання |
-| https://betterstack.tech/article/mongodb         | 170             | 109             | 64%            | 00:02:55           | scroll_75, click_comparison          | 4.9%           | Добре, але можна додати більше CTA |
-| https://betterstack.tech/article/rust            | 140             | 92              | 66%            | 00:03:20           | scroll_80, add_to_stack              | 5.4%           | Висока залученість завдяки популярності Rust |
-| https://betterstack.tech/comparison              | 80              | 58              | 73%            | 00:04:10           | change_comparison, scroll_90         | 7.1%           | Найкращий показник — користувачі глибоко порівнюють інструменти |
+| Landing page                             | Organic sessions | Engaged sessions | Engagement rate | Avg engagement time | Key events                                  | Conversion rate | Висновок                                                                |
+|------------------------------------------|------------------|------------------|-----------------|---------------------|---------------------------------------------|-----------------|-------------------------------------------------------------------------|
+| https://betterstack.tech/                | 920              | 570              | 62%             | 00:01:38            | view_catalog, click_tool_card, search       | 3.1%            | Хороший старт, але багато швидких переходів у каталог                   |
+| https://betterstack.tech/catalog         | 680              | 374              | 55%             | 00:02:05            | click_tool, filter_category, scroll_50      | 4.2%            | Користувачі активно фільтрують і клікають на інструменти                |
+| https://betterstack.tech/article/vim     | 245              | 167              | 68%             | 00:03:12            | scroll_75, click_alternatives, add_to_stack | 5.7%            | Відмінна залученість, сильний інтерес до порівнянь                      |
+| https://betterstack.tech/article/redis   | 210              | 149              | 71%             | 00:03:45            | scroll_90, view_docs_link, add_to_stack     | 6.2%            | Найкраща залученість серед tool pages — контент добре відповідає intent |
+| https://betterstack.tech/article/go      | 185              | 109              | 59%             | 00:02:18            | scroll_60, click_related                    | 3.8%            | Середня залученість, користувачі йдуть на зовнішні посилання            |
+| https://betterstack.tech/article/mongodb | 170              | 109              | 64%             | 00:02:55            | scroll_75, click_comparison                 | 4.9%            | Добре, але можна додати більше CTA                                      |
+| https://betterstack.tech/article/rust    | 140              | 92               | 66%             | 00:03:20            | scroll_80, add_to_stack                     | 5.4%            | Висока залученість завдяки популярності Rust                            |
+| https://betterstack.tech/comparison      | 80               | 58               | 73%             | 00:04:10            | change_comparison, scroll_90                | 7.1%            | Найкращий показник — користувачі глибоко порівнюють інструменти         |
 
 #### 2.3 Bounce і dwell context-аналіз — betterstack.tech
 **Період:** останні 28 днів  
 **Дата:** 23 квітня 2026
 
-| URL                                              | Тип intent                  | Bounce/engagement контекст                          | Dwell-патерн          | Нормально чи ризик     | Що робити |
-|--------------------------------------------------|-----------------------------|-----------------------------------------------------|-----------------------|------------------------|-----------|
-| https://betterstack.tech/                        | Навігаційний / Transactional | Bounce ~38%, але 65% одразу йдуть у catalog        | Короткий-середній    | Нормально             | Посилити CTA на головній та покращити швидкість переходу |
-| https://betterstack.tech/catalog                 | Transactional              | Bounce ~45%, високий % кліків на tool cards        | Середній              | Нормально             | Додати більше фільтрів та сортування |
-| https://betterstack.tech/article/vim             | Інформаційний / Transactional | Низький bounce, високий scroll                     | Довгий                | Нормально (добре)     | Розширити блок альтернатив та CTA |
-| https://betterstack.tech/article/redis           | Інформаційний / Transactional | Дуже низький bounce, глибокий scroll               | Дуже довгий           | Нормально (відмінно)  | Додати більше внутрішніх посилань |
-| https://betterstack.tech/article/go              | Інформаційний              | Середній bounce, багато виходів після 2 хв         | Середній              | Легкий ризик          | Додати сильніший CTA "Порівняти з ..." |
-| https://betterstack.tech/article/mongodb         | Інформаційний / Transactional | Bounce прийнятний, але частина йде на офіційний сайт | Середній-довгий      | Нормально             | Посилити внутрішню перелінковку |
-| https://betterstack.tech/about                   | Навігаційний               | Високий bounce (~52%)                              | Короткий              | Ризик                 | Зробити сторінку кориснішою + сильний CTA на catalog |
-| https://betterstack.tech/comparison              | Transactional / Comparison | Дуже низький bounce, високий час на сторінці       | Дуже довгий           | Нормально (відмінно)  | Розвивати цей тип сторінок (найвищий потенціал) |
+| URL                                      | Тип intent                    | Bounce/engagement контекст                           | Dwell-патерн      | Нормально чи ризик   | Що робити                                                |
+|------------------------------------------|-------------------------------|------------------------------------------------------|-------------------|----------------------|----------------------------------------------------------|
+| https://betterstack.tech/                | Навігаційний / Transactional  | Bounce ~38%, але 65% одразу йдуть у catalog          | Короткий-середній | Нормально            | Посилити CTA на головній та покращити швидкість переходу |
+| https://betterstack.tech/catalog         | Transactional                 | Bounce ~45%, високий % кліків на tool cards          | Середній          | Нормально            | Додати більше фільтрів та сортування                     |
+| https://betterstack.tech/article/vim     | Інформаційний / Transactional | Низький bounce, високий scroll                       | Довгий            | Нормально (добре)    | Розширити блок альтернатив та CTA                        |
+| https://betterstack.tech/article/redis   | Інформаційний / Transactional | Дуже низький bounce, глибокий scroll                 | Дуже довгий       | Нормально (відмінно) | Додати більше внутрішніх посилань                        |
+| https://betterstack.tech/article/go      | Інформаційний                 | Середній bounce, багато виходів після 2 хв           | Середній          | Легкий ризик         | Додати сильніший CTA "Порівняти з ..."                   |
+| https://betterstack.tech/article/mongodb | Інформаційний / Transactional | Bounce прийнятний, але частина йде на офіційний сайт | Середній-довгий   | Нормально            | Посилити внутрішню перелінковку                          |
+| https://betterstack.tech/about           | Навігаційний                  | Високий bounce (~52%)                                | Короткий          | Ризик                | Зробити сторінку кориснішою + сильний CTA на catalog     |
+| https://betterstack.tech/comparison      | Transactional / Comparison    | Дуже низький bounce, високий час на сторінці         | Дуже довгий       | Нормально (відмінно) | Розвивати цей тип сторінок (найвищий потенціал)          |
 
 ---
 
@@ -158,13 +158,13 @@
 
 Зафіксовано 5 ключових мікроконверсій для проєкту **betterstack.tech**, що базуються на технічно впроваджених подіях. Ці показники дозволяють оцінити якість органічного трафіку та глибину задоволення інтенту користувачів.
 
-| Мікроконверсія | Event name | Де тригериться | Навіщо для SEO | Поточне значення | Ціль на 30 днів |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Глибина залученості** | `scroll_75` | `/article/*` | Підтверджує, що контент SEO-статті дочитаний до кінця (match intent) | 41% сесій | 55% сесій |
-| **Пошуковий інтерес** | `view_search_results` | Live-пошук | Допомагає виявити "Content Gap" (запити, на які ще немає сторінок) | ~12% користувачів | 15% (покращення навігації) |
-| **Ефективність виходу** | `click_tool_website` | Шапка профілю софту | Вимірює фінальний етап транзакційного інтенту — перехід до розробника | ~4% сесій | 8% сесій |
-| **Лояльність до стеку** | `add_to_stack` | Кнопка "Used" | Найсильніший сигнал користі сторінки; впливає на авторитетність сутності софту | 6% сесій | 10% сесій |
-| **Вага перелінковки** | `click_related_article` | Блок "Related" | Оцінює якість внутрішньої перелінковки та здатність сайту утримувати dwell time | ~3.8% сесій | 7% сесій |
+| Мікроконверсія          | Event name              | Де тригериться      | Навіщо для SEO                                                                  | Поточне значення  | Ціль на 30 днів            |
+|:------------------------|:------------------------|:--------------------|:--------------------------------------------------------------------------------|:------------------|:---------------------------|
+| **Глибина залученості** | `scroll_75`             | `/article/*`        | Підтверджує, що контент SEO-статті дочитаний до кінця (match intent)            | 41% сесій         | 55% сесій                  |
+| **Пошуковий інтерес**   | `view_search_results`   | Live-пошук          | Допомагає виявити "Content Gap" (запити, на які ще немає сторінок)              | ~12% користувачів | 15% (покращення навігації) |
+| **Ефективність виходу** | `click_tool_website`    | Шапка профілю софту | Вимірює фінальний етап транзакційного інтенту — перехід до розробника           | ~4% сесій         | 8% сесій                   |
+| **Лояльність до стеку** | `add_to_stack`          | Кнопка "Used"       | Найсильніший сигнал користі сторінки; впливає на авторитетність сутності софту  | 6% сесій          | 10% сесій                  |
+| **Вага перелінковки**   | `click_related_article` | Блок "Related"      | Оцінює якість внутрішньої перелінковки та здатність сайту утримувати dwell time | ~3.8% сесій       | 7% сесій                   |
 
 ### 3. Налаштування GA4
 
@@ -179,10 +179,10 @@
 
 Таблиця контролю:
 
-| Налаштування | Статус | Доказ | Коментар |
-|--------------|--------|-------|----------|
-| GA4 property створено та збір даних активний | OK | Скрин Admin + Realtime | Data stream `web` активний |
-| ... | | | |
+| Налаштування                                 | Статус | Доказ                  | Коментар                   |
+|----------------------------------------------|--------|------------------------|----------------------------|
+| GA4 property створено та збір даних активний | OK     | Скрин Admin + Realtime | Data stream `web` активний |
+| ...                                          |        |                        |                            |
 
 #### 3.2 - Події для SEO-оцінки (через GTM або код)
 
@@ -197,15 +197,15 @@
 
 Таблиця **"GA4 Event Mapping"**:
 
-| Event name | Trigger | Parameters | Бізнес/SEO сенс | Перевірка в DebugView |
-|------------|---------|------------|------------------|-----------------------|
-| view_search_results | Успішний пошук у LiveSearchBar | search_term, results_count | Аналіз інтересу до конкретних інструментів | Event видно при вводі >2 символів |
-| click_tool_website | Клік по GlobeIcon у хедері статті | software_id, software_name | Перехід на сайт розробника (CTA) | Подія з URL сайту |
-| click_tool_github | Клік по лого GitHub у хедері статті | software_id, software_name | Перехід до репозиторію (CTA) | Подія з GitHub URL |
-| add_to_stack | Натискання "I used this" | software_id, software_name | Мікроконверсія: користувач додав софт у стек | Подія при успішному toggle |
-| click_related_article | Клік по картці альтернативного софту | current_slug, target_slug | Аналіз внутрішнього перелінкування | Перехід на іншу статтю |
-| click_comparison | Клік по кнопці "Compare" | current_slug, target_slug | Намір порівняти інструменти (High Intent) | Перехід на сторінку порівняння |
-| scroll_75 | Скрол сторінки на 75% | page_path | Підтвердження якості контенту | Спрацьовує автоматично при скролі |
+| Event name            | Trigger                              | Parameters                 | Бізнес/SEO сенс                              | Перевірка в DebugView             |
+|-----------------------|--------------------------------------|----------------------------|----------------------------------------------|-----------------------------------|
+| view_search_results   | Успішний пошук у LiveSearchBar       | search_term, results_count | Аналіз інтересу до конкретних інструментів   | Event видно при вводі >2 символів |
+| click_tool_website    | Клік по GlobeIcon у хедері статті    | software_id, software_name | Перехід на сайт розробника (CTA)             | Подія з URL сайту                 |
+| click_tool_github     | Клік по лого GitHub у хедері статті  | software_id, software_name | Перехід до репозиторію (CTA)                 | Подія з GitHub URL                |
+| add_to_stack          | Натискання "I used this"             | software_id, software_name | Мікроконверсія: користувач додав софт у стек | Подія при успішному toggle        |
+| click_related_article | Клік по картці альтернативного софту | current_slug, target_slug  | Аналіз внутрішнього перелінкування           | Перехід на іншу статтю            |
+| click_comparison      | Клік по кнопці "Compare"             | current_slug, target_slug  | Намір порівняти інструменти (High Intent)    | Перехід на сторінку порівняння    |
+| scroll_75             | Скрол сторінки на 75%                | page_path                  | Підтвердження якості контенту                | Спрацьовує автоматично при скролі |
 
 
 #### 3.3 - Налаштування conversions і аудиторій
@@ -218,13 +218,13 @@
 
 Таблиця:
 
-| Тип | Назва | Умова | Навіщо |
-|-----|-------|-------|--------|
-| Conversion | add_to_stack | event_name = add_to_stack | Найвища лояльність (користувач додав софт у свій стек) |
-| Conversion | click_tool_website | event_name = click_tool_website | Цільова дія — перехід на сайт інструменту |
-| Audience | Organic Engaged Users | session_medium = organic AND (engagement_time > 10s OR scroll_75 triggered) | Аналіз ядра лояльної органічної аудиторії |
-| Audience | Organic Non-Engaged | session_medium = organic AND engagement_time < 5s | Виявлення проблем релевантності/UX на вході |
-| Audience | Organic Returning Users | session_medium = organic AND user_type = 'returning' | Оцінка здатності контенту повертати користувачів |
+| Тип        | Назва                   | Умова                                                                       | Навіщо                                                 |
+|------------|-------------------------|-----------------------------------------------------------------------------|--------------------------------------------------------|
+| Conversion | add_to_stack            | event_name = add_to_stack                                                   | Найвища лояльність (користувач додав софт у свій стек) |
+| Conversion | click_tool_website      | event_name = click_tool_website                                             | Цільова дія — перехід на сайт інструменту              |
+| Audience   | Organic Engaged Users   | session_medium = organic AND (engagement_time > 10s OR scroll_75 triggered) | Аналіз ядра лояльної органічної аудиторії              |
+| Audience   | Organic Non-Engaged     | session_medium = organic AND engagement_time < 5s                           | Виявлення проблем релевантності/UX на вході            |
+| Audience   | Organic Returning Users | session_medium = organic AND user_type = 'returning'                        | Оцінка здатності контенту повертати користувачів       |
 
 #### 3.4 - Щотижневий GA4 SEO report
 
@@ -234,15 +234,15 @@
 Період: 14–20 квітня 2026  
 Дата звіту: 23 квітня 2026  
 
-| KPI                                      | Поточне значення   | Минулого тижня | Delta      | Порог тривоги     | Дія / Рекомендація                              |
-|------------------------------------------|--------------------|----------------|------------|-------------------|-------------------------------------------------|
-| Organic sessions                     | 2380              | 2210          | +7.7% | -10% WoW         | Продовжити тест CTA на категоріях              |
-| Organic users                        | 1950              | 1820          | +7.1% | -10% WoW         | Моніторити зростання нових користувачів        |
-| Engaged sessions (Organic)           | 1420              | 1380          | +2.9% | -12% WoW         | -                                              |
-| Avg. engagement time (Organic)       | 1 хв 45 сек       | 1 хв 52 сек   | -6.3% | -15%             | Перевірити контент на топ-сторінках категорій  |
-| Pages per session (Organic)          | 2.4               | 2.6           | -7.7% | -10%             | Посилити внутрішню перелінковку                |
-| Organic conversions                  | 185               | 172           | +7.6% | -15%             | Розширити CTA-тест на сторінки окремих інструментів |
-| Bounce rate (Organic)                | 48%               | 45%           | +3%   | +8%              | Оптимізувати meta titles/descriptions на категоріях |
+| KPI                            | Поточне значення | Минулого тижня | Delta | Порог тривоги | Дія / Рекомендація                                  |
+|--------------------------------|------------------|----------------|-------|---------------|-----------------------------------------------------|
+| Organic sessions               | 2380             | 2210           | +7.7% | -10% WoW      | Продовжити тест CTA на категоріях                   |
+| Organic users                  | 1950             | 1820           | +7.1% | -10% WoW      | Моніторити зростання нових користувачів             |
+| Engaged sessions (Organic)     | 1420             | 1380           | +2.9% | -12% WoW      | -                                                   |
+| Avg. engagement time (Organic) | 1 хв 45 сек      | 1 хв 52 сек    | -6.3% | -15%          | Перевірити контент на топ-сторінках категорій       |
+| Pages per session (Organic)    | 2.4              | 2.6            | -7.7% | -10%          | Посилити внутрішню перелінковку                     |
+| Organic conversions            | 185              | 172            | +7.6% | -15%          | Розширити CTA-тест на сторінки окремих інструментів |
+| Bounce rate (Organic)          | 48%              | 45%            | +3%   | +8%           | Оптимізувати meta titles/descriptions на категоріях |
 
 ---
 
@@ -252,20 +252,20 @@
 
 Підсумковий беклог містить 12 пріоритетних задач, що базуються на виявлених «вузьких місцях» у воронці залучення та утримання користувачів.
 
-| Issue (Проблема) | Evidence (Докази) | Impact (Вплив) | Effort | Owner | Deadline | Success criteria |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Критична помилка в канонічних URL** | UX Audit 1.3 (#2): Параметр `?q=` у тегу canonical | High (Indexing/Duplicate content) | M | Tech (Коля) | 05.05.2026 | Очищення індексу від дублів пошуку |
-| **Неоптимізований Title головної сторінки** | UX Audit 1.3 (#1): Назва "Home \| betterstack" | High (CTR / Rankings) | S | SEO (Ти) | 01.05.2026 | Зростання CTR головної у GSC на 1% |
-| **Горизонтальний скрол у порівняннях (Mobile)** | UX Audit 1.3 (#8): Помилки відображення таблиць | High (Mobile Rankings / UX) | M | Tech (Коля) | 10.05.2026 | Відсутність помилок у GSC Mobile Usability |
-| **Слабкий інтент-матч на сторінках без оглядів** | GA4 (2.2): Нижчий ER на сторінках типу /article/go (59%) | High (Dwell time / Trust) | L | Content (Влад) | 20.05.2026 | Engagement Rate > 65% для цих URL |
-| **Низька видимість за non-brand запитами** | GSC (2.1): Позиції 24-42 для "jetbrains rider" | High (Traffic) | M | SEO + Content | 15.05.2026 | Вихід топ-запитів у ТОП-10 |
-| **Низька залученість на сторінці /about** | GA4 (2.3): Bounce ~52%, короткий dwell-time | Medium (Navigation) | S | UX (Костя) | 05.05.2026 | Engagement Rate > 60% |
-| **Відсутність мікророзмітки Breadcrumbs** | UX Audit 1.3 (#9): Валідатор Rich Results | Medium (CTR) | S | Tech (Коля) | 03.05.2026 | Відображення Breadcrumbs у сніпеті Google |
-| **Тупиковий стан "Nothing found" у каталозі** | UX Audit 1.3 (#3): Скриншоти порожнього лістингу | Medium (Bounce rate) | S | UX (Костя) | 07.05.2026 | Bounce rate на /catalog < 40% |
-| **Відсутність сигналів свіжості (Last Updated)** | UX Audit 1.3 (#6): Відсутність дат у UI | Medium (E-E-A-T / CTR) | S | Tech + Content | 12.05.2026 | Поява дати у сніпеті Google |
-| **Розрив у Breadcrumbs (пропуск категорії)** | UX Audit 1.3 (#4): `Home > Catalog > [Software]` | Medium (Link Juice) | M | Tech (Коля) | 15.05.2026 | Коректна ієрархія в GSC |
-| **Низька конверсія в клік CTA на сторінках категорій** | GA4 (3.4): Зниження Pages per session (-7.7%) | Medium (Conversion) | M | UX + SEO | 25.05.2026 | Зростання Pages per session до 2.8 |
-| **Невідповідність Meta Description інтенту** | UX Audit 1.3 (#12): Рандомні сніпети у видачі | Low-Medium (CTR) | S | Content (Влад) | 10.05.2026 | Сніпети відповідають заданим Description |
+| Issue (Проблема)                                       | Evidence (Докази)                                        | Impact (Вплив)                    | Effort | Owner          | Deadline   | Success criteria                           |
+|:-------------------------------------------------------|:---------------------------------------------------------|:----------------------------------|:-------|:---------------|:-----------|:-------------------------------------------|
+| **Критична помилка в канонічних URL**                  | UX Audit 1.3 (#2): Параметр `?q=` у тегу canonical       | High (Indexing/Duplicate content) | M      | Tech (Коля)    | 05.05.2026 | Очищення індексу від дублів пошуку         |
+| **Неоптимізований Title головної сторінки**            | UX Audit 1.3 (#1): Назва "Home \| betterstack"           | High (CTR / Rankings)             | S      | SEO (Міша)     | 01.05.2026 | Зростання CTR головної у GSC на 1%         |
+| **Горизонтальний скрол у порівняннях (Mobile)**        | UX Audit 1.3 (#8): Помилки відображення таблиць          | High (Mobile Rankings / UX)       | M      | Tech (Коля)    | 10.05.2026 | Відсутність помилок у GSC Mobile Usability |
+| **Слабкий інтент-матч на сторінках без оглядів**       | GA4 (2.2): Нижчий ER на сторінках типу /article/go (59%) | High (Dwell time / Trust)         | L      | Content (Влад) | 20.05.2026 | Engagement Rate > 65% для цих URL          |
+| **Низька видимість за non-brand запитами**             | GSC (2.1): Позиції 24-42 для "jetbrains rider"           | High (Traffic)                    | M      | SEO + Content  | 15.05.2026 | Вихід топ-запитів у ТОП-10                 |
+| **Низька залученість на сторінці /about**              | GA4 (2.3): Bounce ~52%, короткий dwell-time              | Medium (Navigation)               | S      | UX (Костя)     | 05.05.2026 | Engagement Rate > 60%                      |
+| **Відсутність мікророзмітки Breadcrumbs**              | UX Audit 1.3 (#9): Валідатор Rich Results                | Medium (CTR)                      | S      | Tech (Коля)    | 03.05.2026 | Відображення Breadcrumbs у сніпеті Google  |
+| **Тупиковий стан "Nothing found" у каталозі**          | UX Audit 1.3 (#3): Скриншоти порожнього лістингу         | Medium (Bounce rate)              | S      | UX (Костя)     | 07.05.2026 | Bounce rate на /catalog < 40%              |
+| **Відсутність сигналів свіжості (Last Updated)**       | UX Audit 1.3 (#6): Відсутність дат у UI                  | Medium (E-E-A-T / CTR)            | S      | Tech + Content | 12.05.2026 | Поява дати у сніпеті Google                |
+| **Розрив у Breadcrumbs (пропуск категорії)**           | UX Audit 1.3 (#4): `Home > Catalog > [Software]`         | Medium (Link Juice)               | M      | Tech (Коля)    | 15.05.2026 | Коректна ієрархія в GSC                    |
+| **Низька конверсія в клік CTA на сторінках категорій** | GA4 (3.4): Зниження Pages per session (-7.7%)            | Medium (Conversion)               | M      | UX + SEO       | 25.05.2026 | Зростання Pages per session до 2.8         |
+| **Невідповідність Meta Description інтенту**           | UX Audit 1.3 (#12): Рандомні сніпети у видачі            | Low-Medium (CTR)                  | S      | Content (Влад) | 10.05.2026 | Сніпети відповідають заданим Description   |
 
 #### 4.2 - Пріоритезація за матрицею Impact/Effort
 
@@ -278,8 +278,15 @@
 | Fill-ins   | Low impact + Low effort   | 3             | Точкові правки microcopy CTA                           |
 | Postpone   | Low impact + High effort  | 2             | Низькопріоритетні UI-експерименти без впливу на KPI    |
 
-**Обов'язкова умова впровадження:** реалізувати мінімум **4 задачі з групи Quick Wins** і зафіксувати результат у форматі
-"було/стало" (метрика або UX-доказ).
+**Обов'язкова умова впровадження:** реалізувати мінімум **4 задачі з групи Quick Wins** і зафіксувати результат у форматі "було/стало" (метрика або UX-доказ).
+
+| Група                                                                            | Задачі у беклозі                                                                                                                                                                                                                                 | Власник                                   |
+|----------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
+| 🚀 Quick Wins <br><br>(High/Med Impact + Low Effort) <br><br>4 задачі            | 1. Неоптимізований Title головної сторінки (High / S)<br><br>2. Тупиковий стан "Nothing found" у каталозі (Medium / S)<br><br>3. Відсутність мікророзмітки Breadcrumbs (Medium / S)<br><br>4. Низька залученість на сторінці /about (Medium / S) | SEO<br><br>UX<br><br>Tech                 |
+| 🎯 Strategic <br><br>(High Impact + High/Med Effort) <br><br>3 задачі            | 1. Критична помилка в канонічних URL (High / M)<br><br>2. Слабкий інтент-матч на сторінках без оглядів (High / L)<br><br>3. Горизонтальний скрол у порівняннях (Mobile) (High / M)                                                               | Tech<br><br>Content<br><br>Tech           |
+| 🩹 Fill-ins <br><br>(Low/Med Impact + Low/Med Effort) <br><br>3 задачі           | 1. Невідповідність Meta Description інтенту (Low-Medium / S)<br><br>2. Відсутність сигналів свіжості (Last Updated) (Medium / S)<br><br>3. Розрив у Breadcrumbs (пропуск категорії) (Medium / M)                                                 | Content<br><br>Tech + Content<br><br>Tech |
+| ⏳ Postpone <br><br>(High/Med Effort, що потребують відкладення) <br><br>2 задачі | 1. Низька конверсія в клік CTA на сторінках категорій (Medium / M)<br><br>2. Низька видимість за non-brand запитами (High / M - через довгостроковість SEO-результатів)                                                                          | UX+SEO<br><br>SEO+Content                 |
+
 
 #### 4.3 - SEO roadmap на 30/60/90 днів
 
