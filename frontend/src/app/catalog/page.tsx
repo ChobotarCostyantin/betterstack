@@ -12,24 +12,39 @@ import CategoryList from './_components/CategoryList';
 import CatalogSearchBar from './_components/CatalogSearchBar';
 import { CategoryListItem } from '@/src/api/categories/categories.schemas';
 import { Metadata } from 'next';
+import { absoluteUrl } from '@/src/lib/url';
 
-export const metadata: Metadata = {
-    title: 'Catalog | betterstack',
-    description: 'View and choose the best software.',
-    openGraph: {
-        url: new URL(
-            '/catalog',
-            process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
-        ),
-        images: [
-            {
-                url: '/opengraph-image',
-                width: 1200,
-                height: 630,
-            },
-        ],
-    },
-};
+export async function generateMetadata({
+    searchParams,
+}: {
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+    const params = await searchParams;
+
+    const canonicalParams = new URLSearchParams();
+    if (typeof params.category === 'string')
+        canonicalParams.set('category', params.category);
+    if (typeof params.q === 'string') canonicalParams.set('q', params.q);
+    if (typeof params.page === 'string') {
+        const page = parseInt(params.page, 10);
+        if (page > 1) canonicalParams.set('page', String(page));
+    }
+
+    const canonicalPath = canonicalParams.toString()
+        ? `/catalog?${canonicalParams.toString()}`
+        : '/catalog';
+    const canonical = absoluteUrl(canonicalPath);
+
+    return {
+        title: 'Catalog | betterstack',
+        description: 'View and choose the best software.',
+        alternates: { canonical },
+        openGraph: {
+            url: canonical,
+            images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
+        },
+    };
+}
 
 export default async function Catalog({
     searchParams,
@@ -47,12 +62,16 @@ export default async function Catalog({
             : 1;
     const searchQuery =
         typeof resolvedParams.q === 'string' ? resolvedParams.q : undefined;
+    const currentCatPage =
+        typeof resolvedParams.catPage === 'string'
+            ? parseInt(resolvedParams.catPage, 10) || 1
+            : 1;
 
     const serverClient = await createServerClient();
 
     let software: SoftwareListItem[] = [];
     let initialCategories: CategoryListItem[] = [];
-    let initialCategoriesTotalPages = 1;
+    let hasMoreCategories = false;
     let totalPages = 1;
     let categoryIds: number[] | undefined = undefined;
     let categoryNotFound = false;
@@ -60,10 +79,11 @@ export default async function Catalog({
     try {
         const categoriesRes = await listCategories(serverClient, {
             page: 1,
-            perPage: 3,
+            perPage: currentCatPage * 5,
         });
         initialCategories = categoriesRes.data ?? [];
-        initialCategoriesTotalPages = categoriesRes.meta?.totalPages || 1;
+        hasMoreCategories =
+            currentCatPage * 5 < (categoriesRes.meta?.total ?? 0);
 
         if (currentCategorySlug) {
             try {
@@ -114,9 +134,11 @@ export default async function Catalog({
                             Categories
                         </h2>
                         <CategoryList
-                            initialCategories={initialCategories}
+                            categories={initialCategories}
                             currentCategorySlug={currentCategorySlug}
-                            totalPages={initialCategoriesTotalPages}
+                            hasMoreCategories={hasMoreCategories}
+                            currentCatPage={currentCatPage}
+                            searchParams={resolvedParams}
                         />
                     </div>
                 </aside>
@@ -137,11 +159,12 @@ export default async function Catalog({
                             <Pagination
                                 currentPage={currentPage}
                                 totalPages={totalPages}
+                                searchParams={resolvedParams}
                             />
                         </>
                     ) : (
                         <div className="flex flex-col items-center justify-center py-24 px-4 text-center border border-zinc-800 border-dashed rounded-2xl bg-zinc-900/20">
-                            <div className="w-16 h-16 mb-4 rounded-full bg-zinc-800/50 flex items-center justify-center">
+                            <div className="w-16 h-16 mb-6 rounded-full bg-zinc-800/50 flex items-center justify-center">
                                 <svg
                                     className="w-8 h-8 text-zinc-500"
                                     fill="none"
@@ -151,29 +174,40 @@ export default async function Catalog({
                                     <path
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                                        strokeWidth={1.5}
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
                                     />
                                 </svg>
                             </div>
                             <h3 className="text-xl font-semibold text-white mb-2">
-                                Nothing found.
+                                No software found
                             </h3>
-                            <p className="text-zinc-400 max-w-md">
+                            <p className="text-zinc-400 max-w-md mb-8">
                                 {searchQuery
-                                    ? `No software found for "${searchQuery}".`
-                                    : 'No software found for the selected category or page.'}
+                                    ? `We couldn't find any results for "${searchQuery}".`
+                                    : 'There are no tools listed in this category yet.'}
                             </p>
-                            {(currentCategorySlug ||
-                                currentPage > 1 ||
-                                searchQuery) && (
-                                <Link
-                                    href="/catalog"
-                                    className="mt-6 px-6 py-2.5 bg-zinc-100 text-zinc-900 font-medium rounded-xl hover:bg-white transition-colors shadow-lg"
+
+                            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center w-full max-w-md">
+                                {(currentCategorySlug ||
+                                    currentPage > 1 ||
+                                    searchQuery) && (
+                                    <Link
+                                        href="/catalog"
+                                        className="w-full sm:w-auto px-6 py-2.5 bg-zinc-100 text-zinc-900 font-medium rounded-xl hover:bg-white transition-colors shadow-lg text-center"
+                                    >
+                                        Clear filters
+                                    </Link>
+                                )}
+                                <a
+                                    href="https://github.com/TeseySTD/betterstack/issues/new"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full sm:w-auto px-6 py-2.5 bg-zinc-800 text-zinc-300 font-medium rounded-xl hover:bg-zinc-700 hover:text-white transition-colors border border-zinc-700 text-center"
                                 >
-                                    Clear filters
-                                </Link>
-                            )}
+                                    Suggest Software
+                                </a>
+                            </div>
                         </div>
                     )}
                 </main>

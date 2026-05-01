@@ -1,10 +1,21 @@
 'use client';
 
 import React, { useState } from 'react';
-import Markdown from '@/src/components/Markdown';
 import { Pencil } from 'lucide-react';
-import { SoftwareReviewEditModal } from './SoftwareReviewEditModal';
 import type { SoftwareReviewResponse } from '@/src/api/reviews/reviews.schemas';
+import dynamic from 'next/dynamic';
+
+const Markdown = dynamic(() => import('@/src/components/Markdown'), {
+    ssr: true,
+});
+
+const SoftwareReviewEditModal = dynamic(
+    () =>
+        import('./SoftwareReviewEditModal').then(
+            (mod) => mod.SoftwareReviewEditModal,
+        ),
+    { ssr: false },
+);
 
 interface SoftwareReviewSectionProps {
     softwareSlug: string;

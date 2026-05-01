@@ -1,53 +1,62 @@
 import { createServerClient } from '@/src/lib/api/server.client';
 import { getSoftwareBySlug } from '@/src/api/software/software.api';
-import { me } from '@/src/api/auth/auth.api';
+import { me } from '@/src/api/auth/auth.api.server';
 import { hasUserUsedSoftware } from '@/src/api/users/users.api';
 import { getSoftwareReviewBySlug } from '@/src/api/reviews/reviews.api';
 import { HTTPError } from 'ky';
 import Image from 'next/image';
 import Link from 'next/link';
 import CategoryTags from '@/src/components/CategoryTags';
-import ScreenshotGallery from './_components/ScreenshotGallery';
-import ProsAndCons from './_components/ProsAndCons';
-import SoftwareAlternatives from './_components/SoftwareAlternatives';
 import UseSoftwareButton from './_components/UseSoftwareButton';
+import TrackedLink from './_components/TrackedLink';
 import SoftwareReviewSection from './_components/SoftwareReviewSection';
+import ProsAndCons from './_components/ProsAndCons';
+import ScreenshotGallery from './_components/ScreenshotGallery';
+import SoftwareAlternatives from './_components/SoftwareAlternatives';
 import { notFound } from 'next/navigation';
-import { GlobeIcon, Users } from 'lucide-react';
+import { GlobeIcon, Users, ChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
+import { absoluteUrl } from '@/src/lib/url';
+import { BreadcrumbList, SoftwareApplication, WithContext } from 'schema-dts';
+import { safeJsonLdStringify } from '@/src/lib/utils';
+import { AnalyticsEvent } from '@/src/api/common/analytics.enums';
 
 export async function generateMetadata({
     params,
 }: {
     params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-    const slugObject = await params;
+    const { slug } = await params;
+    const canonical = absoluteUrl(`/article/${slug}`);
+
+    const defaultMeta = {
+        title: 'Software Not Found | betterstack',
+        description: 'The requested software could not be found.',
+        alternates: { canonical },
+    };
+
+    const customMeta = await getCustomArticleMetadata(canonical, slug);
+
+    return { ...defaultMeta, ...customMeta };
+}
+
+async function getCustomArticleMetadata(url: URL, slug: string) {
     const client = await createServerClient();
-    const url = new URL(
-        `/article/${slugObject.slug}`,
-        process.env.NEXT_PUBLIC_APP_URL || 'https://betterstack.tech',
-    );
+
     try {
-        const software = await getSoftwareBySlug(client, slugObject.slug);
+        const software = await getSoftwareBySlug(client, slug);
+        const title = `${software.name} | betterstack`;
+        const description =
+            software.shortDescription ||
+            `View details and features of ${software.name}.`;
 
         return {
-            title: `${software.name} | betterstack`,
-            description:
-                software.shortDescription ||
-                `View details and features of ${software.name}.`,
-            openGraph: {
-                title: `${software.name} | betterstack`,
-                description:
-                    software.shortDescription ||
-                    `View details and features of ${software.name}.`,
-                url: url,
-            },
+            title,
+            description,
+            openGraph: { title, url, description },
         };
     } catch {
-        return {
-            title: 'Software Not Found | betterstack',
-            description: 'The requested software could not be found.',
-        };
+        return {};
     }
 }
 
@@ -67,13 +76,13 @@ export default async function SoftwareArticlePage({
         throw err;
     }
 
-    let isAuthenticated = false;
+    let isAuthenticated: boolean;
     let isUsedByCurrentUser = false;
     let currentUser = null;
 
     try {
         const user = await me(client);
-        isAuthenticated = true;
+        isAuthenticated = user != null;
         currentUser = user;
     } catch {
         isAuthenticated = false;
@@ -111,8 +120,114 @@ export default async function SoftwareArticlePage({
 
     const categoryNames = software.categories.map((c) => c.name);
 
+    const jsonLd: WithContext<SoftwareApplication> = {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: software.name,
+        description: software.shortDescription || undefined,
+        url: absoluteUrl(`/article/${slugObject.slug}`).toString(),
+        applicationCategory:
+            software.categories[0]?.name || 'BusinessApplication',
+        operatingSystem: 'All',
+        image: software.logoUrl || undefined,
+        author: software.developer
+            ? {
+                  '@type': 'Organization',
+                  name: software.developer,
+              }
+            : undefined,
+        review: review?.author
+            ? {
+                  '@type': 'Review',
+                  author: {
+                      '@type': 'Person',
+                      name: review.author.fullName || 'Anonymous',
+                      description: review.author.bio || undefined,
+                      image: review.author.avatarUrl || undefined,
+                      url: absoluteUrl(
+                          `/profile/${review.author.userId}`,
+                      ).toString(),
+                      sameAs: review.author.websiteUrl || undefined,
+                  },
+                  reviewBody: review.content,
+              }
+            : undefined,
+    };
+
+    const breadcrumbJsonLd: WithContext<BreadcrumbList> = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: absoluteUrl('/').toString(),
+            },
+            {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Catalog',
+                item: absoluteUrl('/catalog').toString(),
+            },
+            {
+                '@type': 'ListItem',
+                position: 3,
+                name: software.name,
+                item: absoluteUrl(`/article/${slugObject.slug}`).toString(),
+            },
+        ],
+    };
+
     return (
-        <article className="max-w-4xl mx-auto px-4 py-6 sm:p-6 md:py-10">
+        <article className="max-w-4xl mx-auto px-4 py-6 sm:p-6">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: safeJsonLdStringify(jsonLd),
+                }}
+            />
+
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: safeJsonLdStringify(breadcrumbJsonLd),
+                }}
+            />
+
+            <nav
+                aria-label="Breadcrumb"
+                className="mb-6 text-sm font-medium text-zinc-400"
+            >
+                <ol className="flex items-center gap-2">
+                    <li>
+                        <Link
+                            href="/"
+                            className="hover:text-zinc-100 transition-colors"
+                        >
+                            Home
+                        </Link>
+                    </li>
+                    <li>
+                        <ChevronRight className="w-4 h-4 text-zinc-600 shrink-0" />
+                    </li>
+                    <li>
+                        <Link
+                            href="/catalog"
+                            className="hover:text-zinc-100 transition-colors"
+                        >
+                            Catalog
+                        </Link>
+                    </li>
+                    <li>
+                        <ChevronRight className="w-4 h-4 text-zinc-600 shrink-0" />
+                    </li>
+                    <li className="text-zinc-100 truncate" aria-current="page">
+                        {software.name}
+                    </li>
+                </ol>
+            </nav>
+
             <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 sm:gap-6 mb-8">
                 <div className="flex items-center gap-4 sm:gap-6">
                     {software.logoUrl && (
@@ -121,6 +236,8 @@ export default async function SoftwareArticlePage({
                                 src={software.logoUrl}
                                 alt={software.name}
                                 fill
+                                priority
+                                sizes="(max-width: 640px) 64px, 96px"
                                 className="object-contain"
                             />
                         </div>
@@ -165,10 +282,13 @@ export default async function SoftwareArticlePage({
                 {/* Icons & Actions*/}
                 <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-2 sm:mt-0">
                     {software.gitRepoUrl && (
-                        <Link
+                        <TrackedLink
                             href={software.gitRepoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            eventName={AnalyticsEvent.CLICK_TOOL_GITHUB}
+                            eventParams={{
+                                software_id: software.id,
+                                software_name: software.name,
+                            }}
                             className="flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-zinc-900/80 border border-zinc-800 hover:bg-zinc-800 transition-all duration-300 shrink-0"
                         >
                             <Image
@@ -178,35 +298,39 @@ export default async function SoftwareArticlePage({
                                 height={24}
                                 className="w-5 h-5 sm:w-6 sm:h-6 object-contain opacity-90"
                             />
-                        </Link>
+                        </TrackedLink>
                     )}
                     {software.websiteUrl && (
-                        <Link
+                        <TrackedLink
                             href={software.websiteUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            eventName={AnalyticsEvent.CLICK_TOOL_WEBSITE}
+                            eventParams={{
+                                software_id: software.id,
+                                software_name: software.name,
+                            }}
                             className="flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-zinc-900/80 border border-zinc-800 hover:bg-zinc-800 transition-all duration-300 shrink-0"
                         >
                             <GlobeIcon
                                 className="w-5 h-5 sm:w-6 sm:h-6 text-zinc-300"
                                 strokeWidth={1.5}
                             />
-                        </Link>
+                        </TrackedLink>
                     )}
 
                     {isAuthenticated && (
                         <UseSoftwareButton
                             softwareId={software.id}
                             initialIsUsed={isUsedByCurrentUser}
+                            softwareName={software.name}
                         />
                     )}
                 </div>
             </header>
 
             <section className="mb-8 sm:mb-10">
-                <h3 className="text-sm sm:text-md font-semibold uppercase tracking-wider text-gray-400 mb-3">
+                <h2 className="text-sm sm:text-md font-semibold uppercase tracking-wider text-gray-400 mb-3">
                     Categories
-                </h3>
+                </h2>
                 <div>
                     {categoryNames.length === 0 && (
                         <p className="text-base sm:text-lg font-medium">
@@ -274,9 +398,7 @@ export default async function SoftwareArticlePage({
             </section>
 
             <div className="mb-8 sm:mb-12">
-                <ScreenshotGallery
-                    screenshots={software.screenshots.map((s) => s.url)}
-                />
+                <ScreenshotGallery screenshots={software.screenshots} />
             </div>
 
             <ProsAndCons

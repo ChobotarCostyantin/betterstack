@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, ChevronDown, Check, Loader2 } from 'lucide-react';
+import { X, ChevronDown, Check, Loader2, Plus, Trash2 } from 'lucide-react';
 import type { TableRecord } from '../types';
 import {
     createSoftware,
@@ -39,8 +39,11 @@ export function SoftwareFormModal({
         websiteUrl: '',
         gitRepoUrl: '',
         logoUrl: '',
-        screenshotUrls: '',
     });
+
+    const [screenshots, setScreenshots] = useState<
+        { url: string; alt: string }[]
+    >([]);
 
     const [isLoading, setIsLoading] = useState(false);
     const [isFetchingDetails, setIsFetchingDetails] = useState(false);
@@ -71,10 +74,13 @@ export function SoftwareFormModal({
                         websiteUrl: detail.websiteUrl || '',
                         gitRepoUrl: detail.gitRepoUrl || '',
                         logoUrl: detail.logoUrl || '',
-                        screenshotUrls: detail.screenshots
-                            .map((s) => s.url)
-                            .join('\n'),
                     });
+                    setScreenshots(
+                        detail.screenshots.map((s) => ({
+                            url: s.url,
+                            alt: s.alt ?? '',
+                        })),
+                    );
 
                     if (detail.categories) {
                         setSelectedCategoryIds(
@@ -98,8 +104,8 @@ export function SoftwareFormModal({
                 websiteUrl: '',
                 gitRepoUrl: '',
                 logoUrl: '',
-                screenshotUrls: '',
             });
+            setScreenshots([]);
             setSelectedCategoryIds([]);
             setError(null);
         }
@@ -160,11 +166,12 @@ export function SoftwareFormModal({
         setIsLoading(true);
 
         try {
-            const screenshots = formData.screenshotUrls
-                .split('\n')
-                .map((url) => url.trim())
-                .filter((url) => url.length > 0)
-                .map((url) => ({ url }));
+            const screenshotInput = screenshots
+                .filter((s) => s.url.trim().length > 0)
+                .map((s) => ({
+                    url: s.url.trim(),
+                    ...(s.alt.trim() && { alt: s.alt.trim() }),
+                }));
 
             const baseInput = {
                 ...(formData.slug && { slug: formData.slug }),
@@ -176,7 +183,9 @@ export function SoftwareFormModal({
                 ...(formData.websiteUrl && { websiteUrl: formData.websiteUrl }),
                 ...(formData.gitRepoUrl && { gitRepoUrl: formData.gitRepoUrl }),
                 ...(formData.logoUrl && { logoUrl: formData.logoUrl }),
-                ...(screenshots.length > 0 && { screenshots }),
+                ...(screenshotInput.length > 0 && {
+                    screenshots: screenshotInput,
+                }),
                 ...(selectedCategoryIds.length > 0 && {
                     categoryIds: selectedCategoryIds,
                 }),
@@ -453,17 +462,96 @@ export function SoftwareFormModal({
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-zinc-300 mb-2">
-                                    Screenshot URLs (one per line)
-                                </label>
-                                <textarea
-                                    name="screenshotUrls"
-                                    value={formData.screenshotUrls}
-                                    onChange={handleInputChange}
-                                    rows={3}
-                                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-700 resize-none"
-                                    placeholder="https://example.com/screen1.png&#10;https://example.com/screen2.png"
-                                />
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="text-sm font-medium text-zinc-300">
+                                        Screenshots
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setScreenshots((prev) => [
+                                                ...prev,
+                                                { url: '', alt: '' },
+                                            ])
+                                        }
+                                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-300 hover:text-white bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 transition-colors"
+                                    >
+                                        <Plus size={12} />
+                                        Add screenshot
+                                    </button>
+                                </div>
+
+                                {screenshots.length === 0 && (
+                                    <p className="text-sm text-zinc-600 py-2">
+                                        No screenshots added yet.
+                                    </p>
+                                )}
+
+                                <div className="space-y-2">
+                                    {screenshots.map((s, i) => (
+                                        <div
+                                            key={i}
+                                            className="flex gap-2 items-start"
+                                        >
+                                            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                <input
+                                                    type="text"
+                                                    value={s.url}
+                                                    onChange={(e) =>
+                                                        setScreenshots((prev) =>
+                                                            prev.map((x, j) =>
+                                                                j === i
+                                                                    ? {
+                                                                          ...x,
+                                                                          url: e
+                                                                              .target
+                                                                              .value,
+                                                                      }
+                                                                    : x,
+                                                            ),
+                                                        )
+                                                    }
+                                                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-700 text-sm"
+                                                    placeholder="https://example.com/screen.png"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    value={s.alt}
+                                                    onChange={(e) =>
+                                                        setScreenshots((prev) =>
+                                                            prev.map((x, j) =>
+                                                                j === i
+                                                                    ? {
+                                                                          ...x,
+                                                                          alt: e
+                                                                              .target
+                                                                              .value,
+                                                                      }
+                                                                    : x,
+                                                            ),
+                                                        )
+                                                    }
+                                                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-700 text-sm"
+                                                    placeholder="Alt text (optional)"
+                                                />
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setScreenshots((prev) =>
+                                                        prev.filter(
+                                                            (_, j) => j !== i,
+                                                        ),
+                                                    )
+                                                }
+                                                className="mt-2 p-1.5 text-zinc-500 hover:text-red-400 transition-colors shrink-0"
+                                                aria-label="Remove screenshot"
+                                            >
+                                                <Trash2 size={15} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
 
                             <div className="flex justify-end gap-3 pt-4 border-t border-zinc-800 mt-6">

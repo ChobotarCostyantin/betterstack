@@ -6,7 +6,7 @@ import { listUsers } from '@/src/api/users/users.api';
 import { browserClient } from '@/src/lib/api/browser.client';
 import type { Tab, TableRecord } from '../types';
 
-export function useAdminData(activeTab: Tab, isAuthorized: boolean) {
+export function useAdminData(activeTab: Tab) {
     const [data, setData] = useState<TableRecord[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -40,8 +40,6 @@ export function useAdminData(activeTab: Tab, isAuthorized: boolean) {
     };
 
     useEffect(() => {
-        if (!isAuthorized) return;
-
         async function loadData() {
             const isFirstPage = page === 1;
 
@@ -138,7 +136,7 @@ export function useAdminData(activeTab: Tab, isAuthorized: boolean) {
         }
 
         loadData();
-    }, [activeTab, isAuthorized, trigger, page, data.length]);
+    }, [activeTab, trigger, page, data.length]);
 
     return {
         data,

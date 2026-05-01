@@ -1,9 +1,7 @@
 import type { KyInstance } from 'ky';
 import { unwrapResponse } from '../common/common.utils';
 import {
-    UserSchema,
     AuthPayloadSchema,
-    type User,
     type RegisterInput,
     type LoginInput,
     type AuthResponse,
@@ -27,9 +25,4 @@ export async function login(
 
 export async function logout(client: KyInstance): Promise<void> {
     await client.post('auth/logout');
-}
-
-export async function me(client: KyInstance): Promise<User> {
-    const raw = await client.get('auth/me').json();
-    return unwrapResponse(UserSchema, raw);
 }

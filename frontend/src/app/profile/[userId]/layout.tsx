@@ -1,5 +1,5 @@
 import ProfileSidebar from './_components/ProfileSidebar';
-import { me } from '@/src/api/auth/auth.api';
+import { me } from '@/src/api/auth/auth.api.server';
 import { createServerClient } from '@/src/lib/api/server.client';
 import React from 'react';
 
