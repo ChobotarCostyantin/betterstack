@@ -287,6 +287,29 @@
 | 🩹 Fill-ins <br><br>(Low/Med Impact + Low/Med Effort) <br><br>3 задачі           | 1. Невідповідність Meta Description інтенту (Low-Medium / S)<br><br>2. Відсутність сигналів свіжості (Last Updated) (Medium / S)<br><br>3. Розрив у Breadcrumbs (пропуск категорії) (Medium / M)                                                 | Content<br><br>Tech + Content<br><br>Tech |
 | ⏳ Postpone <br><br>(High/Med Effort, що потребують відкладення) <br><br>2 задачі | 1. Низька конверсія в клік CTA на сторінках категорій (Medium / M)<br><br>2. Низька видимість за non-brand запитами (High / M - через довгостроковість SEO-результатів)                                                                          | UX+SEO<br><br>SEO+Content                 |
 
+**1. Неоптимізований Title головної сторінки:**
+
+![Before](./media/not-optimized-title-before.png)
+
+![After](./media/not-optimized-title-after.png)
+
+**2. Тупиковий стан "Nothing found" у каталозі:**
+
+![Before](./media/deadlock-in-catalog-before.png)
+
+![After](./media/deadlock-in-catalog-after.png)
+
+**3. Відсутність мікророзмітки Breadcrumbs:**
+
+![Before](./media/no-breadcrumbs-schema-before.png)
+
+![After](./media/no-breadcrumbs-schema-after.png)
+
+**4. Низька залученість на сторінці /about:**
+
+![Before](./media/low-engagement-on-about-page-before.png)
+
+![After](./media/low-engagement-on-about-page-after.png)
 
 #### 4.3 - SEO roadmap на 30/60/90 днів
 
